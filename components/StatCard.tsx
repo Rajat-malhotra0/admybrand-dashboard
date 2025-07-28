@@ -28,11 +28,11 @@ const StatCard: React.FC<StatCardProps> = ({
   };
 
   return (
-    <Card className="p-6" hover>
+    <Card className="p-0 tech-accent" hover>
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-text-secondary">{title}</p>
-          <p className="text-2xl font-bold text-text-primary mt-2">
+          <p className="text-2xl font-bold text-text-primary mt-2 mono">
             {formatValue(value)}
           </p>
           {description && (
@@ -46,18 +46,18 @@ const StatCard: React.FC<StatCardProps> = ({
                 <TrendingDown className="w-4 h-4 text-error mr-1" />
               )}
               <span
-                className={`text-sm font-medium ${
+                className={`text-sm font-medium mono ${
                   change.type === 'increase' ? 'text-success' : 'text-error'
                 }`}
               >
-                {change.value}%
+                {change.type === 'increase' ? '+' : '-'}{change.value}%
               </span>
               <span className="text-sm text-text-muted ml-1">vs last month</span>
             </div>
           )}
         </div>
         {icon && (
-          <div className="ml-4 p-3 bg-primary/10 rounded-lg">
+          <div className="ml-4 p-3 bg-sky-400/10 rounded-lg">
             {icon}
           </div>
         )}

@@ -40,8 +40,8 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
   const pathData = `M ${dataPoints.map(p => `${p.x},${p.y}`).join(' L ')} Z`;
 
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold text-text-primary mb-6">{title}</h3>
+    <Card className="p-0">
+      <h3 className="text-lg font-semibold text-text-primary mb-6 tech-accent">{title}</h3>
       <div className="flex justify-center">
         <svg width="240" height="240" className="overflow-visible">
           {/* Grid levels */}

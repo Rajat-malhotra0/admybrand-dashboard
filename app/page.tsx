@@ -5,6 +5,7 @@ import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import StatCard from '@/components/StatCard';
+import Card from '@/components/Card';
 import BarChart from '@/components/charts/BarChart';
 import RadarChart from '@/components/charts/RadarChart';
 import dynamic from 'next/dynamic';
@@ -103,12 +104,12 @@ const tabsData = [
 
 export default function Dashboard() {
   return (
-    <div className="flex h-screen bg-bg-secondary">
+    <div className="flex h-screen bg-bg-secondary dashboard-bg">
       {/* Sidebar */}
       <Sidebar />
       
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto relative z-10">
         <div className="p-8">
           {/* Header */}
           <Header 
@@ -162,8 +163,8 @@ export default function Dashboard() {
           {/* Additional Content Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
-            <div className="bg-bg-primary rounded-lg border border-gray-200 shadow-card p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">Recent Activity</h3>
+            <Card className="p-0">
+              <h3 className="text-lg font-semibold text-text-primary mb-4 tech-accent">Recent Activity</h3>
               <div className="space-y-4">
                 {[
                   { time: '2 hours ago', action: 'Campaign "Summer Sale" launched', status: 'success' },
@@ -187,8 +188,8 @@ export default function Dashboard() {
             </div>
             
             {/* Top Performing Content */}
-            <div className="bg-bg-primary rounded-lg border border-gray-200 shadow-card p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">Top Performing Content</h3>
+            <Card className="p-0">
+              <h3 className="text-lg font-semibold text-text-primary mb-4 tech-accent">Top Performing Content</h3>
               <div className="space-y-4">
                 {[
                   { title: 'Marketing Automation Guide', views: '12.4K', engagement: '8.2%' },
@@ -196,18 +197,18 @@ export default function Dashboard() {
                   { title: 'Product Demo Video', views: '8.1K', engagement: '9.1%' },
                   { title: 'Industry Trends Report', views: '6.9K', engagement: '5.4%' },
                 ].map((content, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-bg-secondary transition-colors duration-200">
+                  <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors duration-150">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-text-primary">{content.title}</p>
                       <div className="flex items-center space-x-4 mt-1">
-                        <span className="text-xs text-text-muted">{content.views} views</span>
-                        <span className="text-xs text-success">{content.engagement} engagement</span>
+                        <span className="text-xs text-text-muted mono">{content.views} views</span>
+                        <span className="text-xs text-sky-600 mono">{content.engagement}</span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>

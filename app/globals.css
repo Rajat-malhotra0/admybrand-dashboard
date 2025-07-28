@@ -104,3 +104,91 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--color-text-secondary));
 }
+
+/* Grid background utility classes */
+.dashboard-grid {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: 0 0;
+}
+
+.dashboard-grid-fine {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0;
+}
+
+/* Combined grid effect */
+.dashboard-bg {
+  position: relative;
+  background-color: #fafafa;
+}
+
+.dashboard-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dashboard-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.015) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Modern card styling */
+.tech-card {
+  @apply bg-white/95 backdrop-blur-sm border border-slate-100 rounded-lg shadow-sm;
+  @apply ring-1 ring-slate-100/40;
+  position: relative;
+  z-index: 1;
+}
+
+/* Monospace font for numbers */
+.mono {
+  font-family: 'JetBrains Mono', 'Roboto Mono', 'Consolas', monospace;
+  font-size: 0.9em;
+  letter-spacing: -0.02em;
+}
+
+/* Smooth hover transitions */
+.hover-lift {
+  @apply transition-all duration-150 ease-out;
+}
+
+.hover-lift:hover {
+  @apply -translate-y-0.5 shadow-md;
+}
+
+/* Tech accent line */
+.tech-accent {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.tech-accent::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, rgb(var(--color-primary)), rgb(var(--color-primary-light)));
+  border-radius: 1px;
+}

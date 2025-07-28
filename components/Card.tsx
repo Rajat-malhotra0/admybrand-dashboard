@@ -11,8 +11,8 @@ const Card: React.FC<CardProps> = ({ children, className, hover = false }) => {
   return (
     <div
       className={cn(
-        'bg-bg-primary rounded-lg border border-gray-200 shadow-card',
-        hover && 'transition-shadow duration-200 hover:shadow-card-hover',
+        'tech-card bg-white/95 backdrop-blur-sm border border-slate-100 rounded-lg shadow-sm ring-1 ring-slate-100/40 p-6',
+        hover && 'hover-lift transition-all duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md',
         className
       )}
     >

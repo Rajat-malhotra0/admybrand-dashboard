@@ -92,6 +92,26 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
     // Apply zoom behavior to SVG
     svg.call(zoomBehavior);
     
+    // Add grid pattern definition
+    const defs = svg.append('defs');
+    const pattern = defs.append('pattern')
+      .attr('id', 'grid-pattern')
+      .attr('width', 20)
+      .attr('height', 20)
+      .attr('patternUnits', 'userSpaceOnUse');
+    
+    pattern.append('path')
+      .attr('d', 'M 20 0 L 0 0 0 20')
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(0,0,0,0.04)')
+      .attr('stroke-width', 0.5);
+    
+    // Add background with grid
+    svg.append('rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', 'url(#grid-pattern)');
+    
     // Create main group for map elements
     const mapGroup = svg.append('g').attr('class', 'map-group');
     
