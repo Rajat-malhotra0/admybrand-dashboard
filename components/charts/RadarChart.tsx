@@ -24,10 +24,10 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
     { label: 'Music', value: 65 },
   ];
 
-  const center = 100;
-  const maxRadius = 80;
+  const center = 110;
+  const maxRadius = 70;
   const levels = 5;
-  const size = 200;
+  const size = 220;
   
   // Calculate points for the data polygon
   const calculatePoint = (value: number, index: number) => {
@@ -41,7 +41,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
   // Calculate label positions
   const calculateLabelPoint = (index: number) => {
     const angle = (index * 2 * Math.PI) / chartData.length - Math.PI / 2;
-    const radius = maxRadius + 25;
+    const radius = maxRadius + 20;
     const x = center + radius * Math.cos(angle);
     const y = center + radius * Math.sin(angle);
     return { x, y };
@@ -115,10 +115,11 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
                 y={labelPoint.y}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="text-xs fill-current text-text-secondary"
+                className="text-xs"
+                fill="#64748b"
               >
-                <tspan x={labelPoint.x} dy="0">{item.label}</tspan>
-                <tspan x={labelPoint.x} dy="12" className="font-medium text-text-primary mono">
+                <tspan x={labelPoint.x} dy="-6">{item.label}</tspan>
+                <tspan x={labelPoint.x} dy="12" className="font-medium" fill="#1e293b">
                   {item.value}%
                 </tspan>
               </text>

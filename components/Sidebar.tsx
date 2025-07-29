@@ -3,8 +3,12 @@
 import React from 'react';
 import { Home, Target, CreditCard, Users, Settings, UserCheck, Crown } from 'lucide-react';
 
-const Sidebar: React.FC = () => (
-  <div className="flex flex-col bg-bg-sidebar text-text-white h-full w-full">
+interface SidebarProps {
+  className?: string;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => (
+  <div className={`flex flex-col bg-bg-sidebar text-text-white h-full w-full ${className}`}>
     <div className="p-md border-b border-slate-700">
       <h1 className="text-lg md:text-xl font-bold">Dashboard</h1>
     </div>
