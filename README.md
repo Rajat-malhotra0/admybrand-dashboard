@@ -17,6 +17,12 @@ A responsive admin dashboard built with Next.js, featuring an interactive chorop
 - **Dynamic legend**: Color legend adapts to screen size with compact mobile version
 - **Campaign statistics overlay**: Key metrics displayed alongside the map
 
+### PDF Export
+- **Download PDF reports**: Export the current dashboard view as a PDF document
+- **High-quality rendering**: Vector graphics ensure crisp output at any resolution
+- **Complete data capture**: Includes map, legend, and statistics in the exported PDF
+- **Cross-browser compatibility**: Works across all modern browsers
+
 ## Technology Stack
 
 - **Framework**: Next.js 14 with React 18
@@ -90,6 +96,53 @@ The map uses a discrete bucket system for consistent and accessible color coding
 - **Desktop (1024px+)**: Full map with campaign statistics sidebar and desktop legend
 - **Tablet (768-1023px)**: Optimized layout with adjusted spacing
 - **Mobile (<768px)**: Campaign statistics hidden, compact legend, touch-optimized interactions
+
+## Export PDF Reports
+
+### How to Export
+
+1. **Locate the Export Button**: Find the "Download PDF" button in the dashboard interface
+2. **Click to Generate**: Click the button to start the PDF generation process
+3. **Wait for Processing**: The system will capture the current dashboard state
+4. **Download Automatically**: The PDF will be automatically downloaded to your default downloads folder
+
+### What's Included in the PDF
+
+- **Interactive Map**: Current choropleth map view with all country colorings
+- **Legend**: Color legend showing user count ranges and corresponding colors
+- **Statistics**: Campaign statistics and key metrics displayed on the dashboard
+- **Metadata**: Export timestamp and dashboard configuration details
+
+### Environment Considerations
+
+#### CORS and Image Handling
+- **External Images**: If your dashboard displays external images or icons, ensure CORS headers are properly configured
+- **Base64 Conversion**: Images are automatically converted to base64 format for PDF embedding
+- **Fallback Handling**: Missing or blocked images will be replaced with placeholder content
+
+#### Large Data Sets
+- **Memory Usage**: Large datasets (>10MB) may cause increased memory usage during PDF generation
+- **Processing Time**: Complex maps with many countries may take 3-5 seconds to process
+- **Browser Limits**: Very large exports may hit browser memory limits (>100MB datasets)
+- **Optimization**: Consider filtering or paginating data for better performance
+
+#### Browser Compatibility
+- **Modern Browsers**: PDF export works best in Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **Pop-up Blockers**: Ensure pop-up blockers allow downloads from your domain
+- **JavaScript Required**: PDF export requires JavaScript to be enabled
+
+### Troubleshooting PDF Export
+
+**If PDF export fails:**
+1. Check browser console for error messages
+2. Ensure sufficient browser memory (close other tabs if needed)
+3. Try refreshing the page and exporting again
+4. For large datasets, consider reducing the data scope
+
+**If images are missing in PDF:**
+1. Verify CORS headers are set for external image domains
+2. Check that image URLs are accessible from the client
+3. Consider hosting images on the same domain as the application
 
 ## Testing
 
