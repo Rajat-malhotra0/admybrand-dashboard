@@ -13,16 +13,19 @@ A simple Express.js backend API for managing dashboard data with a test interfac
 ## Installation
 
 1. Navigate to the backend directory:
+
    ```bash
    cd backend
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Start the server:
+
    ```bash
    npm start
    # or for development with auto-reload:
@@ -36,34 +39,41 @@ A simple Express.js backend API for managing dashboard data with a test interfac
 ## API Endpoints
 
 ### Dashboard Data
+
 - `GET /api/dashboard` - Get all dashboard data
 
 ### Campaign Statistics
+
 - `GET /api/campaign-stats` - Get all campaign stats
 - `POST /api/campaign-stats` - Add new campaign stat
 - `PUT /api/campaign-stats/:id` - Update campaign stat
 - `DELETE /api/campaign-stats/:id` - Delete campaign stat
 
 ### Influencers
+
 - `GET /api/influencers` - Get all influencers
 - `POST /api/influencers` - Add new influencer
 - `PUT /api/influencers/:id` - Update influencer
 - `DELETE /api/influencers/:id` - Delete influencer
 
 ### Demographics
+
 - `GET /api/demographics` - Get demographics data
 - `PUT /api/demographics/:id` - Update demographic entry
 
 ### Interests
+
 - `GET /api/interests` - Get interests data
 - `PUT /api/interests/:id` - Update interest entry
 
 ### System
+
 - `POST /api/reset` - Reset all data to default values
 
 ## Data Structure
 
 ### Campaign Stat
+
 ```json
 {
   "id": 1,
@@ -74,6 +84,7 @@ A simple Express.js backend API for managing dashboard data with a test interfac
 ```
 
 ### Influencer
+
 ```json
 {
   "id": 1,
@@ -84,6 +95,7 @@ A simple Express.js backend API for managing dashboard data with a test interfac
 ```
 
 ### Demographics
+
 ```json
 {
   "id": 1,
@@ -94,6 +106,7 @@ A simple Express.js backend API for managing dashboard data with a test interfac
 ```
 
 ### Interest
+
 ```json
 {
   "id": 1,
@@ -105,6 +118,7 @@ A simple Express.js backend API for managing dashboard data with a test interfac
 ## Test Interface
 
 The backend includes a built-in web interface for testing all endpoints:
+
 - Visit `http://localhost:5000` after starting the server
 - Interactive forms for adding/editing data
 - Real-time data viewing
@@ -119,8 +133,9 @@ To connect your Next.js frontend:
 3. Handle loading states and errors appropriately
 
 Example fetch call:
+
 ```javascript
-const response = await fetch('http://localhost:5000/api/campaign-stats');
+const response = await fetch("http://localhost:5000/api/campaign-stats");
 const data = await response.json();
 ```
 

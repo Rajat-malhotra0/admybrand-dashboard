@@ -50,7 +50,7 @@ export interface ApiError {
 }
 
 // Request types for creating/updating data
-export type CreateInfluencerRequest = Omit<Influencer, 'id'>;
-export type UpdateInfluencerRequest = Partial<Omit<Influencer, 'id'>>;
-export type CreateCampaignStatRequest = Omit<CampaignStat, 'id'>;
-export type UpdateCampaignStatRequest = Partial<Omit<CampaignStat, 'id'>>;
+export type CreateInfluencerRequest = Omit<Influencer, "id">;
+export type UpdateInfluencerRequest = Partial<Omit<Influencer, "id">>;
+export type CreateCampaignStatRequest = Omit<CampaignStat, "id">;
+export type UpdateCampaignStatRequest = Partial<Omit<CampaignStat, "id">>;

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { RefreshCw } from 'lucide-react';
-import Card from './Card';
+import React from "react";
+import { RefreshCw } from "lucide-react";
+import Card from "./Card";
 
 const CampaignReach: React.FC = () => {
   return (
@@ -11,21 +11,27 @@ const CampaignReach: React.FC = () => {
         {/* Campaign Reach */}
         <div className="text-center">
           <p className="text-sm text-text-secondary mb-xs">Campaign Reach</p>
-          <p className="text-xl md:text-2xl font-bold text-text-primary mono">12</p>
+          <p className="text-xl md:text-2xl font-bold text-text-primary mono">
+            12
+          </p>
           <p className="text-xs md:text-sm text-text-muted">country</p>
         </div>
 
         {/* Total Users */}
         <div className="text-center">
           <p className="text-sm text-text-secondary mb-xs">Total Users</p>
-          <p className="text-xl md:text-2xl font-bold text-text-primary mono">180,807,839</p>
+          <p className="text-xl md:text-2xl font-bold text-text-primary mono">
+            180,807,839
+          </p>
           <p className="text-xs md:text-sm text-text-muted">user</p>
         </div>
 
         {/* Period */}
         <div className="text-center">
           <p className="text-sm text-text-secondary mb-xs">Period</p>
-          <p className="text-xl md:text-2xl font-bold text-text-primary mono">9</p>
+          <p className="text-xl md:text-2xl font-bold text-text-primary mono">
+            9
+          </p>
           <p className="text-xs md:text-sm text-text-muted">month</p>
         </div>
 

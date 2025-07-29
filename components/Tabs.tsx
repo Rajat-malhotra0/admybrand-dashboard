@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
+import React, { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface Tab {
   id: string;
@@ -31,20 +31,22 @@ const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onTabChange }) => {
             key={tab.id}
             onClick={() => handleTabClick(tab.id)}
             className={cn(
-              'py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200',
+              "py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200",
               activeTab === tab.id
-                ? 'border-primary text-primary'
-                : 'border-transparent text-text-secondary hover:text-text-primary hover:border-gray-300'
+                ? "border-primary text-primary"
+                : "border-transparent text-text-secondary hover:text-text-primary hover:border-gray-300",
             )}
           >
             {tab.label}
             {tab.count !== undefined && (
-              <span className={cn(
-                'ml-2 py-0.5 px-2 rounded-full text-xs',
-                activeTab === tab.id
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-text-secondary'
-              )}>
+              <span
+                className={cn(
+                  "ml-2 py-0.5 px-2 rounded-full text-xs",
+                  activeTab === tab.id
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-text-secondary",
+                )}
+              >
                 {tab.count}
               </span>
             )}

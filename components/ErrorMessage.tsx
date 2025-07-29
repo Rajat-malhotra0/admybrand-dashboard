@@ -1,5 +1,5 @@
-import React from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import React from "react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 
 interface ErrorMessageProps {
   error: any;
@@ -7,16 +7,16 @@ interface ErrorMessageProps {
   title?: string;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ 
-  error, 
-  onRetry, 
-  title = 'Something went wrong' 
+const ErrorMessage: React.FC<ErrorMessageProps> = ({
+  error,
+  onRetry,
+  title = "Something went wrong",
 }) => {
   const getErrorMessage = (error: any): string => {
-    if (typeof error === 'string') return error;
+    if (typeof error === "string") return error;
     if (error?.response?.data?.error) return error.response.data.error;
     if (error?.message) return error.message;
-    return 'An unexpected error occurred';
+    return "An unexpected error occurred";
   };
 
   return (

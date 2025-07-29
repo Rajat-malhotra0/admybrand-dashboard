@@ -1,6 +1,6 @@
-import useSWR from 'swr';
-import { dashboardApi } from '@/lib/api/dashboard';
-import { DemographicData } from '@/lib/api/types';
+import useSWR from "swr";
+import { dashboardApi } from "@/lib/api/dashboard";
+import { DemographicData } from "@/lib/api/types";
 
 const fetcher = async (): Promise<DemographicData[]> => {
   const response = await dashboardApi.getDemographics();
@@ -9,21 +9,27 @@ const fetcher = async (): Promise<DemographicData[]> => {
 
 export const useDemographics = () => {
   const { data, error, isLoading, mutate } = useSWR<DemographicData[]>(
-    'demographics',
+    "demographics",
     fetcher,
     {
       revalidateOnFocus: true,
       errorRetryCount: 3,
-    }
+    },
   );
 
-  const updateDemographic = async (id: number, demographicData: Partial<DemographicData>) => {
+  const updateDemographic = async (
+    id: number,
+    demographicData: Partial<DemographicData>,
+  ) => {
     try {
-      const response = await dashboardApi.updateDemographic(id, demographicData);
+      const response = await dashboardApi.updateDemographic(
+        id,
+        demographicData,
+      );
       mutate(); // Revalidate the data
       return response.data;
     } catch (error) {
-      console.error('Error updating demographic:', error);
+      console.error("Error updating demographic:", error);
       throw error;
     }
   };

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Card from './Card';
+import React from "react";
+import Card from "./Card";
 
 interface AudienceData {
   label: string;
@@ -15,18 +15,22 @@ interface AudienceAgeGenderChartProps {
   className?: string;
 }
 
-const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({ 
-  title = "Audience Age & Gender Demographics", 
-  data, 
-  className 
+const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
+  title = "Audience Age & Gender Demographics",
+  data,
+  className,
 }) => {
   // Find the maximum value to scale the bars
-  const maxValue = Math.max(...data.map(item => Math.max(item.male, item.female)));
+  const maxValue = Math.max(
+    ...data.map((item) => Math.max(item.male, item.female)),
+  );
 
   return (
     <Card hover className={className}>
-      <h2 className="text-lg font-semibold text-text-primary mb-6 tech-accent">Audience Age & Gender</h2>
-      
+      <h2 className="text-lg font-semibold text-text-primary mb-6 tech-accent">
+        Audience Age & Gender
+      </h2>
+
       {/* Legend */}
       <div className="flex items-center justify-center space-x-6 mb-6">
         <div className="flex items-center space-x-2">
@@ -50,12 +54,15 @@ const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
 
             {/* Male bar (left side) */}
             <div className="flex-1 flex justify-end pr-2">
-              <div className="flex items-center justify-end" style={{ width: '100%' }}>
-                <div 
+              <div
+                className="flex items-center justify-end"
+                style={{ width: "100%" }}
+              >
+                <div
                   className="h-6 bg-chart-1 rounded-r transition-all duration-500 ease-out"
                   style={{
                     width: `${(item.male / maxValue) * 100}%`,
-                    minWidth: item.male > 0 ? '2px' : '0px'
+                    minWidth: item.male > 0 ? "2px" : "0px",
                   }}
                 />
               </div>
@@ -66,12 +73,12 @@ const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
 
             {/* Female bar (right side) */}
             <div className="flex-1 flex justify-start pl-2">
-              <div className="flex items-center" style={{ width: '100%' }}>
-                <div 
+              <div className="flex items-center" style={{ width: "100%" }}>
+                <div
                   className="h-6 bg-chart-2 rounded-l transition-all duration-500 ease-out"
                   style={{
                     width: `${(item.female / maxValue) * 100}%`,
-                    minWidth: item.female > 0 ? '2px' : '0px'
+                    minWidth: item.female > 0 ? "2px" : "0px",
                   }}
                 />
               </div>

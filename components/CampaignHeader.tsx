@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { ArrowLeft, MoreVertical, Circle } from 'lucide-react';
+import React, { useState } from "react";
+import { ArrowLeft, MoreVertical, Circle } from "lucide-react";
 
 const CampaignHeader: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('TikTok');
+  const [activeTab, setActiveTab] = useState("TikTok");
 
-  const tabs = ['TikTok', 'Instagram', 'Facebook'];
+  const tabs = ["TikTok", "Instagram", "Facebook"];
 
   return (
     <div className="mb-8">
@@ -21,12 +21,16 @@ const CampaignHeader: React.FC = () => {
               <span className="text-white font-bold text-lg">BC</span>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Blue Chips Chicago</h1>
-              <p className="text-sm text-gray-500">Diam nullam quis nunc et pretium augue</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Blue Chips Chicago
+              </h1>
+              <p className="text-sm text-gray-500">
+                Diam nullam quis nunc et pretium augue
+              </p>
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-8">
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-500">Status</span>
@@ -37,7 +41,9 @@ const CampaignHeader: React.FC = () => {
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-500">Created on</span>
-            <span className="text-sm font-medium text-gray-900">August 20, 2021</span>
+            <span className="text-sm font-medium text-gray-900">
+              August 20, 2021
+            </span>
           </div>
           <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <MoreVertical className="w-5 h-5 text-gray-600" />
@@ -53,8 +59,8 @@ const CampaignHeader: React.FC = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               activeTab === tab
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             {tab}

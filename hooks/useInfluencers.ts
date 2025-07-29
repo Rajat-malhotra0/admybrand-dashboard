@@ -1,6 +1,10 @@
-import useSWR from 'swr';
-import { dashboardApi } from '@/lib/api/dashboard';
-import { Influencer, CreateInfluencerRequest, UpdateInfluencerRequest } from '@/lib/api/types';
+import useSWR from "swr";
+import { dashboardApi } from "@/lib/api/dashboard";
+import {
+  Influencer,
+  CreateInfluencerRequest,
+  UpdateInfluencerRequest,
+} from "@/lib/api/types";
 
 const fetcher = async (): Promise<Influencer[]> => {
   const response = await dashboardApi.getInfluencers();
@@ -9,12 +13,12 @@ const fetcher = async (): Promise<Influencer[]> => {
 
 export const useInfluencers = () => {
   const { data, error, isLoading, mutate } = useSWR<Influencer[]>(
-    'influencers',
+    "influencers",
     fetcher,
     {
       revalidateOnFocus: true,
       errorRetryCount: 3,
-    }
+    },
   );
 
   const createInfluencer = async (influencerData: CreateInfluencerRequest) => {
@@ -23,18 +27,21 @@ export const useInfluencers = () => {
       mutate(); // Revalidate the data
       return response.data;
     } catch (error) {
-      console.error('Error creating influencer:', error);
+      console.error("Error creating influencer:", error);
       throw error;
     }
   };
 
-  const updateInfluencer = async (id: number, influencerData: UpdateInfluencerRequest) => {
+  const updateInfluencer = async (
+    id: number,
+    influencerData: UpdateInfluencerRequest,
+  ) => {
     try {
       const response = await dashboardApi.updateInfluencer(id, influencerData);
       mutate(); // Revalidate the data
       return response.data;
     } catch (error) {
-      console.error('Error updating influencer:', error);
+      console.error("Error updating influencer:", error);
       throw error;
     }
   };
@@ -44,7 +51,7 @@ export const useInfluencers = () => {
       await dashboardApi.deleteInfluencer(id);
       mutate(); // Revalidate the data
     } catch (error) {
-      console.error('Error deleting influencer:', error);
+      console.error("Error deleting influencer:", error);
       throw error;
     }
   };

@@ -1,6 +1,6 @@
-import useSWR from 'swr';
-import { dashboardApi } from '@/lib/api/dashboard';
-import { DashboardData } from '@/lib/api/types';
+import useSWR from "swr";
+import { dashboardApi } from "@/lib/api/dashboard";
+import { DashboardData } from "@/lib/api/types";
 
 const fetcher = async (): Promise<DashboardData> => {
   const response = await dashboardApi.getDashboardData();
@@ -9,7 +9,7 @@ const fetcher = async (): Promise<DashboardData> => {
 
 export const useDashboardData = () => {
   const { data, error, isLoading, mutate } = useSWR<DashboardData>(
-    'dashboard',
+    "dashboard",
     fetcher,
     {
       refreshInterval: 30000, // Refresh every 30 seconds
@@ -17,9 +17,9 @@ export const useDashboardData = () => {
       errorRetryCount: 3,
       dedupingInterval: 5000, // Dedupe requests within 5 seconds
       onError: (error) => {
-        console.error('Dashboard data fetch error:', error);
+        console.error("Dashboard data fetch error:", error);
       },
-    }
+    },
   );
 
   return {
