@@ -1,143 +1,83 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  Target, 
-  BarChart3, 
-  Users, 
-  Settings, 
-  HelpCircle,
-  Crown,
-  User,
-  Menu,
-  X
-} from 'lucide-react';
+import React from 'react';
+import { Home, Target, CreditCard, Users, Settings, UserCheck, Crown } from 'lucide-react';
 
-type NavigationItem = {
-  id: string;
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  active: boolean;
-};
+const Sidebar: React.FC = () => (
+  <div className="flex flex-col bg-bg-sidebar text-text-white h-full w-full">
+    <div className="p-md border-b border-slate-700">
+      <h1 className="text-lg md:text-xl font-bold">Dashboard</h1>
+    </div>
 
-const NAV_ITEMS: NavigationItem[] = [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', active: false },
-  { id: 'campaign', icon: Target, label: 'Campaign', active: true },
-  { id: 'analytics', icon: BarChart3, label: 'Analytics', active: false },
-  { id: 'audience', icon: Users, label: 'Audience', active: false },
-  { id: 'settings', icon: Settings, label: 'Settings', active: false },
-  { id: 'help', icon: HelpCircle, label: 'Help', active: false },
-];
-
-const Sidebar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState('campaign');
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleNavigation = (id: string) => {
-    setActiveItem(id);
-    // Close sidebar on mobile after selection
-    if (window.innerWidth < 768) {
-      setIsOpen(false);
-    }
-  };
-
-  return (
-    <>
-      {/* Mobile menu button */}
-      <button 
-        onClick={toggleSidebar}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-bg-sidebar text-white"
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-
-      {/* Sidebar */}
-      <div 
-        className={`
-          fixed md:relative z-40 w-64 bg-bg-sidebar text-white flex flex-col h-screen 
-          transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-      >
-      {/* Logo */}
-      <div className="p-4 md:p-6 border-b border-slate-700">
-        <h1 className="text-xl font-bold text-white">Dashboard</h1>
-      </div>
-
-      {/* User Profile */}
-      <div className="p-4 md:p-6 border-b border-slate-700">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-primary rounded-full flex-shrink-0 flex items-center justify-center">
-            <User className="w-5 h-5 text-white" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <p className="font-medium text-white truncate">Sarah Johnson</p>
-            <p className="text-sm text-slate-300 truncate">Marketing Manager</p>
-          </div>
+    <div className="p-md lg:p-lg border-b border-slate-700">
+      <div className="flex items-center space-x-sm md:space-x-md">
+        <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary to-primary-dark rounded-full flex items-center justify-center text-text-white font-semibold text-sm md:text-base">
+          JL
         </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 p-2 md:p-4 overflow-y-auto">
-        <ul className="space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeItem === item.id;
-            return (
-              <li key={item.id}>
-                <button
-                  onClick={() => handleNavigation(item.id)}
-                  className={`
-                    w-full text-left flex items-center space-x-3 px-4 py-3 rounded-lg 
-                    transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary
-                    ${isActive 
-                      ? 'bg-primary text-white' 
-                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-                    }
-                  `}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  <Icon 
-                    className="w-5 h-5 flex-shrink-0" 
-                    aria-hidden="true"
-                  />
-                  <span className="truncate">{item.label}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      {/* Upgrade Card */}
-      <div className="p-4 mt-auto">
-        <div className="bg-gradient-to-r from-primary to-primary-dark rounded-lg p-4">
-          <div className="flex items-center space-x-2 mb-2">
-            <Crown className="w-5 h-5 text-yellow-400 flex-shrink-0" aria-hidden="true" />
-            <span className="font-medium text-white">Upgrade to Pro</span>
-          </div>
-          <p className="text-sm text-slate-200 mb-3">
-            Unlock advanced features and analytics
-          </p>
-          <button 
-            className="w-full bg-white text-primary font-medium py-2 px-4 rounded-md 
-                     hover:bg-gray-100 transition-colors duration-200 focus:outline-none
-                     focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-            onClick={() => handleNavigation('upgrade')}
-          >
-            Upgrade Now
-          </button>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-sm md:text-base truncate">Justinus Lhaksana</p>
+          <p className="text-xs md:text-sm text-text-muted truncate">@justinus.lhaksana</p>
         </div>
       </div>
     </div>
-    </>
-  );
-};
+
+    <nav className="flex-1 p-sm md:p-md space-y-xs">
+      <ul className="space-y-xs">
+        <li>
+          <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
+            <Home className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span className="text-sm md:text-base truncate">Home</span>
+          </button>
+        </li>
+        <li>
+          <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md bg-primary transition-colors">
+            <Target className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span className="text-sm md:text-base truncate">Campaign</span>
+          </button>
+        </li>
+        <li>
+          <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
+            <CreditCard className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span className="text-sm md:text-base truncate">Payments</span>
+          </button>
+        </li>
+        <li>
+          <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
+            <UserCheck className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span className="text-sm md:text-base truncate">Influencer</span>
+          </button>
+        </li>
+        <li>
+          <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
+            <Settings className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span className="text-sm md:text-base truncate">Settings</span>
+          </button>
+        </li>
+        <li>
+          <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
+            <Users className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span className="text-sm md:text-base truncate">Team</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div className="p-sm md:p-md mt-auto">
+      <div className="bg-gradient-to-r from-primary to-primary-dark rounded-lg p-sm md:p-md text-text-white">
+        <div className="flex items-center space-x-xs mb-xs md:mb-sm">
+          <Crown className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+          <span className="font-semibold text-sm md:text-base">Become Pro Access</span>
+        </div>
+        <p className="text-xs md:text-sm text-primary-light mb-sm md:mb-md">
+          Try our knowledge base and unlock learning
+        </p>
+        <button className="w-full bg-text-white text-primary font-semibold py-xs md:py-sm px-sm md:px-md rounded-md hover:bg-bg-secondary transition-colors flex items-center justify-center space-x-xs text-sm">
+          <Crown className="w-3 h-3 md:w-4 md:h-4" />
+          <span>Upgrade Pro</span>
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 export default Sidebar;

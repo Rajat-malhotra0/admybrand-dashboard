@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Data Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button.danger {
+            background: #dc3545;
+        }
+
+        button.danger:hover {
+            background: #c82333;
+        }
+
+        button.success {
+            background: #28a745;
+        }
+
+        button.success:hover {
+            background: #218838;
+        }
+
+        .data-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎛️ Dashboard Data Test Interface</h1>
+            <p>Test and manipulate your dashboard data in real-time</p>
+        </div>
+
+        <!-- Campaign Stats Section -->
+        <div class="section">
+            <div class="section-header">📊 Campaign Statistics</div>
+            <div class="section-content">
+                <div class="controls">
+                    <button onclick="loadCampaignStats()">Load Data</button>
+                    <button onclick="showAddCampaignForm()" class="success">Add New</button>
+                </div>
+                
+                <div id="add-campaign-form" class="hidden">
+                    <h4>Add New Campaign Stat</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Title:</label>
+                            <input type="text" id="campaign-title" placeholder="e.g., Total Views">
+                        </div>
+                        <div class="form-group">
+                            <label>Value:</label>
+                            <input type="text" id="campaign-value" placeholder="e.g., 150,000">
+                        </div>
+                        <div class="form-group">
+                            <label>Icon:</label>
+                            <select id="campaign-icon">
+                                <option value="thumbs-up">Thumbs Up</option>
+                                <option value="message-square">Message Square</option>
+                                <option value="share">Share</option>
+                                <option value="bar-chart-2">Bar Chart</option>
+                                <option value="eye">Eye</option>
+                                <option value="heart">Heart</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="addCampaignStat()" class="success">Add Stat</button>
+                    <button onclick="hideAddCampaignForm()">Cancel</button>
+                </div>
+
+                <div class="data-container">
+                    <pre id="campaign-data">Click "Load Data" to view campaign statistics</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Influencers Section -->
+        <div class="section">
+            <div class="section-header">👥 Influencers</div>
+            <div class="section-content">
+                <div class="controls">
+                    <button onclick="loadInfluencers()">Load Data</button>
+                    <button onclick="showAddInfluencerForm()" class="success">Add New</button>
+                </div>
+
+                <div id="add-influencer-form" class="hidden">
+                    <h4>Add New Influencer</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" id="influencer-name" placeholder="e.g., John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Projects:</label>
+                            <input type="number" id="influencer-projects" placeholder="e.g., 15">
+                        </div>
+                        <div class="form-group">
+                            <label>Followers:</label>
+                            <input type="text" id="influencer-followers" placeholder="e.g., 1,500,000">
+                        </div>
+                    </div>
+                    <button onclick="addInfluencer()" class="success">Add Influencer</button>
+                    <button onclick="hideAddInfluencerForm()">Cancel</button>
+                </div>
+
+                <div class="data-container">
+                    <pre id="influencer-data">Click "Load Data" to view influencers</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demographics Section -->
+        <div class="section">
+            <div class="section-header">📈 Demographics Data</div>
+            <div class="section-content">
+                <div class="controls">
+                    <button onclick="loadDemographics()">Load Data</button>
+                </div>
+                <div class="data-container">
+                    <pre id="demographics-data">Click "Load Data" to view demographics</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interests Section -->
+        <div class="section">
+            <div class="section-header">🎯 Interests Data</div>
+            <div class="section-content">
+                <div class="controls">
+                    <button onclick="loadInterests()">Load Data</button>
+                </div>
+                <div class="data-container">
+                    <pre id="interests-data">Click "Load Data" to view interests</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Controls -->
+        <div class="section">
+            <div class="section-header">⚙️ System Controls</div>
+            <div class="section-content">
+                <div class="controls">
+                    <button onclick="loadAllData()">Load All Data</button>
+                    <button onclick="resetAllData()" class="danger">Reset to Default</button>
+                </div>
+                <div id="status-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+
+        // Utility functions
+        function showStatus(message, type = 'success') {
+            const statusEl = document.getElementById('status-message');
+            statusEl.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                statusEl.innerHTML = '';
+            }, 3000);
+        }
+
+        function formatJSON(data) {
+            return JSON.stringify(data, null, 2);
+        }
+
+        // Campaign Stats Functions
+        async function loadCampaignStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/campaign-stats`);
+                const data = await response.json();
+                document.getElementById('campaign-data').textContent = formatJSON(data);
+            } catch (error) {
+                showStatus('Error loading campaign stats: ' + error.message, 'error');
+            }
+        }
+
+        function showAddCampaignForm() {
+            document.getElementById('add-campaign-form').classList.remove('hidden');
+        }
+
+        function hideAddCampaignForm() {
+            document.getElementById('add-campaign-form').classList.add('hidden');
+            // Clear form
+            document.getElementById('campaign-title').value = '';
+            document.getElementById('campaign-value').value = '';
+            document.getElementById('campaign-icon').value = 'thumbs-up';
+        }
+
+        async function addCampaignStat() {
+            const title = document.getElementById('campaign-title').value;
+            const value = document.getElementById('campaign-value').value;
+            const icon = document.getElementById('campaign-icon').value;
+
+            if (!title || !value) {
+                showStatus('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/campaign-stats`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, value, icon })
+                });
+
+                if (response.ok) {
+                    showStatus('Campaign stat added successfully!');
+                    hideAddCampaignForm();
+                    loadCampaignStats();
+                } else {
+                    showStatus('Error adding campaign stat', 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Influencer Functions
+        async function loadInfluencers() {
+            try {
+                const response = await fetch(`${API_BASE}/api/influencers`);
+                const data = await response.json();
+                document.getElementById('influencer-data').textContent = formatJSON(data);
+            } catch (error) {
+                showStatus('Error loading influencers: ' + error.message, 'error');
+            }
+        }
+
+        function showAddInfluencerForm() {
+            document.getElementById('add-influencer-form').classList.remove('hidden');
+        }
+
+        function hideAddInfluencerForm() {
+            document.getElementById('add-influencer-form').classList.add('hidden');
+            // Clear form
+            document.getElementById('influencer-name').value = '';
+            document.getElementById('influencer-projects').value = '';
+            document.getElementById('influencer-followers').value = '';
+        }
+
+        async function addInfluencer() {
+            const name = document.getElementById('influencer-name').value;
+            const projects = parseInt(document.getElementById('influencer-projects').value);
+            const followers = document.getElementById('influencer-followers').value;
+
+            if (!name || !projects || !followers) {
+                showStatus('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/influencers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, projects, followers })
+                });
+
+                if (response.ok) {
+                    showStatus('Influencer added successfully!');
+                    hideAddInfluencerForm();
+                    loadInfluencers();
+                } else {
+                    showStatus('Error adding influencer', 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Demographics Functions
+        async function loadDemographics() {
+            try {
+                const response = await fetch(`${API_BASE}/api/demographics`);
+                const data = await response.json();
+                document.getElementById('demographics-data').textContent = formatJSON(data);
+            } catch (error) {
+                showStatus('Error loading demographics: ' + error.message, 'error');
+            }
+        }
+
+        // Interests Functions
+        async function loadInterests() {
+            try {
+                const response = await fetch(`${API_BASE}/api/interests`);
+                const data = await response.json();
+                document.getElementById('interests-data').textContent = formatJSON(data);
+            } catch (error) {
+                showStatus('Error loading interests: ' + error.message, 'error');
+            }
+        }
+
+        // System Functions
+        async function loadAllData() {
+            await Promise.all([
+                loadCampaignStats(),
+                loadInfluencers(),
+                loadDemographics(),
+                loadInterests()
+            ]);
+            showStatus('All data loaded successfully!');
+        }
+
+        async function resetAllData() {
+            if (!confirm('Are you sure you want to reset all data to default values?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/reset`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    showStatus('Data reset successfully!');
+                    loadAllData();
+                } else {
+                    showStatus('Error resetting data', 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Load initial data on page load
+        window.addEventListener('load', () => {
+            loadAllData();
+        });
+    </script>
+</body>
+</html>

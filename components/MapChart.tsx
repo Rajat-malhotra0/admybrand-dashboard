@@ -18,20 +18,18 @@ interface MapChartProps {
 
 // Sample data for markers
 const markers: MapMarker[] = [
-  { id: 'us', name: 'United States', coordinates: [-95, 40], value: 2547 },
-  { id: 'uk', name: 'United Kingdom', coordinates: [0, 52], value: 1823 },
-  { id: 'de', name: 'Germany', coordinates: [10, 51], value: 1456 },
-  { id: 'fr', name: 'France', coordinates: [2, 46], value: 1234 },
-  { id: 'jp', name: 'Japan', coordinates: [138, 36], value: 987 },
+  { id: 'ca', name: 'Canada', coordinates: [-106.3468, 56.1304], value: 87142 },
+  { id: 'de', name: 'Germany', coordinates: [10.4515, 51.1657], value: 90069 },
+  { id: 'id', name: 'Indonesia', coordinates: [113.9213, -0.7893], value: 120904 },
+  { id: 'uy', name: 'Uruguay', coordinates: [-55.7658, -32.5228], value: 85321 },
 ];
 
 // Country colors
 const countryColors: Record<string, string> = {
-  'United States of America': 'rgb(59, 130, 246)',
-  'United Kingdom': 'rgb(16, 185, 129)',
-  'Germany': 'rgb(245, 158, 11)',
-  'France': 'rgb(239, 68, 68)',
-  'Japan': 'rgb(139, 92, 246)',
+  Canada: '#3b82f6',
+  Germany: '#10b981',
+  Indonesia: '#f59e0b',
+  Uruguay: '#8b5cf6',
 };
 
 const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
@@ -92,25 +90,37 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
     // Create path generator
     const path = d3.geoPath().projection(projection);
     
-    // Add grid pattern definition
+// Add subtle grid pattern definition
     const defs = svg.append('defs');
     const pattern = defs.append('pattern')
-      .attr('id', 'grid-pattern')
-      .attr('width', 20)
-      .attr('height', 20)
+      .attr('id', 'subtle-grid')
+      .attr('width', 30)
+      .attr('height', 30)
       .attr('patternUnits', 'userSpaceOnUse');
     
-    pattern.append('path')
-      .attr('d', 'M 20 0 L 0 0 0 20')
-      .attr('fill', 'none')
-      .attr('stroke', 'rgba(0,0,0,0.04)')
+    // Horizontal grid lines
+    pattern.append('line')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', 30)
+      .attr('y2', 0)
+      .attr('stroke', 'rgba(0,0,0,0.03)')
       .attr('stroke-width', 0.5);
     
-    // Add background with grid
+    // Vertical grid lines
+    pattern.append('line')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', 0)
+      .attr('y2', 30)
+      .attr('stroke', 'rgba(0,0,0,0.03)')
+      .attr('stroke-width', 0.5);
+    
+    // Add clean background with subtle grid
     svg.append('rect')
       .attr('width', width)
       .attr('height', height)
-      .attr('fill', 'url(#grid-pattern)');
+      .attr('fill', 'url(#subtle-grid)');
     
     // Create main group for map elements
     const mapGroup = svg.append('g').attr('class', 'map-group');
@@ -176,63 +186,35 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
         .attr('class', 'marker')
         .attr('transform', `translate(${point[0]}, ${point[1]})`);
       
-      // Add main marker circle
-      markerGroup.append('circle')
-        .attr('r', 6)
-        .attr('fill', markerColors[index % markerColors.length])
-        .attr('stroke', '#ffffff')
-        .attr('stroke-width', 2)
-        .style('cursor', 'pointer')
-        .attr('class', 'marker-circle');
+// Add flagged style marker
+      const markerBox = markerGroup.append('g')
+        .attr('transform', 'translate(-30, -40)');
       
-      // Add hover tooltip
-      const tooltip = markerGroup.append('g')
-        .attr('class', 'tooltip')
-        .style('opacity', 0)
-        .attr('transform', 'translate(10, -30)');
-      
-      tooltip.append('rect')
-        .attr('width', marker.name.length * 8 + 40)
-        .attr('height', 35)
+      markerBox.append('rect')
+        .attr('width', 90)
+        .attr('height', 40)
         .attr('fill', 'rgba(15, 23, 42, 0.9)')
-        .attr('rx', 6)
-        .attr('ry', 6);
-      
-      tooltip.append('text')
+        .attr('rx', 10)
+        .attr('ry', 10)
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 1);
+
+      // Country flag and name
+      markerBox.append('text')
         .attr('x', 20)
-        .attr('y', 15)
-        .attr('fill', 'white')
+        .attr('y', 20)
+        .attr('fill', '#fff')
         .attr('font-size', '12px')
-        .attr('font-weight', '600')
+        .attr('font-weight', 'bold')
         .text(marker.name);
-      
-      tooltip.append('text')
+
+      // User count
+      markerBox.append('text')
         .attr('x', 20)
-        .attr('y', 28)
+        .attr('y', 35)
         .attr('fill', '#94a3b8')
         .attr('font-size', '10px')
         .text(`${marker.value.toLocaleString()} users`);
-      
-      // Add interactions
-      markerGroup
-        .on('mouseenter', function() {
-          d3.select(this).select('.marker-circle')
-            .transition().duration(200)
-            .attr('r', 8);
-          
-          d3.select(this).select('.tooltip')
-            .transition().duration(200)
-            .style('opacity', 1);
-        })
-        .on('mouseleave', function() {
-          d3.select(this).select('.marker-circle')
-            .transition().duration(200)
-            .attr('r', 6);
-          
-          d3.select(this).select('.tooltip')
-            .transition().duration(200)
-            .style('opacity', 0);
-        });
     });
     
   }, [worldData, width, height, isLoading]);

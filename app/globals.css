@@ -164,8 +164,8 @@
 
 /* Modern card styling */
 .tech-card {
-  @apply bg-white/95 backdrop-blur-sm border border-slate-100 rounded-lg shadow-sm;
-  @apply ring-1 ring-slate-100/40;
+  @apply bg-white/95 backdrop-blur-sm border border-border rounded-lg shadow-card;
+  @apply ring-1 ring-border/40;
   position: relative;
   z-index: 1;
 }
