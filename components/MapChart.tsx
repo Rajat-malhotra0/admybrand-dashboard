@@ -39,6 +39,16 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
   const [worldData, setWorldData] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [zoomBehavior, setZoomBehavior] = useState<any>(null);
+
+  // Reset zoom function
+  const resetZoom = useCallback(() => {
+    if (svgRef.current && zoomBehavior) {
+      const svg = d3.select(svgRef.current);
+      const initialTransform = d3.zoomIdentity.scale(1.5);
+      svg.transition().duration(750).call(zoomBehavior.transform, initialTransform);
+    }
+  }, [zoomBehavior]);
 
   // Load world data
   useEffect(() => {
@@ -73,24 +83,13 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
       .attr('height', '100%')
       .attr('viewBox', `0 0 ${width} ${height}`);
     
-    // Create projection
+    // Create projection with better initial zoom
     const projection = d3.geoNaturalEarth1()
       .translate([width / 2, height / 2])
-      .scale(Math.min(width, height) / 6.5);
+      .scale(Math.min(width, height) / 4.5);
     
     // Create path generator
     const path = d3.geoPath().projection(projection);
-    
-    // Create zoom behavior
-    const zoomBehavior = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.5, 8])
-      .on('zoom', (event) => {
-        const { transform } = event;
-        mapGroup.attr('transform', transform.toString());
-      });
-    
-    // Apply zoom behavior to SVG
-    svg.call(zoomBehavior);
     
     // Add grid pattern definition
     const defs = svg.append('defs');
@@ -114,6 +113,24 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
     
     // Create main group for map elements
     const mapGroup = svg.append('g').attr('class', 'map-group');
+    
+    // Create zoom behavior (after mapGroup is created)
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 8])
+      .on('zoom', (event) => {
+        const { transform } = event;
+        mapGroup.attr('transform', transform.toString());
+      });
+    
+    // Apply zoom behavior to SVG
+    svg.call(zoom);
+    
+    // Set initial zoom level (1.5x zoom)
+    const initialTransform = d3.zoomIdentity.scale(1.5);
+    svg.call(zoom.transform, initialTransform);
+    
+    // Store zoom behavior for reset functionality
+    setZoomBehavior(zoom);
     
     // Draw countries
     mapGroup.selectAll('.country')
@@ -259,6 +276,12 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
             touchAction: 'none'
           }}
         />
+        <button 
+          onClick={resetZoom} 
+          className="absolute top-2 left-2 bg-white text-xs px-2 py-1 rounded shadow hover:bg-gray-100 transition-colors"
+        >
+          Reset Zoom
+        </button>
         <div className="absolute bottom-2 right-2 text-xs text-gray-500 bg-white px-2 py-1 rounded shadow">
           🌍 Interactive World Map
         </div>

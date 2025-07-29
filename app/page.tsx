@@ -185,7 +185,7 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
             
             {/* Top Performing Content */}
             <Card className="p-0">

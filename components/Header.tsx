@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ title, status }) => {
           Last updated: {format(currentTime, 'P')}
         </div>
         <div className="flex items-center space-x-3">
-          <span className="text-xs text-text-muted mono">UTC {utcTime}</span>
+          <span className="text-xs text-text-muted mono" suppressHydrationWarning>UTC {utcTime}</span>
           <span className="text-xs bg-slate-100 px-2 py-1 rounded mono">v2.4.1</span>
         </div>
       </div>
