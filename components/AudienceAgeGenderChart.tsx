@@ -27,28 +27,28 @@ const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
 
   return (
     <Card hover className={className}>
-      <h2 className="text-lg font-semibold text-text-primary mb-6 tech-accent">
+      <h2 className="text-lg font-semibold text-gray-900 mb-6">
         Audience Age & Gender
       </h2>
 
       {/* Legend */}
       <div className="flex items-center justify-center space-x-6 mb-6">
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-chart-1 rounded-sm"></div>
-          <span className="text-sm text-text-secondary">Male</span>
+          <div className="w-3 h-3 bg-blue-500 rounded-sm"></div>
+          <span className="text-sm text-gray-600">Male</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-chart-2 rounded-sm"></div>
-          <span className="text-sm text-text-secondary">Female</span>
+          <div className="w-3 h-3 bg-green-500 rounded-sm"></div>
+          <span className="text-sm text-gray-600">Female</span>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {data.map((item, index) => (
           <div key={index} className="flex items-center">
             {/* Age label */}
-            <div className="w-12 text-sm text-text-secondary text-center flex-shrink-0">
+            <div className="w-12 text-sm text-gray-600 text-center flex-shrink-0">
               {item.label}
             </div>
 
@@ -59,7 +59,7 @@ const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
                 style={{ width: "100%" }}
               >
                 <div
-                  className="h-6 bg-chart-1 rounded-r transition-all duration-500 ease-out"
+                  className="h-6 bg-blue-500 rounded-r transition-all duration-500 ease-out"
                   style={{
                     width: `${(item.male / maxValue) * 100}%`,
                     minWidth: item.male > 0 ? "2px" : "0px",
@@ -69,13 +69,13 @@ const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
             </div>
 
             {/* Center divider */}
-            <div className="w-px bg-slate-300 h-8 mx-1 flex-shrink-0"></div>
+            <div className="w-px bg-gray-300 h-8 mx-2 flex-shrink-0"></div>
 
             {/* Female bar (right side) */}
             <div className="flex-1 flex justify-start pl-2">
               <div className="flex items-center" style={{ width: "100%" }}>
                 <div
-                  className="h-6 bg-chart-2 rounded-l transition-all duration-500 ease-out"
+                  className="h-6 bg-green-500 rounded-l transition-all duration-500 ease-out"
                   style={{
                     width: `${(item.female / maxValue) * 100}%`,
                     minWidth: item.female > 0 ? "2px" : "0px",
@@ -83,30 +83,38 @@ const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
                 />
               </div>
             </div>
-
-            {/* Percentage labels to the right */}
-            <div className="ml-4 flex items-center text-xs mono flex-shrink-0">
-              <span className="text-chart-1 font-medium">{item.male}%</span>
-              <span className="text-text-muted mx-1">|</span>
-              <span className="text-chart-2 font-medium">{item.female}%</span>
-            </div>
           </div>
         ))}
       </div>
 
       {/* Scale indicators */}
-      <div className="mt-6 pt-4 border-t border-slate-100">
-        <div className="flex justify-center">
-          <div className="flex items-center space-x-8 text-xs text-text-muted">
-            <span>100</span>
-            <span>75</span>
-            <span>50</span>
-            <span>25</span>
-            <span>0</span>
-            <span>25</span>
-            <span>50</span>
-            <span>75</span>
-            <span>100</span>
+      <div className="mt-6 pt-4 border-t border-gray-100">
+        <div className="relative">
+          {/* Create a layout that mirrors the chart structure */}
+          <div className="flex items-center">
+            {/* Age label space */}
+            <div className="w-12 flex-shrink-0"></div>
+            
+            {/* Male side scale */}
+            <div className="flex-1 flex justify-between pr-2 text-xs text-gray-400">
+              <span>100k</span>
+              <span>75k</span>
+              <span>50k</span>
+              <span>25k</span>
+            </div>
+            
+            {/* Center with 0 */}
+            <div className="w-2 flex justify-center">
+              <span className="text-xs text-gray-400">0</span>
+            </div>
+            
+            {/* Female side scale */}
+            <div className="flex-1 flex justify-between pl-2 text-xs text-gray-400">
+              <span>25k</span>
+              <span>50k</span>
+              <span>75k</span>
+              <span>100k</span>
+            </div>
           </div>
         </div>
       </div>

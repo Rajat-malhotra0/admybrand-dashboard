@@ -260,6 +260,11 @@ export default function DataEditor() {
                             </div>
                           </div>
                         ))}
+                        
+                        {/* Note about pagination */}
+                        <div className="text-xs text-gray-500 mt-2 p-2 bg-blue-50 rounded">
+                          💡 The InfluencerTable component includes pagination when more than 5 influencers are present.
+                        </div>
                       </div>
                     )}
 

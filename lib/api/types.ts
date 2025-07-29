@@ -16,20 +16,27 @@ export interface Influencer {
 }
 
 export interface DemographicData {
-  id: number;
   label: string;
-  value: number;
-  color: string;
-  gender?: string;
+  male: number;
+  female: number;
 }
 
 export interface InterestData {
-  id: number;
   label: string;
   value: number;
 }
 
 export interface DashboardData {
+  platforms: {
+    [key: string]: PlatformData;
+  };
+  campaignStats: CampaignStat[];
+  influencerData: Influencer[];
+  demographicsData: DemographicData[];
+  interestsData: InterestData[];
+}
+
+export interface PlatformData {
   campaignStats: CampaignStat[];
   influencerData: Influencer[];
   demographicsData: DemographicData[];

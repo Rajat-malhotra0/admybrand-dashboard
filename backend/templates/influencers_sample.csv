@@ -1,0 +1,6 @@
+name,projects,followers,platform,email,phone,location,category,engagement_rate,verified
+"John Doe",5,"100K","Instagram","john@example.com","+1234567890","New York","Fashion",5.2,true
+"Jane Smith",8,"250K","LinkedIn","jane@example.com","+1234567891","Los Angeles","Business",4.8,false
+"Mike Johnson",12,"500K","Facebook","mike@example.com","+1234567892","Chicago","Technology",6.1,true
+"Sarah Wilson",15,"750K","Instagram","sarah@example.com","+1234567893","Miami","Lifestyle",5.5,true
+"David Brown",20,"1M","LinkedIn","david@example.com","+1234567894","Seattle","Finance",4.2,false

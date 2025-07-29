@@ -169,7 +169,10 @@ export default function DashboardWithApi() {
 
           {/* Bottom Row - Three Components */}
           <div className="col-span-4">
-            <InfluencerTable influencers={data.influencerData || []} />
+            <InfluencerTable 
+              influencers={data.influencerData || []} 
+              itemsPerPage={5}
+            />
           </div>
           <div className="col-span-4">
             <AudienceAgeGenderChart

@@ -24,3 +24,6 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+// Export parseFollowerCount utility
+export { parseFollowerCount } from './utils/parseFollowerCount';

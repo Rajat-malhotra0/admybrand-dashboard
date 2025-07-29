@@ -1,0 +1,230 @@
+import { getTursoClient } from '../database/turso';
+
+export interface Campaign {
+  id: number;
+  name: string;
+  platform: string;
+  status: string;
+  start_date?: string;
+  end_date?: string;
+  budget?: number;
+  reach: number;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  cost_per_click?: number;
+  cost_per_conversion?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CampaignStat {
+  id: number;
+  title: string;
+  value: string;
+  icon: string;
+  description: string;
+}
+
+// Ensure table exists
+async function ensureSchemaExists() {
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(`
+    CREATE TABLE IF NOT EXISTS campaigns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      platform TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active',
+      start_date DATE,
+      end_date DATE,
+      budget REAL,
+      reach INTEGER DEFAULT 0,
+      impressions INTEGER DEFAULT 0,
+      clicks INTEGER DEFAULT 0,
+      conversions INTEGER DEFAULT 0,
+      cost_per_click REAL DEFAULT 0.0,
+      cost_per_conversion REAL DEFAULT 0.0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
+// Add Campaign
+export async function addCampaign(campaign: Omit<Campaign, 'id' | 'created_at' | 'updated_at'>) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  const result = await tursoClient.execute(
+    `INSERT INTO campaigns (name, platform, status, start_date, end_date, budget, reach, impressions, clicks, conversions, cost_per_click, cost_per_conversion) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      campaign.name, 
+      campaign.platform, 
+      campaign.status, 
+      campaign.start_date || null, 
+      campaign.end_date || null, 
+      campaign.budget || null, 
+      campaign.reach, 
+      campaign.impressions, 
+      campaign.clicks, 
+      campaign.conversions, 
+      campaign.cost_per_click || 0.0, 
+      campaign.cost_per_conversion || 0.0
+    ]
+  );
+  return result.lastInsertRowid;
+}
+
+// Get Campaigns
+export async function getCampaigns({ 
+  platform, 
+  page = 1, 
+  size = 10, 
+  status = 'active' 
+}: { 
+  platform?: string; 
+  page?: number; 
+  size?: number; 
+  status?: string; 
+} = {}) {
+  await ensureSchemaExists();
+  const offset = (page - 1) * size;
+  
+  let query = 'SELECT * FROM campaigns WHERE 1=1';
+  const params: any[] = [];
+  
+  if (platform) {
+    query += ' AND platform = ?';
+    params.push(platform);
+  }
+  
+  if (status) {
+    query += ' AND status = ?';
+    params.push(status);
+  }
+  
+  query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+  params.push(size, offset);
+  
+  const tursoClient = getTursoClient();
+  const results = await tursoClient.query(query, params);
+  return results.rows;
+}
+
+// Get Campaign Stats for Dashboard
+export async function getCampaignStats(platform?: string): Promise<CampaignStat[]> {
+  await ensureSchemaExists();
+  
+  let whereClause = '';
+  const params: any[] = [];
+  
+  if (platform) {
+    whereClause = 'WHERE platform = ?';
+    params.push(platform);
+  }
+  
+  const statsQuery = `
+    SELECT 
+      SUM(reach) as total_reach,
+      SUM(impressions) as total_impressions,
+      SUM(clicks) as total_clicks,
+      SUM(conversions) as total_conversions,
+      AVG(cost_per_click) as avg_cpc,
+      AVG(cost_per_conversion) as avg_cpc_conversion,
+      COUNT(*) as total_campaigns
+    FROM campaigns 
+    ${whereClause} AND status = 'active'
+  `;
+  
+  const tursoClient = getTursoClient();
+  const result = await tursoClient.query(statsQuery, params);
+  const stats = result.rows[0];
+  
+  if (!stats) {
+    return [];
+  }
+  
+  const formatNumber = (num: number): string => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toLocaleString();
+  };
+  
+  return [
+    {
+      id: 1,
+      title: "Total Reach",
+      value: formatNumber(Number(stats.total_reach) || 0),
+      icon: "TrendingUp",
+      description: `${stats.total_campaigns} active campaigns`
+    },
+    {
+      id: 2,
+      title: "Engagement",
+      value: formatNumber(Number(stats.total_clicks) || 0),
+      icon: "Users", 
+      description: `Avg CPC: $${Number(stats.avg_cpc || 0).toFixed(2)}`
+    },
+    {
+      id: 3,
+      title: "Impressions",
+      value: formatNumber(Number(stats.total_impressions) || 0),
+      icon: "Eye",
+      description: `Total views across campaigns`
+    },
+    {
+      id: 4,
+      title: "Conversions", 
+      value: formatNumber(Number(stats.total_conversions) || 0),
+      icon: "Target",
+      description: `Avg cost: $${Number(stats.avg_cpc_conversion || 0).toFixed(2)}`
+    }
+  ];
+}
+
+// Update Campaign
+export async function updateCampaign(id: number, updates: Partial<Campaign>) {
+  await ensureSchemaExists();
+  
+  const setClause = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => `${key} = ?`)
+    .join(', ');
+  
+  const values = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => updates[key as keyof Campaign]);
+  
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    `UPDATE campaigns SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+    [...values, id]
+  );
+}
+
+// Delete Campaign
+export async function deleteCampaign(id: number) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  await tursoClient.execute('DELETE FROM campaigns WHERE id = ?', [id]);
+}
+
+// Count Campaigns
+export async function countCampaigns(platform?: string, status = 'active') {
+  await ensureSchemaExists();
+  
+  let query = 'SELECT COUNT(*) as total FROM campaigns WHERE status = ?';
+  const params: any[] = [status];
+  
+  if (platform) {
+    query += ' AND platform = ?';
+    params.push(platform);
+  }
+  
+  const tursoClient = getTursoClient();
+  const result = await tursoClient.query(query, params);
+  return Number(result.rows[0]?.total) || 0;
+}

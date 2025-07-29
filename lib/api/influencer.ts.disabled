@@ -1,0 +1,138 @@
+import { getTursoClient } from '../database/turso';
+
+// Ensure table exists
+async function ensureSchemaExists() {
+const tursoClient = getTursoClient();
+  await tursoClient.execute(`
+    CREATE TABLE IF NOT EXISTS influencers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      projects INTEGER NOT NULL DEFAULT 0,
+      followers TEXT NOT NULL DEFAULT '0',
+      platform TEXT NOT NULL DEFAULT 'General',
+      email TEXT,
+      phone TEXT,
+      location TEXT,
+      category TEXT,
+      engagement_rate REAL DEFAULT 0.0,
+      avg_likes INTEGER DEFAULT 0,
+      avg_comments INTEGER DEFAULT 0,
+      verified BOOLEAN DEFAULT FALSE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
+export interface Influencer {
+  id: number;
+  name: string;
+  projects: number;
+  followers: string;
+  platform: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  category?: string;
+  engagement_rate?: number;
+  avg_likes?: number;
+  avg_comments?: number;
+  verified?: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Add Influencer
+export async function addInfluencer(influencer: Omit<Influencer, 'id' | 'created_at' | 'updated_at'>) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    `INSERT INTO influencers (name, projects, followers, platform, email, phone, location, category, engagement_rate, avg_likes, avg_comments, verified) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      influencer.name, 
+      influencer.projects, 
+      influencer.followers, 
+      influencer.platform || 'General',
+      influencer.email || null,
+      influencer.phone || null,
+      influencer.location || null,
+      influencer.category || null,
+      influencer.engagement_rate || 0.0,
+      influencer.avg_likes || 0,
+      influencer.avg_comments || 0,
+      influencer.verified || false
+    ]
+  );
+}
+
+// Get Influencers
+export async function getInfluencers({ platform, page = 1, size = 10, order = 'desc' }: { platform?: string; page?: number; size?: number; order?: 'asc' | 'desc'; } = {}) {
+  await ensureSchemaExists();
+  const offset = (page - 1) * size;
+  
+  let query = 'SELECT * FROM influencers';
+  const params: any[] = [];
+  
+  if (platform) {
+    query += ' WHERE platform = ?';
+    params.push(platform);
+  }
+  
+  // For sorting by follower count, we need to use a custom sort since followers is stored as text
+  query += ' ORDER BY CAST(REPLACE(REPLACE(REPLACE(followers, "M", "000000"), "K", "000"), ",", "") AS INTEGER) ' + order;
+  query += ' LIMIT ? OFFSET ?';
+  params.push(size, offset);
+  
+  const tursoClient = getTursoClient();
+  const results = await tursoClient.query(query, params);
+  return results.rows;
+}
+
+// Update Influencer
+export async function updateInfluencer(id: number, updates: Partial<Influencer>) {
+  await ensureSchemaExists();
+  
+  const setClause = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => `${key} = ?`)
+    .join(', ');
+  
+  const values = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => updates[key as keyof Influencer]);
+  
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    `UPDATE influencers SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+    [...values, id]
+  );
+}
+
+// Delete Influencer
+export async function deleteInfluencer(id: number) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    'DELETE FROM influencers WHERE id = ?',
+    [id]
+  );
+}
+
+// Count Influencers
+export async function countInfluencers(platform?: string) {
+  await ensureSchemaExists();
+  
+  let query = 'SELECT COUNT(id) as total FROM influencers';
+  const params: any[] = [];
+  
+  if (platform) {
+    query += ' WHERE platform = ?';
+    params.push(platform);
+  }
+  
+  const tursoClient = getTursoClient();
+  const result = await tursoClient.query(query, params);
+  return Number(result.rows[0]?.total) || 0;
+}
+

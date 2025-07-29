@@ -1,0 +1,125 @@
+import { getTursoClient } from '../database/turso';
+
+export interface Interest {
+  id: number;
+  platform: string;
+  interest_category: string;
+  interest_name: string;
+  percentage: number;
+  total_users: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InterestData {
+  label: string;
+  value: number;
+}
+
+// Ensure table exists
+async function ensureSchemaExists() {
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(`
+    CREATE TABLE IF NOT EXISTS user_interests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      platform TEXT NOT NULL,
+      interest_category TEXT NOT NULL,
+      interest_name TEXT NOT NULL,
+      percentage REAL NOT NULL DEFAULT 0.0,
+      total_users INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
+// Add Interest
+export async function addInterest(interest: Omit<Interest, 'id' | 'created_at' | 'updated_at'>) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    `INSERT INTO user_interests (platform, interest_category, interest_name, percentage, total_users) 
+     VALUES (?, ?, ?, ?, ?)`,
+    [
+      interest.platform,
+      interest.interest_category,
+      interest.interest_name,
+      interest.percentage,
+      interest.total_users
+    ]
+  );
+}
+
+// Get Interests
+export async function getInterests({ platform, page = 1, size = 10 }: { platform?: string; page?: number; size?: number; } = {}) {
+  await ensureSchemaExists();
+  const offset = (page - 1) * size;
+  
+  const query = platform
+    ? 'SELECT * FROM user_interests WHERE platform = ? ORDER BY percentage DESC LIMIT ? OFFSET ?'
+    : 'SELECT * FROM user_interests ORDER BY percentage DESC LIMIT ? OFFSET ?';
+  
+  const params = platform ? [platform, size, offset] : [size, offset];
+  const tursoClient = getTursoClient();
+  const results = await tursoClient.query(query, params);
+  return results.rows;
+}
+
+// Get Interest Data for Charts (formatted for frontend)
+export async function getInterestData(platform?: string): Promise<InterestData[]> {
+  await ensureSchemaExists();
+  
+  const query = platform
+    ? 'SELECT interest_name as label, percentage as value FROM user_interests WHERE platform = ? ORDER BY percentage DESC'
+    : 'SELECT interest_name as label, AVG(percentage) as value FROM user_interests GROUP BY interest_name ORDER BY value DESC';
+  
+  const params = platform ? [platform] : [];
+  const tursoClient = getTursoClient();
+  const results = await tursoClient.query(query, params);
+  
+  return results.rows.map(row => ({
+    label: String(row.label),
+    value: Number(row.value)
+  }));
+}
+
+// Update Interest
+export async function updateInterest(id: number, updates: Partial<Interest>) {
+  await ensureSchemaExists();
+  
+  const setClause = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => `${key} = ?`)
+    .join(', ');
+  
+  const values = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => updates[key as keyof Interest]);
+  
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    `UPDATE user_interests SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+    [...values, id]
+  );
+}
+
+// Delete Interest
+export async function deleteInterest(id: number) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  await tursoClient.execute('DELETE FROM user_interests WHERE id = ?', [id]);
+}
+
+// Count Interests
+export async function countInterests(platform?: string) {
+  await ensureSchemaExists();
+  
+  const query = platform
+    ? 'SELECT COUNT(*) as total FROM user_interests WHERE platform = ?'
+    : 'SELECT COUNT(*) as total FROM user_interests';
+  
+  const params = platform ? [platform] : [];
+  const tursoClient = getTursoClient();
+  const result = await tursoClient.query(query, params);
+  return Number(result.rows[0]?.total) || 0;
+}

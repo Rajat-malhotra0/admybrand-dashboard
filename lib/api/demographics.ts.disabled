@@ -1,0 +1,105 @@
+import { getTursoClient } from '../database/turso';
+
+export interface Demographic {
+  id: number;
+  platform: string;
+  age_group: string;
+  gender: string;
+  location: string;
+  percentage: number;
+  total_users: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Ensure table exists
+async function ensureSchemaExists() {
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(`
+    CREATE TABLE IF NOT EXISTS demographics (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      platform TEXT NOT NULL,
+      age_group TEXT NOT NULL,
+      gender TEXT NOT NULL,
+      location TEXT NOT NULL,
+      percentage REAL NOT NULL DEFAULT 0.0,
+      total_users INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
+// Add Demographic
+export async function addDemographic(demographic: Omit<Demographic, 'id' | 'created_at' | 'updated_at'>) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    `INSERT INTO demographics (platform, age_group, gender, location, percentage, total_users) 
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [
+      demographic.platform, 
+      demographic.age_group, 
+      demographic.gender, 
+      demographic.location, 
+      demographic.percentage, 
+      demographic.total_users
+    ]
+  );
+}
+
+// Get Demographics
+export async function getDemographics({ platform, page = 1, size = 10 }: { platform?: string; page?: number; size?: number; } = {}) {
+  await ensureSchemaExists();
+  const offset = (page - 1) * size;
+  
+  const query = platform
+    ? 'SELECT * FROM demographics WHERE platform = ? ORDER BY created_at DESC LIMIT ? OFFSET ?'
+    : 'SELECT * FROM demographics ORDER BY created_at DESC LIMIT ? OFFSET ?';
+  
+  const params = platform ? [platform, size, offset] : [size, offset];
+  const tursoClient = getTursoClient();
+  const results = await tursoClient.query(query, params);
+  return results.rows;
+}
+
+// Update Demographic
+export async function updateDemographic(id: number, updates: Partial<Demographic>) {
+  await ensureSchemaExists();
+  
+  const setClause = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => `${key} = ?`)
+    .join(', ');
+  
+  const values = Object.keys(updates)
+    .filter(key => key !== 'id' && key !== 'created_at')
+    .map(key => updates[key as keyof Demographic]);
+  
+  const tursoClient = getTursoClient();
+  await tursoClient.execute(
+    `UPDATE demographics SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+    [...values, id]
+  );
+}
+
+// Delete Demographic
+export async function deleteDemographic(id: number) {
+  await ensureSchemaExists();
+  const tursoClient = getTursoClient();
+  await tursoClient.execute('DELETE FROM demographics WHERE id = ?', [id]);
+}
+
+// Count Demographics
+export async function countDemographics(platform?: string) {
+  await ensureSchemaExists();
+  
+  const query = platform
+    ? 'SELECT COUNT(*) as total FROM demographics WHERE platform = ?'
+    : 'SELECT COUNT(*) as total FROM demographics';
+  
+  const params = platform ? [platform] : [];
+  const tursoClient = getTursoClient();
+  const result = await tursoClient.query(query, params);
+  return Number(result.rows[0]?.total) || 0;
+}

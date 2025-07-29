@@ -1,0 +1,98 @@
+import { getTursoClient } from './turso';
+import fs from 'fs';
+import path from 'path';
+import { addInfluencer } from '../api/influencer';
+import { addCampaign } from '../api/campaigns';
+import { addDemographic } from '../api/demographics';
+import { addInterest } from '../api/interests';
+
+export async function initializeDatabase() {
+  try {
+    // Read and execute schema
+    const schemaPath = path.join(process.cwd(), 'lib', 'database', 'schema.sql');
+    const schema = fs.readFileSync(schemaPath, 'utf8');
+    
+    // Split schema by semicolons and execute each statement
+    const statements = schema
+      .split(';')
+      .map(stmt => stmt.trim())
+      .filter(stmt => stmt.length > 0);
+
+    const tursoClient = getTursoClient();
+    for (const statement of statements) {
+      await tursoClient.execute(statement);
+    }
+
+    console.log('Database schema initialized successfully');
+    return true;
+  } catch (error) {
+    console.error('Error initializing database:', error);
+    throw error;
+  }
+}
+
+export async function seedDatabase() {
+  try {
+    await initializeDatabase();
+    
+    // Seed influencers
+    const sampleInfluencers = [
+      { name: 'Sarah Johnson', projects: 12, followers: '2.4M', platform: 'Instagram' },
+      { name: 'Mike Chen', projects: 8, followers: '1,800,000', platform: 'LinkedIn' },
+      { name: 'Emma Davis', projects: 15, followers: '3.1M', platform: 'Instagram' },
+      { name: 'Alex Rodriguez', projects: 6, followers: '987K', platform: 'TikTok' },
+      { name: 'Jessica Williams', projects: 9, followers: '1.5M', platform: 'Instagram' },
+      { name: 'David Brown', projects: 11, followers: '2,100,000', platform: 'LinkedIn' },
+      { name: 'Lisa Wang', projects: 7, followers: '890K', platform: 'TikTok' },
+      { name: 'Carlos Garcia', projects: 13, followers: '1.7M', platform: 'Instagram' },
+      { name: 'Maya Patel', projects: 10, followers: '1,300,000', platform: 'LinkedIn' },
+      { name: 'Ryan Thompson', projects: 14, followers: '2.8M', platform: 'Instagram' },
+    ];
+
+    const tursoClient = getTursoClient();
+    for (const influencer of sampleInfluencers) {
+      await tursoClient.execute(
+        `INSERT OR IGNORE INTO influencers (name, projects, followers, platform) 
+         VALUES (?, ?, ?, ?)`,
+        [influencer.name, influencer.projects, influencer.followers, influencer.platform]
+      );
+    }
+
+    // Seed campaigns
+    const sampleCampaigns = [
+      { name: 'Summer Fashion Campaign', platform: 'Instagram', budget: 50000, reach: 1200000 },
+      { name: 'Tech Product Launch', platform: 'LinkedIn', budget: 75000, reach: 850000 },
+      { name: 'Fitness Challenge', platform: 'TikTok', budget: 30000, reach: 2100000 },
+    ];
+
+    for (const campaign of sampleCampaigns) {
+      await tursoClient.execute(
+        `INSERT OR IGNORE INTO campaigns (name, platform, budget, reach) 
+         VALUES (?, ?, ?, ?)`,
+        [campaign.name, campaign.platform, campaign.budget, campaign.reach]
+      );
+    }
+
+    // Seed demographics
+    const sampleDemographics = [
+      { platform: 'Instagram', age_group: '18-24', gender: 'Female', location: 'US', percentage: 35.2 },
+      { platform: 'Instagram', age_group: '25-34', gender: 'Female', location: 'US', percentage: 28.7 },
+      { platform: 'LinkedIn', age_group: '25-34', gender: 'Male', location: 'US', percentage: 42.1 },
+      { platform: 'TikTok', age_group: '18-24', gender: 'Female', location: 'US', percentage: 48.9 },
+    ];
+
+    for (const demo of sampleDemographics) {
+      await tursoClient.execute(
+        `INSERT OR IGNORE INTO demographics (platform, age_group, gender, location, percentage) 
+         VALUES (?, ?, ?, ?, ?)`,
+        [demo.platform, demo.age_group, demo.gender, demo.location, demo.percentage]
+      );
+    }
+
+    console.log('Database seeded successfully');
+    return true;
+  } catch (error) {
+    console.error('Error seeding database:', error);
+    throw error;
+  }
+}

@@ -1,0 +1,127 @@
+import { getInfluencers } from './influencer';
+import { getCampaignStats } from './campaigns';
+import { getDemographics } from './demographics';
+import { getInterestData } from './interests';
+
+export interface PlatformData {
+  campaignStats: Array<{
+    id: number;
+    title: string;
+    value: string;
+    icon: string;
+    description: string;
+  }>;
+  influencerData: Array<{
+    id: number;
+    name: string;
+    projects: number;
+    followers: string;
+    platform?: string;
+  }>;
+  demographicsData: Array<{
+    label: string;
+    male: number;
+    female: number;
+  }>;
+  interestsData: Array<{
+    label: string;
+    value: number;
+  }>;
+}
+
+// Get all platform data for a specific platform
+export async function getPlatformData(platform: string): Promise<PlatformData> {
+  try {
+    // Fetch campaign stats for the platform
+    const campaignStats = await getCampaignStats(platform);
+    
+    // Fetch influencers for the platform
+    const influencersRaw = await getInfluencers({ platform, page: 1, size: 50 });
+    const influencerData = influencersRaw.map((inf: any) => ({
+      id: inf.id,
+      name: inf.name,
+      projects: inf.projects,
+      followers: inf.followers,
+      platform: inf.platform
+    }));
+    
+    // Fetch demographics for the platform and transform to chart format
+    const demographicsRaw = await getDemographics({ platform });
+    const demographicsData = transformDemographicsData(demographicsRaw);
+    
+    // Fetch interests for the platform
+    const interestsData = await getInterestData(platform);
+    
+    return {
+      campaignStats,
+      influencerData,
+      demographicsData,
+      interestsData
+    };
+  } catch (error) {
+    console.error(`Error fetching platform data for ${platform}:`, error);
+    throw error;
+  }
+}
+
+// Transform demographics data from database format to chart format
+function transformDemographicsData(rawData: any[]): Array<{ label: string; male: number; female: number; }> {
+  const demographicsMap = new Map<string, { male: number; female: number; }>();
+  
+  rawData.forEach((demo: any) => {
+    const ageGroup = demo.age_group;
+    const gender = demo.gender.toLowerCase();
+    const percentage = demo.percentage;
+    
+    if (!demographicsMap.has(ageGroup)) {
+      demographicsMap.set(ageGroup, { male: 0, female: 0 });
+    }
+    
+    const entry = demographicsMap.get(ageGroup)!;
+    if (gender === 'male') {
+      entry.male = percentage;
+    } else if (gender === 'female') {
+      entry.female = percentage;
+    }
+  });
+  
+  return Array.from(demographicsMap.entries()).map(([label, data]) => ({
+    label,
+    ...data
+  }));
+}
+
+// Get aggregated data across all platforms (for global view)
+export async function getGlobalPlatformData(): Promise<PlatformData> {
+  try {
+    // Fetch global campaign stats (no platform filter)
+    const campaignStats = await getCampaignStats();
+    
+    // Fetch all influencers
+    const influencersRaw = await getInfluencers({ page: 1, size: 50 });
+    const influencerData = influencersRaw.map((inf: any) => ({
+      id: inf.id,
+      name: inf.name,
+      projects: inf.projects,
+      followers: inf.followers,
+      platform: inf.platform
+    }));
+    
+    // Fetch all demographics and aggregate
+    const demographicsRaw = await getDemographics();
+    const demographicsData = transformDemographicsData(demographicsRaw);
+    
+    // Fetch global interests
+    const interestsData = await getInterestData();
+    
+    return {
+      campaignStats,
+      influencerData,
+      demographicsData,
+      interestsData
+    };
+  } catch (error) {
+    console.error('Error fetching global platform data:', error);
+    throw error;
+  }
+}

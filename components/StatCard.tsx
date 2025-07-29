@@ -32,10 +32,7 @@ const StatCard: React.FC<StatCardProps> = ({
 
   return (
     <Card className={`
-      ${isMobile ? 'p-4' : 'p-6'} 
-      bg-white border border-gray-200 
       hover:shadow-md transition-shadow 
-      touch-target
       ${isMobile ? 'min-h-[120px]' : 'min-h-[140px]'}
     `}>
       <div className={`flex flex-col ${isMobile ? 'space-y-2' : 'space-y-3'}`}>

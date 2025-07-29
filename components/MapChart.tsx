@@ -16,6 +16,7 @@ interface CountryData {
 interface MapChartProps {
   width?: number;
   height?: number;
+  onCountryClick?: (countryIsoCode: string) => void;
 }
 
 // Sample country data with user counts for choropleth visualization
@@ -27,7 +28,7 @@ const countryData: CountryData[] = [
 ];
 
 
-const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
+const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountryClick }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
@@ -54,7 +55,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
     d3.select(svgRef.current)
       .transition()
       .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity.scale(1.5));
+      .call(zoomRef.current.transform, d3.zoomIdentity.scale(1));
   }, []);
 
   // Load world data
@@ -82,6 +83,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
   }, []);
 
   // Draw the map
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!svgRef.current || !worldData || isLoading) return;
     if (!worldData?.features?.length) return;
@@ -95,11 +97,11 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
       .attr("height", "100%")
       .attr("viewBox", `0 0 ${width} ${height}`);
 
-    // Create projection with better initial zoom
+    // Create projection with better world coverage
     const projection = d3
       .geoNaturalEarth1()
       .translate([width / 2, height / 2])
-      .scale(Math.min(width, height) / 4.5);
+      .scale(Math.min(width, height) / 4.3);
 
     // Create path generator
     const path = d3.geoPath().projection(projection);
@@ -155,8 +157,8 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
     // Apply zoom behavior to SVG
     svg.call(zoom);
 
-    // Set initial zoom level (1.5x zoom)
-    const initialTransform = d3.zoomIdentity.scale(1.5);
+    // Set initial zoom level to show complete world
+    const initialTransform = d3.zoomIdentity.scale(1);
     svg.call(zoom.transform, initialTransform);
 
     // Store zoom behavior for reset functionality
@@ -189,8 +191,6 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
       .attr("stroke", "#ffffff")
       .attr("stroke-width", 0.5)
       .style("cursor", "pointer")
-      .attr("role", "button")
-      .attr("tabindex", "0")
       .attr("aria-label", (d: any) => {
         const isoCode = d?.id ?? "";
         const countryName = d?.properties?.name ?? "";
@@ -254,58 +254,14 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
           coordinates: d.geometry ? d3.geoCentroid(d) : null
         });
         
-        // Future: Could open detailed view, filter data, etc.
-      })
-      .on("keydown", function (event, d: any) {
-        // Handle keyboard accessibility
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          // Trigger the same action as click
-          const clickEvent = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-          });
-          this.dispatchEvent(clickEvent);
+        // Call the callback to update stats with ISO code if available
+        if (onCountryClick && isoCode) {
+          onCountryClick(isoCode);
         }
       })
-      .on("focus", function (event, d: any) {
-        // Visual focus indicator
-        const isoCode = d?.id ?? "";
-        const countryName = d?.properties?.name ?? "";
-        const userCount = countryUserData[isoCode] || countryUserData[countryName] || 0;
-        
-        // Add focus styling
-        d3.select(this)
-          .attr("stroke", "#2563eb")
-          .attr("stroke-width", 2);
-        
-        // Announce to screen readers
-        const announcement = userCount > 0 
-          ? `Focused on ${countryName} with ${userCount.toLocaleString()} users`
-          : `Focused on ${countryName} with no user data`;
-        
-        // Create temporary announcement element for screen readers
-        const announcement_el = document.createElement('div');
-        announcement_el.setAttribute('aria-live', 'polite');
-        announcement_el.setAttribute('aria-atomic', 'true');
-        announcement_el.style.position = 'absolute';
-        announcement_el.style.left = '-10000px';
-        announcement_el.textContent = announcement;
-        document.body.appendChild(announcement_el);
-        
-        setTimeout(() => {
-          document.body.removeChild(announcement_el);
-        }, 1000);
-      })
-      .on("blur", function (event, d: any) {
-        // Remove focus styling
-        d3.select(this)
-          .attr("stroke", "#ffffff")
-          .attr("stroke-width", 0.5);
-      });
+;
 
-  }, [worldData, width, height, isLoading]);
+  }, [worldData, width, height, isLoading, onCountryClick]);
 
   if (isLoading) {
     return (
@@ -404,12 +360,6 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400 }) => {
         <div className="absolute bottom-2 right-2 text-xs text-gray-500 bg-white px-2 py-1 rounded shadow">
           🌍 Interactive World Map
         </div>
-        
-        {/* Map Legend - Desktop */}
-        <MapLegend position="top-right" className="hidden md:block" />
-        
-        {/* Map Legend - Mobile (Compact) */}
-        <MapLegend position="bottom-left" compact={true} className="block md:hidden" />
         
         {/* Tooltip */}
         {tooltip && (

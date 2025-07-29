@@ -11,6 +11,7 @@ import InfluencerTable from "@/components/InfluencerTable";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { ResponsiveGrid, ResponsiveGridItem } from "@/components/Layout/ResponsiveGrid";
 import { useScreenSize } from "@/hooks/useScreenSize";
+import { usePlatformData } from "@/hooks/usePlatformData";
 import { TrendingUp, Users, Eye, Target } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -18,73 +19,12 @@ const MapChart = dynamic(() => import("@/components/MapChart"), {
   ssr: false,
 });
 
-// Mock data to display the dashboard properly
-const mockData = {
-  campaignStats: [
-    {
-      id: 1,
-      title: "Total Reach",
-      value: "2.4M",
-      icon: "TrendingUp",
-      description: "+12% from last month",
-    },
-    {
-      id: 2,
-      title: "Engagement",
-      value: "18,439",
-      icon: "Users",
-      description: "+4.2% from last week",
-    },
-    {
-      id: 3,
-      title: "Impressions",
-      value: "1.2M",
-      icon: "Eye",
-      description: "+8.1% from last month",
-    },
-    {
-      id: 4,
-      title: "Conversions",
-      value: "542",
-      icon: "Target",
-      description: "+16% from last month",
-    },
-  ],
-  influencerData: [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      projects: 12,
-      followers: "2.4M",
-    },
-    {
-      id: 2,
-      name: "Mike Chen",
-      projects: 8,
-      followers: "1.8M",
-    },
-    {
-      id: 3,
-      name: "Alex Rivera",
-      projects: 15,
-      followers: "980K",
-    },
-  ],
-  demographicsData: [
-    { label: "18-24", male: 25, female: 30 },
-    { label: "25-34", male: 35, female: 28 },
-    { label: "35-44", male: 20, female: 25 },
-    { label: "45-54", male: 12, female: 12 },
-    { label: "55+", male: 8, female: 5 },
-  ],
-  interestsData: [
-    { label: "Fashion", value: 85 },
-    { label: "Beauty", value: 72 },
-    { label: "Lifestyle", value: 68 },
-    { label: "Tech", value: 45 },
-    { label: "Sports", value: 35 },
-    { label: "Travel", value: 52 },
-  ],
+// Fallback data structure for when database is unavailable
+const fallbackData = {
+  campaignStats: [],
+  influencerData: [],
+  demographicsData: [],
+  interestsData: [],
 };
 
 const getIconComponent = (iconName: string) => {
@@ -103,9 +43,88 @@ const getIconComponent = (iconName: string) => {
 };
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState("TikTok");
-  const tabs = ["TikTok", "Instagram", "Facebook"];
+  const [activeTab, setActiveTab] = useState("LinkedIn");
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedCountryName, setSelectedCountryName] = useState<string | null>(null);
+  const [dashboardData, setDashboardData] = useState(fallbackData);
+  const [useBackend, setUseBackend] = useState(true);
+  const tabs = ["LinkedIn", "Instagram", "Facebook"];
+  
+  // Use the unified platform data hook like the admin panel
+  const { data: platformData, error: platformError, isLoading: platformLoading, refresh } = usePlatformData(activeTab, useBackend, selectedCountry || undefined);
+
+  // Load data from localStorage on component mount
+  React.useEffect(() => {
+    const savedData = localStorage.getItem("dashboardData");
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setDashboardData(parsed);
+      } catch (error) {
+        console.error("Error parsing saved data:", error);
+      }
+    }
+  }, []);
   const { isMobile, isTablet, isDesktop, screenSize } = useScreenSize();
+
+  // ISO to country name mapping
+  const isoToCountryName: Record<string, string> = {
+    'US': 'United States',
+    'CAN': 'Canada', 
+    'DEU': 'Germany',
+    'GBR': 'United Kingdom',
+    'FRA': 'France',
+    'JPN': 'Japan',
+    'AUS': 'Australia',
+    'BRA': 'Brazil',
+    'IND': 'India',
+    'CHN': 'China'
+  };
+  
+  // Function to handle country selection
+  const handleCountryClick = (countryIso: string) => {
+    console.log('Country selected (ISO):', countryIso);
+    setSelectedCountry(countryIso);
+    setSelectedCountryName(isoToCountryName[countryIso] || countryIso);
+  };
+  
+  // Get current stats based on selected country and platform
+  const getCurrentStats = () => {
+    // Use backend data if available and backend is enabled
+    if (useBackend && platformData && !platformError) {
+      return platformData.campaignStats;
+    }
+    
+    // Fallback to mock data structure
+    return dashboardData.campaignStats;
+  };
+  
+  // Get current influencer data
+  const getCurrentInfluencers = () => {
+    // Use backend data if available and backend is enabled
+    if (useBackend && platformData && !platformError) {
+      return platformData.influencerData;
+    }
+    return dashboardData.influencerData;
+  };
+  
+  // Get current demographics data
+  const getCurrentDemographics = () => {
+    // Use backend data if available and backend is enabled
+    if (useBackend && platformData && !platformError) {
+      return platformData.demographicsData;
+    }
+    return dashboardData.demographicsData;
+  };
+  
+  // Get current interests data
+  const getCurrentInterests = () => {
+    // Use backend data if available and backend is enabled
+    if (useBackend && platformData && !platformError) {
+      return platformData.interestsData;
+    }
+    return dashboardData.interestsData;
+  };
 
   return (
     <DashboardLayout sidebar={<Sidebar />}>
@@ -120,6 +139,30 @@ export default function Dashboard() {
           <ContentHeader />
         </section>
 
+        {/* Backend Toggle and Platform Selection */}
+        <div className="mb-4 p-4 bg-white rounded-lg border">
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="useBackend"
+                checked={useBackend}
+                onChange={(e) => setUseBackend(e.target.checked)}
+                className="rounded"
+              />
+              <label htmlFor="useBackend">Use Backend Data</label>
+            </div>
+            
+            {useBackend && platformLoading && (
+              <span className="text-sm text-gray-600">Loading...</span>
+            )}
+            
+            {useBackend && platformError && (
+              <span className="text-sm text-red-600">Error loading data</span>
+            )}
+          </div>
+        </div>
+
         {/* Social Media Tabs */}
         <div className="flex bg-gray-100 rounded-lg p-1 w-full lg:w-fit">
           {tabs.map((tab) => (
@@ -129,7 +172,7 @@ export default function Dashboard() {
               className={`
                 flex-1 lg:flex-none font-medium rounded-md transition-colors 
                 min-h-[44px] flex items-center justify-center
-                px-3 py-2 text-sm lg:px-4
+                px-3 py-2 text-sm lg:px-4 relative
                 ${
                   activeTab === tab
                     ? "bg-white text-gray-900 shadow-sm"
@@ -138,16 +181,28 @@ export default function Dashboard() {
               `}
             >
               {tab}
+              {platformLoading && activeTab === tab && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+              )}
             </button>
           ))}
         </div>
+        
+        {/* Platform Loading/Error Status */}
+        {platformError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-sm text-red-800">
+              Failed to load {activeTab} data. Using cached data instead.
+            </p>
+          </div>
+        )}
 
         {/* Main Content Grid - Desktop: Stats left, Map right | Mobile: Stacked */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Section - Stats Cards (2x2 grid on desktop) */}
           <div className="lg:col-span-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {mockData.campaignStats?.map((stat) => (
+              {getCurrentStats()?.map((stat: any) => (
                 <StatCard
                   key={stat.id}
                   title={stat.title}
@@ -157,11 +212,27 @@ export default function Dashboard() {
                 />
               )) || []}
             </div>
+            {selectedCountry && (
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800 font-medium">
+                  Showing stats for: {selectedCountryName || selectedCountry}
+                </p>
+                <button 
+                  onClick={() => {
+                    setSelectedCountry(null);
+                    setSelectedCountryName(null);
+                  }}
+                  className="text-xs text-blue-600 hover:text-blue-800 underline mt-1"
+                >
+                  View global stats
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right Section - Map Chart */}
           <div className="lg:col-span-8">
-            <MapChart />
+            <MapChart onCountryClick={handleCountryClick} />
           </div>
         </div>
 
@@ -169,14 +240,17 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Influencer Table */}
           <div className="lg:col-span-4">
-            <InfluencerTable influencers={mockData.influencerData || []} />
+            <InfluencerTable 
+              influencers={getCurrentInfluencers() || []} 
+              itemsPerPage={5}
+            />
           </div>
           
           {/* Age & Gender Chart */}
           <div className="lg:col-span-4">
             <AudienceAgeGenderChart
               title="Audience Age & Gender"
-              data={mockData.demographicsData || []}
+              data={getCurrentDemographics() || []}
             />
           </div>
           
@@ -184,7 +258,7 @@ export default function Dashboard() {
           <div className="lg:col-span-4">
             <RadarChart
               title="Follower Interest"
-              data={mockData.interestsData || []}
+              data={getCurrentInterests() || []}
             />
           </div>
         </div>

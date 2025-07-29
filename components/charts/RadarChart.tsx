@@ -27,10 +27,10 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
           { label: "Music", value: 65 },
         ];
 
-  const center = 110;
-  const maxRadius = 70;
+  const center = 160;
+  const maxRadius = 110;
   const levels = 5;
-  const size = 220;
+  const size = 320;
 
   // Calculate points for the data polygon
   const calculatePoint = (value: number, index: number) => {
@@ -60,12 +60,13 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
       <h3 className="text-base md:text-lg font-semibold text-text-primary mb-md md:mb-lg tech-accent">
         {title}
       </h3>
-      <div className="flex justify-center">
+      <div className="flex justify-center items-center min-h-[350px]">
         <svg
-          width={size}
-          height={size}
-          className="overflow-visible"
+          width="100%"
+          height="100%"
+          className="max-w-[320px] max-h-[320px] w-full h-full"
           viewBox={`0 0 ${size} ${size}`}
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Grid levels */}
           {Array.from({ length: levels }, (_, i) => (

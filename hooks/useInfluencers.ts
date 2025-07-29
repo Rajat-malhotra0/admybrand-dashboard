@@ -5,13 +5,14 @@ import {
   CreateInfluencerRequest,
   UpdateInfluencerRequest,
 } from "@/lib/api/types";
+import { useSortedInfluencers, SortOrder } from "./useSortedInfluencers";
 
 const fetcher = async (): Promise<Influencer[]> => {
   const response = await dashboardApi.getInfluencers();
   return response.data;
 };
 
-export const useInfluencers = () => {
+export const useInfluencers = (sortOrder: SortOrder = 'desc') => {
   const { data, error, isLoading, mutate } = useSWR<Influencer[]>(
     "influencers",
     fetcher,
@@ -20,6 +21,9 @@ export const useInfluencers = () => {
       errorRetryCount: 3,
     },
   );
+
+  // Sort the influencers data whenever it changes or sortOrder changes
+  const sortedData = useSortedInfluencers(data, sortOrder);
 
   const createInfluencer = async (influencerData: CreateInfluencerRequest) => {
     try {
@@ -57,7 +61,8 @@ export const useInfluencers = () => {
   };
 
   return {
-    data,
+    data: sortedData,
+    rawData: data, // Provide access to unsorted data if needed
     error,
     isLoading,
     isError: !!error,

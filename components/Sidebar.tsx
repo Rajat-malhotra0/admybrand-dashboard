@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Home,
   Target,
@@ -10,6 +12,8 @@ import {
   UserCheck,
   Crown,
   Search,
+  Shield,
+  Database,
 } from "lucide-react";
 import { useScreenSize } from "@/hooks/useScreenSize";
 
@@ -20,6 +24,59 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
+  const pathname = usePathname();
+  
+  const navigationItems = [
+    {
+      href: "/",
+      icon: Home,
+      label: "Dashboard",
+      description: "Main overview"
+    },
+    {
+      href: "/campaigns",
+      icon: Target,
+      label: "Campaigns",
+      description: "Manage campaigns"
+    },
+    {
+      href: "/payments",
+      icon: CreditCard,
+      label: "Payments",
+      description: "Financial management"
+    },
+    {
+      href: "/influencers",
+      icon: UserCheck,
+      label: "Influencers",
+      description: "Influencer management"
+    },
+    {
+      href: "/team",
+      icon: Users,
+      label: "Team",
+      description: "Team management"
+    },
+    {
+      href: "/admin",
+      icon: Shield,
+      label: "Admin",
+      description: "Admin panel"
+    },
+    {
+      href: "/data-editor",
+      icon: Database,
+      label: "Data Editor",
+      description: "Edit dashboard data"
+    },
+    {
+      href: "/settings",
+      icon: Settings,
+      label: "Settings",
+      description: "App settings"
+    }
+  ];
+  
   return (
     <div className={`flex flex-col bg-slate-900 text-white h-full w-full ${className}`}>
       {/* User Profile Section */}
@@ -54,35 +111,32 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
       {/* Navigation Section */}
       <div className="flex-1 px-3 lg:px-4 pb-3 lg:pb-4">
         <nav className="space-y-1">
-          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
-            <Home className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="font-medium text-sm lg:text-base">Home</span>
-          </button>
-          
-          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg bg-blue-600 text-white transition-colors">
-            <Target className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="font-medium text-sm lg:text-base">Campaign</span>
-          </button>
-          
-          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
-            <CreditCard className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="font-medium text-sm lg:text-base">Payments</span>
-          </button>
-          
-          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
-            <UserCheck className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="font-medium text-sm lg:text-base">Influencer</span>
-          </button>
-          
-          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
-            <Settings className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="font-medium text-sm lg:text-base">Settings</span>
-          </button>
-          
-          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
-            <Users className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="font-medium text-sm lg:text-base">Team</span>
-          </button>
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`
+                  w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg transition-colors group
+                  ${
+                    isActive
+                      ? "bg-blue-600 text-white shadow-lg"
+                      : "text-slate-300 hover:text-white hover:bg-slate-800"
+                  }
+                `}
+                title={item.description}
+              >
+                <Icon className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
+                <span className="font-medium text-sm lg:text-base">{item.label}</span>
+                {isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 bg-white rounded-full opacity-75"></div>
+                )}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
