@@ -22,51 +22,64 @@ const mockData = {
   campaignStats: [
     {
       id: 1,
-      title: "Total Reach",
-      value: "2.4M",
+      title: "Total Likes",
+      value: "350,809",
       icon: "TrendingUp",
-      description: "+12% from last month",
+      description: "Total Likes",
     },
     {
       id: 2,
-      title: "Engagement",
-      value: "18,439",
+      title: "Total Comments",
+      value: "186,072",
       icon: "Users",
-      description: "+4.2% from last week",
+      description: "Total Comments",
     },
     {
       id: 3,
-      title: "Impressions",
-      value: "1.2M",
+      title: "Campaign Reach",
+      value: "180,807,839 User",
       icon: "Eye",
-      description: "+8.1% from last month",
+      description: "Campaign Reach",
     },
     {
       id: 4,
-      title: "Conversions",
-      value: "542",
+      title: "Total Shares",
+      value: "120,043",
       icon: "Target",
-      description: "+16% from last month",
+      description: "Total Shares",
+    },
+    {
+      id: 5,
+      title: "Engagement",
+      value: "48.07%",
+      icon: "Target",
+      description: "Engagement",
     },
   ],
   influencerData: [
     {
       id: 1,
-      name: "Sarah Johnson",
+      name: "Name........",
       projects: 12,
-      followers: "2.4M",
+      followers: "1.6M",
     },
     {
       id: 2,
-      name: "Mike Chen",
+      name: "Name........",
       projects: 8,
-      followers: "1.8M",
+      followers: "1.2M",
     },
     {
       id: 3,
-      name: "Alex Rivera",
+      name: "Name........",
       projects: 15,
-      followers: "980K",
+      followers: "1.1M",
+    },
+    {
+      id: 4,
+      name: "Name........",
+      projects: 7,
+      followers: "927k",
     },
   ],
   demographicsData: [
@@ -135,57 +148,115 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Row 4 - Dashboard Grid with responsive 12-column layout */}
+        {/* Main Content - Dashboard layout based on the image */}
         <section>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 xl:grid-cols-12 gap-4 md:gap-6">
-            {/* Sub-Row A - Top row with metric cards, wide card, and map */}
+          <div className="grid grid-cols-12 gap-4">
+            {/* Left Column - Campaign Info and Stats */}
+            <div className="col-span-12 lg:col-span-8">
+              {/* Campaign Header */}
+              <div className="border p-4 rounded-md mb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-xl font-bold mb-2">
+                      Blue Chips Chicago
+                    </h2>
+                    <p className="text-gray-600">Diam nullam quis nunc...</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Status: [Active]</p>
+                    <p className="text-sm text-gray-500">
+                      Created on: August 20...
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            {/* Four metric cards - responsive sizing */}
-            {mockData.campaignStats?.map((stat) => (
-              <div
-                key={stat.id}
-                className="col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2"
-              >
-                <StatCard
-                  title={stat.title}
-                  value={stat.value}
-                  icon={getIconComponent(stat.icon)}
-                  description={stat.description}
+              {/* Social Media Platforms Tabs */}
+              <div className="flex space-x-1 border-b mb-4">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                      activeTab === tab
+                        ? "border-blue-500 text-blue-600"
+                        : "border-transparent text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Stats Grid - 2 rows, 3 columns for first 4, then 2 columns for last row */}
+              <div className="grid grid-cols-3 gap-4">
+                {/* First row - 3 columns */}
+                <div className="p-4 border rounded-md text-center">
+                  <h3 className="text-sm font-semibold mb-2">Total Likes</h3>
+                  <p className="text-xl font-bold">350,809</p>
+                </div>
+                <div className="p-4 border rounded-md text-center">
+                  <h3 className="text-sm font-semibold mb-2">Total Comments</h3>
+                  <p className="text-xl font-bold">186,072</p>
+                </div>
+                <div className="p-4 border rounded-md text-center">
+                  <h3 className="text-sm font-semibold mb-2">Campaign Reach</h3>
+                  <p className="text-lg font-bold">180,807,839 User</p>
+                </div>
+
+                {/* Second row - 2 columns centered */}
+                <div className="col-start-1 col-end-3 grid grid-cols-2 gap-4">
+                  <div className="p-4 border rounded-md text-center">
+                    <h3 className="text-sm font-semibold mb-2">Total Shares</h3>
+                    <p className="text-xl font-bold">120,043</p>
+                  </div>
+                  <div className="p-4 border rounded-md text-center">
+                    <h3 className="text-sm font-semibold mb-2">Engagement</h3>
+                    <p className="text-xl font-bold">48.07%</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - World Map */}
+            <div className="col-span-12 lg:col-span-4 ">
+              <div className="h-full p-4 border rounded-md">
+                <h3 className="text-lg font-bold mb-4 text-center">
+                  ## WORLD MAP ##
+                </h3>
+                <div className="h-96 flex items-center justify-center border-2 border-dashed border-gray-300">
+                  <p className="text-gray-500">World Map Visualization</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section - Influencers and Demographics */}
+          <div className="grid grid-cols-12 gap-4 mt-6">
+            {/* Influencer Table */}
+            <div className="col-span-12 md:col-span-7">
+              <div className="p-4 border rounded-md">
+                <h3 className="text-lg font-bold">Influencer</h3>
+                <InfluencerTable influencers={mockData.influencerData || []} />
+              </div>
+            </div>
+
+            {/* Audience Age & Gender and Follower Interest Charts */}
+            <div className="col-span-12 md:col-span-5 grid grid-cols-1 gap-4">
+              <div className="p-4 border rounded-md">
+                <h3 className="text-lg font-bold">Audience Age & Gender</h3>
+                <AudienceAgeGenderChart
+                  title="Audience Age & Gender"
+                  data={mockData.demographicsData || []}
                 />
               </div>
-            )) || []}
-
-            {/* Campaign Reach card - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[200px] lg:min-h-[240px]">
-              <CampaignReach />
-            </div>
-
-            {/* Map card - responsive sizing with row-span on larger screens */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 xl:row-span-2 h-[300px] lg:h-[400px]">
-              <MapChart />
-            </div>
-
-            {/* Sub-Row B - Bottom row with three components */}
-
-            {/* InfluencerTable - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[300px]">
-              <InfluencerTable influencers={mockData.influencerData || []} />
-            </div>
-
-            {/* AudienceAgeGenderChart - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[300px]">
-              <AudienceAgeGenderChart
-                title="Audience Age & Gender"
-                data={mockData.demographicsData || []}
-              />
-            </div>
-
-            {/* RadarChart - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[300px]">
-              <RadarChart
-                title="Follower Interest"
-                data={mockData.interestsData || []}
-              />
+              <div className="p-4 border rounded-md">
+                <h3 className="text-lg font-bold">Follower Interest</h3>
+                <RadarChart
+                  title="Follower Interest"
+                  data={mockData.interestsData || []}
+                />
+              </div>
             </div>
           </div>
         </section>
