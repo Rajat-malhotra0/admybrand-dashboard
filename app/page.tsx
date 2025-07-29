@@ -107,18 +107,18 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout sidebar={<Sidebar />}>
-      <div className="space-y-8 p-6 md:p-8">
-        {/* Row 1 */}
+      <div className="space-y-6 p-6">
+        {/* Header */}
         <header className="flex justify-between items-center">
           <ConsolidatedHeader />
         </header>
 
-        {/* Row 2 */}
+        {/* Content Header */}
         <section className="flex justify-between items-center">
           <ContentHeader />
         </section>
 
-        {/* Row 3 */}
+        {/* Social Media Tabs */}
         <div className="flex space-x-1 bg-gray-100 rounded-lg p-1 w-fit">
           {tabs.map((tab) => (
             <button
@@ -135,17 +135,12 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Row 4 - Dashboard Grid with responsive 12-column layout */}
-        <section>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 xl:grid-cols-12 gap-4 md:gap-6">
-            {/* Sub-Row A - Top row with metric cards, wide card, and map */}
-
-            {/* Four metric cards - responsive sizing */}
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-12 gap-6">
+          {/* Top Row - Stats Cards in 2x2 Grid */}
+          <div className="col-span-8 grid grid-cols-2 grid-rows-2 gap-4">
             {mockData.campaignStats?.map((stat) => (
-              <div
-                key={stat.id}
-                className="col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2"
-              >
+              <div key={stat.id} className="col-span-1">
                 <StatCard
                   title={stat.title}
                   value={stat.value}
@@ -154,41 +149,37 @@ export default function Dashboard() {
                 />
               </div>
             )) || []}
+          </div>
 
-            {/* Campaign Reach card - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[200px] lg:min-h-[240px]">
-              <CampaignReach />
-            </div>
-
-            {/* Map card - responsive sizing with row-span on larger screens */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 xl:row-span-2 h-[300px] lg:h-[400px]">
+          {/* Map Card - Right Side */}
+          <div className="col-span-4 row-span-2">
+            <div className="h-[400px]">
               <MapChart />
             </div>
-
-            {/* Sub-Row B - Bottom row with three components */}
-
-            {/* InfluencerTable - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[300px]">
-              <InfluencerTable influencers={mockData.influencerData || []} />
-            </div>
-
-            {/* AudienceAgeGenderChart - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[300px]">
-              <AudienceAgeGenderChart
-                title="Audience Age & Gender"
-                data={mockData.demographicsData || []}
-              />
-            </div>
-
-            {/* RadarChart - responsive sizing */}
-            <div className="col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4 xl:col-span-4 min-h-[300px]">
-              <RadarChart
-                title="Follower Interest"
-                data={mockData.interestsData || []}
-              />
-            </div>
           </div>
-        </section>
+
+          {/* Campaign Reach - Second Row Left */}
+          <div className="col-span-8">
+            <CampaignReach />
+          </div>
+
+          {/* Bottom Row - Three Components */}
+          <div className="col-span-4">
+            <InfluencerTable influencers={mockData.influencerData || []} />
+          </div>
+          <div className="col-span-4">
+            <AudienceAgeGenderChart
+              title="Audience Age & Gender"
+              data={mockData.demographicsData || []}
+            />
+          </div>
+          <div className="col-span-4">
+            <RadarChart
+              title="Follower Interest"
+              data={mockData.interestsData || []}
+            />
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   );
