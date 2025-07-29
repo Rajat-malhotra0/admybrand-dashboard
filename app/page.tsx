@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import ConsolidatedHeader from "@/components/ConsolidatedHeader";
 import ContentHeader from "@/components/ContentHeader";
-import CampaignReach from "@/components/CampaignReach";
 import StatCard from "@/components/StatCard";
 import AudienceAgeGenderChart from "@/components/AudienceAgeGenderChart";
 import RadarChart from "@/components/charts/RadarChart";
 import InfluencerTable from "@/components/InfluencerTable";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
+import { ResponsiveGrid, ResponsiveGridItem } from "@/components/Layout/ResponsiveGrid";
+import { useScreenSize } from "@/hooks/useScreenSize";
 import { TrendingUp, Users, Eye, Target } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -104,76 +105,83 @@ const getIconComponent = (iconName: string) => {
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("TikTok");
   const tabs = ["TikTok", "Instagram", "Facebook"];
+  const { isMobile, isTablet, isDesktop, screenSize } = useScreenSize();
 
   return (
     <DashboardLayout sidebar={<Sidebar />}>
-      <div className="space-y-6 p-6">
+      <div className="px-4 lg:px-6 py-4 lg:py-6 max-w-full overflow-x-hidden space-y-4 lg:space-y-6">
         {/* Header */}
-        <header className="flex justify-between items-center">
+        <header className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
           <ConsolidatedHeader />
         </header>
 
         {/* Content Header */}
-        <section className="flex justify-between items-center">
+        <section className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
           <ContentHeader />
         </section>
 
         {/* Social Media Tabs */}
-        <div className="flex space-x-1 bg-gray-100 rounded-lg p-1 w-fit">
+        <div className="flex bg-gray-100 rounded-lg p-1 w-full lg:w-fit">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                activeTab === tab
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={`
+                flex-1 lg:flex-none font-medium rounded-md transition-colors 
+                min-h-[44px] flex items-center justify-center
+                px-3 py-2 text-sm lg:px-4
+                ${
+                  activeTab === tab
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }
+              `}
             >
               {tab}
             </button>
           ))}
         </div>
 
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-12 gap-6">
-          {/* Top Row - Stats Cards in 2x2 Grid */}
-          <div className="col-span-8 grid grid-cols-2 grid-rows-2 gap-4">
-            {mockData.campaignStats?.map((stat) => (
-              <div key={stat.id} className="col-span-1">
+        {/* Main Content Grid - Desktop: Stats left, Map right | Mobile: Stacked */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Section - Stats Cards (2x2 grid on desktop) */}
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {mockData.campaignStats?.map((stat) => (
                 <StatCard
+                  key={stat.id}
                   title={stat.title}
                   value={stat.value}
                   icon={getIconComponent(stat.icon)}
                   description={stat.description}
                 />
-              </div>
-            )) || []}
-          </div>
-
-          {/* Map Card - Right Side */}
-          <div className="col-span-4 row-span-2">
-            <div className="h-[400px]">
-              <MapChart />
+              )) || []}
             </div>
           </div>
 
-          {/* Campaign Reach - Second Row Left */}
-          <div className="col-span-8">
-            <CampaignReach />
+          {/* Right Section - Map Chart */}
+          <div className="lg:col-span-8">
+            <MapChart />
           </div>
+        </div>
 
-          {/* Bottom Row - Three Components */}
-          <div className="col-span-4">
+        {/* Bottom Section - Tables and Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Influencer Table */}
+          <div className="lg:col-span-4">
             <InfluencerTable influencers={mockData.influencerData || []} />
           </div>
-          <div className="col-span-4">
+          
+          {/* Age & Gender Chart */}
+          <div className="lg:col-span-4">
             <AudienceAgeGenderChart
               title="Audience Age & Gender"
               data={mockData.demographicsData || []}
             />
           </div>
-          <div className="col-span-4">
+          
+          {/* Radar Chart - Visible on all devices */}
+          <div className="lg:col-span-4">
             <RadarChart
               title="Follower Interest"
               data={mockData.interestsData || []}

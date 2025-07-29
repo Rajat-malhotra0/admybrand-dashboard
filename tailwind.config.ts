@@ -138,12 +138,13 @@ const config: Config = {
       },
     },
     screens: {
-      xs: "320px",
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
+      xs: "320px",    // Mobile Portrait
+      sm: "480px",    // Large Mobile
+      md: "768px",    // Tablet Portrait
+      lg: "1024px",   // Tablet Landscape
+      xl: "1280px",   // Desktop
+      "2xl": "1536px", // Large Desktop
+      "3xl": "1920px", // Ultra Wide
     },
   },
   plugins: [

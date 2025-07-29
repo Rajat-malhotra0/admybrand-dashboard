@@ -11,135 +11,100 @@ import {
   Crown,
   Search,
 } from "lucide-react";
+import { useScreenSize } from "@/hooks/useScreenSize";
 
 interface SidebarProps {
   className?: string;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-// Reusable UserCard component
-const UserCard: React.FC = () => (
-  <div className="p-md lg:p-lg border-b border-slate-700">
-    <div className="flex items-center space-x-sm md:space-x-md">
-      <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary to-primary-dark rounded-full flex items-center justify-center text-text-white font-semibold text-sm md:text-base">
-        JL
+const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
+  return (
+    <div className={`flex flex-col bg-slate-900 text-white h-full w-full ${className}`}>
+      {/* User Profile Section */}
+      <div className="px-3 lg:px-4 py-4 lg:py-6 border-b border-slate-700">
+        <div className="flex items-center space-x-2 lg:space-x-3">
+          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs lg:text-sm">
+            JL
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-white truncate text-sm lg:text-base">
+              Justinus Lhaksana
+            </p>
+            <p className="text-slate-400 truncate text-xs lg:text-sm">
+              @justinus.lhaksana
+            </p>
+          </div>
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="font-medium text-sm md:text-base truncate">
-          Justinus Lhaksana
-        </p>
-        <p className="text-xs md:text-sm text-text-muted truncate">
-          @justinus.lhaksana
-        </p>
-      </div>
-    </div>
-  </div>
-);
 
-// Primary Navigation component
-const PrimaryNav: React.FC = () => (
-  <nav className="mb-md">
-    <ul className="space-y-xs">
-      <li>
-        <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
-          <Home className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-          <span className="text-sm md:text-base truncate">Home</span>
-        </button>
-      </li>
-      <li>
-        <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md bg-primary transition-colors">
-          <Target className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-          <span className="text-sm md:text-base truncate">Campaign</span>
-        </button>
-      </li>
-      <li>
-        <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
-          <CreditCard className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-          <span className="text-sm md:text-base truncate">Payments</span>
-        </button>
-      </li>
-    </ul>
-  </nav>
-);
-
-// Secondary Navigation component
-const SecondaryNav: React.FC = () => (
-  <nav>
-    <ul className="space-y-xs">
-      <li>
-        <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
-          <UserCheck className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-          <span className="text-sm md:text-base truncate">Influencer</span>
-        </button>
-      </li>
-      <li>
-        <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
-          <Settings className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-          <span className="text-sm md:text-base truncate">Settings</span>
-        </button>
-      </li>
-      <li>
-        <button className="w-full text-left flex items-center space-x-sm md:space-x-md p-sm md:p-md rounded-md hover:bg-slate-700 transition-colors">
-          <Users className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-          <span className="text-sm md:text-base truncate">Team</span>
-        </button>
-      </li>
-    </ul>
-  </nav>
-);
-
-const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => (
-  <div
-    className={`flex flex-col bg-bg-sidebar text-text-white h-full w-full ${className}`}
-  >
-    {/* Top Card */}
-    <div>
-      <div className="p-md border-b border-slate-700">
-        <h1 className="text-lg md:text-xl font-bold">Dashboard</h1>
-      </div>
-      <UserCard />
-    </div>
-
-    {/* Middle Section */}
-    <div className="flex-1 flex flex-col p-sm md:p-md">
-      {/* Search Input */}
-      <div className="mb-md">
+      {/* Search Section */}
+      <div className="px-3 lg:px-4 py-3 lg:py-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 lg:w-4 lg:h-4 text-slate-400" />
           <input
             type="text"
             placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm text-text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+            className="w-full pl-8 lg:pl-10 pr-4 py-2 lg:py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-xs lg:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
         </div>
       </div>
 
-      {/* Primary Navigation */}
-      <PrimaryNav />
+      {/* Navigation Section */}
+      <div className="flex-1 px-3 lg:px-4 pb-3 lg:pb-4">
+        <nav className="space-y-1">
+          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
+            <Home className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="font-medium text-sm lg:text-base">Home</span>
+          </button>
+          
+          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg bg-blue-600 text-white transition-colors">
+            <Target className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="font-medium text-sm lg:text-base">Campaign</span>
+          </button>
+          
+          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
+            <CreditCard className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="font-medium text-sm lg:text-base">Payments</span>
+          </button>
+          
+          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
+            <UserCheck className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="font-medium text-sm lg:text-base">Influencer</span>
+          </button>
+          
+          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
+            <Settings className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="font-medium text-sm lg:text-base">Settings</span>
+          </button>
+          
+          <button className="w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-300 hover:text-white">
+            <Users className="flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="font-medium text-sm lg:text-base">Team</span>
+          </button>
+        </nav>
+      </div>
 
-      {/* Secondary Navigation */}
-      <SecondaryNav />
-    </div>
-
-    {/* Bottom Card */}
-    <div className="p-sm md:p-md">
-      <div className="bg-gradient-to-r from-primary to-primary-dark rounded-lg p-sm md:p-md text-text-white">
-        <div className="flex items-center space-x-xs mb-xs md:mb-sm">
-          <Crown className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-          <span className="font-semibold text-sm md:text-base">
-            Become Pro Access
-          </span>
+      {/* Pro Access Card */}
+      <div className="px-3 lg:px-4 pb-3 lg:pb-4">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl text-white p-3 lg:p-4">
+          <div className="flex items-center space-x-1.5 lg:space-x-2 mb-2">
+            <Crown className="flex-shrink-0 text-yellow-300 w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="font-semibold text-xs lg:text-sm">
+              Become Pro Access
+            </span>
+          </div>
+          <p className="text-blue-100 mb-2 lg:mb-3 leading-relaxed text-xs">
+            Try our knowledge base and unlock learning
+          </p>
+          <button className="w-full bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors py-1.5 px-2 lg:py-2 lg:px-3 text-xs lg:text-sm">
+            Upgrade Pro
+          </button>
         </div>
-        <p className="text-xs md:text-sm text-primary-light mb-sm md:mb-md">
-          Try our knowledge base and unlock learning
-        </p>
-        <button className="w-full bg-text-white text-primary font-semibold py-xs md:py-sm px-sm md:px-md rounded-md hover:bg-bg-secondary transition-colors flex items-center justify-center space-x-xs text-sm">
-          <Crown className="w-3 h-3 md:w-4 md:h-4" />
-          <span>Upgrade Pro</span>
-        </button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Sidebar;
-export { UserCard };
