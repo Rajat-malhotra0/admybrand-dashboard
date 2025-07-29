@@ -75,6 +75,15 @@ const config: Config = {
         xl: 'var(--font-size-xl)',
         '2xl': 'var(--font-size-2xl)',
         '3xl': 'var(--font-size-3xl)',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+        '6xl': '3.75rem',
+        '7xl': '4.5rem',
+      },
+
+      letterSpacing: {
+        tighter: '-0.025em',
+        tight: '-0.015em',
       },
       
       spacing: {
@@ -84,6 +93,8 @@ const config: Config = {
         lg: 'var(--spacing-lg)',
         xl: 'var(--spacing-xl)',
         '2xl': 'var(--spacing-2xl)',
+        '3xl': '4rem',
+        '4xl': '8rem',
       },
       
       borderRadius: {
@@ -112,9 +123,28 @@ const config: Config = {
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
       },
+      zIndex: {
+        'header': '1000',
+        'sidebar': '900',
+        'overlay': '1100',
+      },
+
+      ringWidth: {
+        DEFAULT: '3px',
+      },
+      ringColor: {
+        primary: 'rgb(var(--color-primary-dark))',
+      },
+    },
+    screens: {
+      'xl': '1280px',
+      '2xl': '1536px',
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    require('@tailwindcss/container-queries'),
+  ],
 };
 
 export default config;

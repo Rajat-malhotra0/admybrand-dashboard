@@ -36,19 +36,18 @@ const countryColors: Record<string, string> = {
 
 const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const [worldData, setWorldData] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [zoomBehavior, setZoomBehavior] = useState<any>(null);
 
   // Reset zoom function
   const resetZoom = useCallback(() => {
-    if (svgRef.current && zoomBehavior) {
-      const svg = d3.select(svgRef.current);
-      const initialTransform = d3.zoomIdentity.scale(1.5);
-      svg.transition().duration(750).call(zoomBehavior.transform, initialTransform);
+    if (!svgRef.current || !zoomRef.current) {
+      return;
     }
-  }, [zoomBehavior]);
+    d3.select(svgRef.current).transition().duration(750).call(zoomRef.current.transform, d3.zoomIdentity.scale(1.5));
+  }, []);
 
   // Load world data
   useEffect(() => {
@@ -63,7 +62,8 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
         setIsLoading(false);
       } catch (err) {
         console.error('Error loading world data:', err);
-        setError('Failed to load map data. Please try again later.');
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+        setError(`Failed to load map data: ${errorMessage}. Please try again later.`);
         setIsLoading(false);
       }
     };
@@ -73,6 +73,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
   // Draw the map
   useEffect(() => {
     if (!svgRef.current || !worldData || isLoading) return;
+    if (!worldData?.features?.length) return;
     
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
@@ -130,7 +131,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
     svg.call(zoom.transform, initialTransform);
     
     // Store zoom behavior for reset functionality
-    setZoomBehavior(zoom);
+    zoomRef.current = zoom;
     
     // Draw countries
     mapGroup.selectAll('.country')
@@ -140,14 +141,14 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
       .attr('class', 'country')
       .attr('d', path as any)
       .attr('fill', (d: any) => {
-        const countryName = d.properties.NAME;
+        const countryName = d?.properties?.NAME ?? '';
         return countryColors[countryName] || 'rgb(226, 232, 240)';
       })
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 0.5)
       .style('cursor', 'pointer')
       .on('mouseenter', function(event, d: any) {
-        const countryName = d.properties.NAME;
+        const countryName = d?.properties?.NAME ?? '';
         const baseColor = countryColors[countryName] || 'rgb(226, 232, 240)';
         const hoverColor = d3.color(baseColor)?.darker(0.2)?.toString() || baseColor;
         d3.select(this)
@@ -156,7 +157,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 500 }) => {
           .attr('fill', hoverColor);
       })
       .on('mouseleave', function(event, d: any) {
-        const countryName = d.properties.NAME;
+        const countryName = d?.properties?.NAME ?? '';
         const fillColor = countryColors[countryName] || 'rgb(226, 232, 240)';
         d3.select(this)
           .transition()
