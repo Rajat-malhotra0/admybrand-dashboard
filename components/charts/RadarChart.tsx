@@ -46,10 +46,10 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data, showNoDataMessage 
           { label: "Music", value: 65 },
         ];
 
-  const center = 160;
-  const maxRadius = 110;
+  const center = 180;
+  const maxRadius = 100;
   const levels = 5;
-  const size = 320;
+  const size = 360;
 
   // Calculate points for the data polygon
   const calculatePoint = (value: number, index: number) => {
@@ -63,7 +63,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data, showNoDataMessage 
   // Calculate label positions
   const calculateLabelPoint = (index: number) => {
     const angle = (index * 2 * Math.PI) / chartData.length - Math.PI / 2;
-    const radius = maxRadius + 20;
+    const radius = maxRadius + 30;
     const x = center + radius * Math.cos(angle);
     const y = center + radius * Math.sin(angle);
     return { x, y };
@@ -79,11 +79,11 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data, showNoDataMessage 
       <h3 className="text-base md:text-lg font-semibold text-text-primary mb-md md:mb-lg tech-accent">
         {title}
       </h3>
-      <div className="flex justify-center items-center min-h-[350px]">
+      <div className="flex justify-center items-center min-h-[380px]">
         <svg
           width="100%"
           height="100%"
-          className="max-w-[320px] max-h-[320px] w-full h-full"
+          className="max-w-[360px] max-h-[360px] w-full h-full"
           viewBox={`0 0 ${size} ${size}`}
           preserveAspectRatio="xMidYMid meet"
         >

@@ -1,27 +1,40 @@
-# Admin Dashboard - Choropleth Map Implementation
+# Admin Dashboard - Influencer Marketing Analytics
 
-A responsive admin dashboard built with Next.js, featuring an interactive choropleth world map for visualizing user distribution data.
+A comprehensive admin dashboard built with Next.js for influencer marketing analytics, featuring interactive world maps, real-time data visualization, and campaign performance tracking across multiple social media platforms.
+
+## Dashboard Usage Guide
+
+Access to the application is provided via the designated link. While optimized for larger displays, the dashboard maintains full functionality across all screen sizes.
+
+### Key Features:
+
+- **Data Management**: Direct data addition and modification are supported via the admin sidebar.
+- **Real-time Updates**: All data changes are reflected instantaneously.
+- **Theme Customization**: Users can select between dark and light theme options.
+- **Pagination**: Has been applied to make the tables look clean.
+- **Data Sorting**: The leads table supports data sorting for enhanced usability.
 
 ## Features
 
-### Interactive Choropleth Map
-- **Color-coded countries**: Countries are colored based on user count ranges using a sophisticated color bucket system
-- **Interactive zoom & pan**: Mouse/touch controls for exploring the map
-- **Responsive design**: Optimized layouts for desktop, tablet, and mobile devices
-- **Accessibility**: Full keyboard navigation and screen reader support
-- **Real-time tooltips**: Hover over countries to see detailed user statistics
+### Interactive World Map
+- **Country-based Analytics**: Click on countries to view platform-specific campaign data
+- **Color-coded Visualization**: Countries highlighted based on user engagement data
+- **Real-time Data Updates**: Map interactions trigger instant data refresh
+- **Responsive Design**: Optimized for all screen sizes with touch support
+- **Campaign Reach Visualization**: Visual representation of global campaign performance
 
-### Data Visualization
-- **Discrete color buckets**: User counts mapped to predefined color ranges (0-1K, 1K-5K, etc.)
-- **Multiple color schemes**: Blue (default), Green, Orange, and Purple themes available
-- **Dynamic legend**: Color legend adapts to screen size with compact mobile version
-- **Campaign statistics overlay**: Key metrics displayed alongside the map
+### Multi-Platform Analytics
+- **LinkedIn, Instagram, Facebook**: Comprehensive analytics across major social platforms
+- **Campaign Performance Metrics**: Track reach, engagement, impressions, and conversions
+- **Demographic Insights**: Age and gender distribution analysis
+- **Interest Targeting**: Top follower interests with dynamic percentage tracking
 
-### PDF Export
-- **Download PDF reports**: Export the current dashboard view as a PDF document
-- **High-quality rendering**: Vector graphics ensure crisp output at any resolution
-- **Complete data capture**: Includes map, legend, and statistics in the exported PDF
-- **Cross-browser compatibility**: Works across all modern browsers
+### Lead Management
+- **Comprehensive Lead Database**: 60+ influencer profiles across multiple countries
+- **Advanced Filtering**: Filter leads by platform, country, and engagement metrics
+- **Pagination Support**: Clean table presentation with 5 leads per page
+- **Sortable Columns**: Sort by follower count, engagement rate, and other metrics
+- **Export Capabilities**: Generate PDF reports of lead data and analytics
 
 ## Technology Stack
 

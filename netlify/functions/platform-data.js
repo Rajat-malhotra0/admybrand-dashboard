@@ -134,13 +134,13 @@ export const handler = async (event) => {
       ...data
     }));
     
-    let interestsQuery = 'SELECT interest_name as label, percentage as value FROM user_interests';
+    let interestsQuery = 'SELECT label, value FROM interests';
     const interestsParams = [];
     if (platform && platform !== 'global') {
       interestsQuery += ' WHERE platform = ?';
       interestsParams.push(platform);
     } else {
-      interestsQuery = 'SELECT interest_name as label, AVG(percentage) as value FROM user_interests GROUP BY interest_name';
+      interestsQuery = 'SELECT label, AVG(value) as value FROM interests GROUP BY label';
     }
     interestsQuery += ' ORDER BY value DESC LIMIT 8';
     

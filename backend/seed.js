@@ -294,48 +294,48 @@ async function seedDatabase() {
     const interestsData = {
       LinkedIn: {
         global: [
-          { interest: "Business", value: 92 },
-          { interest: "Technology", value: 88 },
-          { interest: "Professional Development", value: 85 },
-          { interest: "Leadership", value: 78 },
-          { interest: "Marketing", value: 72 },
-          { interest: "Finance", value: 68 }
+          { interest: "Business", value: 80 },
+          { interest: "Technology", value: 75 },
+          { interest: "Professional Development", value: 70 },
+          { interest: "Leadership", value: 65 },
+          { interest: "Marketing", value: 60 },
+          { interest: "Finance", value: 55 }
         ],
         US: [
-          { interest: "Business", value: 95 },
-          { interest: "Technology", value: 91 },
-          { interest: "Professional Development", value: 88 },
-          { interest: "Leadership", value: 82 },
-          { interest: "Marketing", value: 76 },
-          { interest: "Finance", value: 73 }
+          { interest: "Business", value: 82 },
+          { interest: "Technology", value: 78 },
+          { interest: "Professional Development", value: 74 },
+          { interest: "Leadership", value: 70 },
+          { interest: "Marketing", value: 65 },
+          { interest: "Finance", value: 61 }
         ]
       },
       Instagram: {
         global: [
-          { interest: "Fashion", value: 95 },
-          { interest: "Beauty", value: 88 },
-          { interest: "Lifestyle", value: 82 },
-          { interest: "Travel", value: 75 },
-          { interest: "Food", value: 68 },
-          { interest: "Fitness", value: 62 }
+          { interest: "Fashion", value: 85 },
+          { interest: "Beauty", value: 80 },
+          { interest: "Lifestyle", value: 75 },
+          { interest: "Travel", value: 70 },
+          { interest: "Food", value: 65 },
+          { interest: "Fitness", value: 60 }
         ],
         US: [
-          { interest: "Fashion", value: 97 },
-          { interest: "Beauty", value: 92 },
-          { interest: "Lifestyle", value: 86 },
-          { interest: "Travel", value: 79 },
-          { interest: "Food", value: 72 },
-          { interest: "Fitness", value: 68 }
+          { interest: "Fashion", value: 88 },
+          { interest: "Beauty", value: 83 },
+          { interest: "Lifestyle", value: 78 },
+          { interest: "Travel", value: 73 },
+          { interest: "Food", value: 68 },
+          { interest: "Fitness", value: 64 }
         ]
       },
       Facebook: {
         global: [
-          { interest: "Family", value: 85 },
-          { interest: "News", value: 78 },
-          { interest: "Entertainment", value: 72 },
-          { interest: "Community", value: 68 },
-          { interest: "Local Events", value: 58 },
-          { interest: "Sports", value: 52 }
+          { interest: "Family", value: 70 },
+          { interest: "News", value: 65 },
+          { interest: "Entertainment", value: 60 },
+          { interest: "Community", value: 55 },
+          { interest: "Local Events", value: 50 },
+          { interest: "Sports", value: 45 }
         ]
       }
     };
