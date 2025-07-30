@@ -1,3 +1,5 @@
+// Local API handler for platform data
+
 import { createClient } from '@libsql/client';
 
 function getTursoClient() {
@@ -14,16 +16,10 @@ function getTursoClient() {
   });
 }
 
-export const handler = async (event) => {
+export default async function handler(req, res) {
   try {
-    console.log('Environment check:', {
-      hasUrl: !!process.env.TURSO_DATABASE_URL,
-      hasToken: !!process.env.TURSO_AUTH_TOKEN,
-      event: event.queryStringParameters
-    });
-    
     const client = getTursoClient();
-    const { platform, country } = event.queryStringParameters || {};
+    const { platform, country } = req.query;
 
     let campaignStatsQuery = `
       SELECT 
@@ -41,6 +37,10 @@ export const handler = async (event) => {
     if (platform && platform !== 'global') {
       campaignStatsQuery += ' AND platform = ?';
       campaignParams.push(platform);
+    }
+    if (country && country !== 'global') {
+      campaignStatsQuery += ' AND country = ?';
+      campaignParams.push(country);
     }
     
     const campaignResult = await client.execute(campaignStatsQuery, campaignParams);
@@ -65,7 +65,7 @@ export const handler = async (event) => {
         title: "Engagement",
         value: formatNumber(Number(stats.total_clicks) || 0),
         icon: "Users", 
-        description: `Total clicks across campaigns`
+        description: `Avg CPC: $${Number(stats.avg_cpc || 0).toFixed(2)}`
       },
       {
         id: 3,
@@ -79,7 +79,7 @@ export const handler = async (event) => {
         title: "Conversions", 
         value: formatNumber(Number(stats.total_conversions) || 0),
         icon: "Target",
-        description: `Total conversions achieved`
+        description: `Avg cost: $${Number(stats.avg_cpc_conversion || 0).toFixed(2)}`
       }
     ] : [];
     
@@ -153,19 +153,13 @@ export const handler = async (event) => {
       interestsData
     };
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(data),
-    };
+    res.status(200).json(data);
   } catch (error) {
     console.error('API Error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: 'Failed to fetch platform data',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      }),
-    };
+    res.status(500).json({
+      error: 'Failed to fetch platform data',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
-};
+}
 
