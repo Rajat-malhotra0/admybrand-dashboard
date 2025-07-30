@@ -8,10 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Save, Trash2, Edit, RefreshCw } from "lucide-react";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { Plus, Save, Trash2, Edit, RefreshCw, Moon, Sun } from "lucide-react";
 import { usePlatformData } from "@/hooks/usePlatformData";
 import { dashboardApi } from "@/lib/api/dashboard";
+import { useTheme } from "@/contexts/ThemeContext";
+import { CampaignStatsForm } from "@/components/admin/CampaignStatsForm";
+import { InfluencerForm } from "@/components/admin/InfluencerForm";
 
 // Fallback data structure for when database is unavailable
 const fallbackData = {
@@ -22,6 +24,7 @@ const fallbackData = {
 };
 
 export default function AdminPage() {
+  const { theme, toggleTheme } = useTheme();
   const [data, setData] = useState(fallbackData);
   const [selectedPlatform, setSelectedPlatform] = useState("LinkedIn");
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -237,156 +240,35 @@ export default function AdminPage() {
     }
   };
 
-  // Campaign Stats Form
-  const CampaignStatsForm = () => {
-    const [formData, setFormData] = useState({
-      title: "",
-      value: "",
-      icon: "TrendingUp",
-      description: "",
-    });
-
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      const maxId = data.campaignStats.length > 0 ? Math.max(...data.campaignStats.map((s: any) => s.id || 0)) : 0;
-      const newStat = {
-        ...formData,
-        id: maxId + 1,
-      };
-      addItem("campaignStats", newStat);
-      setFormData({ title: "", value: "", icon: "TrendingUp", description: "" });
-    };
-
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Add Campaign Stat</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="value">Value</Label>
-              <Input
-                id="value"
-                value={formData.value}
-                onChange={(e) => setFormData({...formData, value: e.target.value})}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="icon">Icon</Label>
-              <select
-                id="icon"
-                value={formData.icon}
-                onChange={(e) => setFormData({...formData, icon: e.target.value})}
-                className="w-full p-2 border rounded"
-              >
-                <option value="TrendingUp">TrendingUp</option>
-                <option value="Users">Users</option>
-                <option value="Eye">Eye</option>
-                <option value="Target">Target</option>
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-              />
-            </div>
-            <Button type="submit">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Stat
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  // Influencer Form
-  const InfluencerForm = () => {
-    const [formData, setFormData] = useState({
-      name: "",
-      projects: 0,
-      followers: "",
-    });
-
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      const maxId = data.influencerData.length > 0 ? Math.max(...data.influencerData.map((i: any) => i.id || 0)) : 0;
-      const newInfluencer = {
-        ...formData,
-        id: maxId + 1,
-      };
-      addItem("influencerData", newInfluencer);
-      setFormData({ name: "", projects: 0, followers: "" });
-    };
-
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Add Influencer</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="projects">Projects</Label>
-              <Input
-                id="projects"
-                type="number"
-                value={formData.projects}
-                onChange={(e) => setFormData({...formData, projects: parseInt(e.target.value)})}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="followers">Followers</Label>
-              <Input
-                id="followers"
-                value={formData.followers}
-                onChange={(e) => setFormData({...formData, followers: e.target.value})}
-                placeholder="e.g., 1.2M"
-                required
-              />
-            </div>
-            <Button type="submit">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Influencer
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    );
-  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Dashboard Admin</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-3xl font-bold text-foreground">Dashboard Admin</h1>
+            <Button
+              onClick={toggleTheme}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="h-4 w-4" />
+                  Light
+                </>
+              ) : (
+                <>
+                  <Moon className="h-4 w-4" />
+                  Dark
+                </>
+              )}
+            </Button>
+          </div>
           
           {/* Platform Selection and Backend Toggle */}
-          <div className="mb-6 p-4 bg-white rounded-lg border">
+          <div className="mb-6 p-4 bg-card rounded-lg border border-border">
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center space-x-2">
                 <input
@@ -405,7 +287,7 @@ export default function AdminPage() {
                   <select
                     value={selectedPlatform}
                     onChange={(e) => setSelectedPlatform(e.target.value)}
-                    className="px-3 py-1 border rounded"
+                    className="px-3 py-1 border border-border rounded bg-background text-foreground"
                   >
                     {platforms.map(platform => (
                       <option key={platform} value={platform}>{platform}</option>
@@ -422,11 +304,11 @@ export default function AdminPage() {
               )}
               
               {useBackend && isLoading && (
-                <span className="text-sm text-gray-600">Loading...</span>
+                <span className="text-sm text-muted-foreground">Loading...</span>
               )}
               
               {useBackend && error && (
-                <span className="text-sm text-red-600">Error loading data</span>
+                <span className="text-sm text-destructive">Error loading data</span>
               )}
             </div>
           </div>
@@ -456,7 +338,7 @@ export default function AdminPage() {
           <TabsContent value="stats" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Add Form */}
-              <CampaignStatsForm />
+              <CampaignStatsForm addItem={addItem} campaignStats={currentData.campaignStats} />
 
               {/* Current Stats */}
               <Card>
@@ -466,10 +348,10 @@ export default function AdminPage() {
                 <CardContent>
                   <div className="space-y-3">
                     {currentData.campaignStats.map((stat: any) => (
-                      <div key={stat.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                      <div key={stat.id} className="flex items-center justify-between p-3 bg-muted rounded">
                         <div>
-                          <h4 className="font-medium">{stat.title}</h4>
-                          <p className="text-sm text-gray-600">{stat.value} - {stat.description}</p>
+                          <h4 className="font-medium text-foreground">{stat.title}</h4>
+                          <p className="text-sm text-muted-foreground">{stat.value} - {stat.description}</p>
                         </div>
                         <Button
                           onClick={() => deleteItem("campaignStats", stat.id)}
@@ -489,7 +371,7 @@ export default function AdminPage() {
           <TabsContent value="influencers" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Add Form */}
-              <InfluencerForm />
+              <InfluencerForm addItem={addItem} influencerData={currentData.influencerData} />
 
               {/* Current Influencers */}
               <Card>
@@ -532,10 +414,10 @@ export default function AdminPage() {
                   
                   <div className="space-y-3">
                     {paginatedInfluencers.map((influencer) => (
-                      <div key={influencer.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                      <div key={influencer.id} className="flex items-center justify-between p-3 bg-muted rounded">
                         <div>
-                          <h4 className="font-medium">{influencer.name}</h4>
-                          <p className="text-sm text-gray-600">{influencer.projects} projects - {influencer.followers} followers</p>
+                          <h4 className="font-medium text-foreground">{influencer.name}</h4>
+                          <p className="text-sm text-muted-foreground">{influencer.projects} projects - {influencer.followers} followers</p>
                         </div>
                         <Button
                           onClick={() => deleteItem("influencerData", influencer.id)}
@@ -550,7 +432,7 @@ export default function AdminPage() {
                   
                   {/* Pagination Controls */}
                   <div className="mt-4 flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                       Showing {Math.min((currentPage - 1) * itemsPerPage + 1, sortedInfluencers.length)} to {Math.min(currentPage * itemsPerPage, sortedInfluencers.length)} of {sortedInfluencers.length} influencers
                     </div>
                     <div className="flex gap-2">

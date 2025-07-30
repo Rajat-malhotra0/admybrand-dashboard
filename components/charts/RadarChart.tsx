@@ -12,11 +12,26 @@ interface RadarChartData {
 interface RadarChartProps {
   title: string;
   data: RadarChartData[];
+  showNoDataMessage?: boolean;
 }
 
-const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
+const RadarChart: React.FC<RadarChartProps> = ({ title, data, showNoDataMessage = false }) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  
+  // If showing no data message and no data provided, show empty state
+  if (showNoDataMessage && data.length === 0) {
+    return (
+      <Card hover>
+        <h3 className="text-base md:text-lg font-semibold text-text-primary mb-md md:mb-lg tech-accent">
+          {title}
+        </h3>
+        <div className="flex items-center justify-center py-12">
+          <p className="text-text-muted text-sm">No data yet</p>
+        </div>
+      </Card>
+    );
+  }
   
   // Default data if none provided
   const chartData =

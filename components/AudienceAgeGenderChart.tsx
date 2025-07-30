@@ -14,15 +14,31 @@ interface AudienceAgeGenderChartProps {
   title?: string;
   data: AudienceData[];
   className?: string;
+  showNoDataMessage?: boolean;
 }
 
 const AudienceAgeGenderChart: React.FC<AudienceAgeGenderChartProps> = ({
   title = "Audience Age & Gender Demographics",
   data,
   className,
+  showNoDataMessage = false,
 }) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+
+  // If showing no data message and no data provided, show empty state
+  if (showNoDataMessage && data.length === 0) {
+    return (
+      <Card hover className={className}>
+        <h2 className="text-lg font-semibold text-text-primary mb-6">
+          Audience Age & Gender
+        </h2>
+        <div className="flex items-center justify-center py-12">
+          <p className="text-text-muted text-sm">No data yet</p>
+        </div>
+      </Card>
+    );
+  }
 
   // Find the maximum value to scale the bars
   const maxValue = Math.max(

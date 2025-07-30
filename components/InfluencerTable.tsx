@@ -19,6 +19,7 @@ interface InfluencerTableProps {
   sortOrder?: SortOrder;
   itemsPerPage?: number;
   onSortOrderChange?: (order: SortOrder) => void;
+  showNoDataMessage?: boolean;
 }
 
 const InfluencerTable: React.FC<InfluencerTableProps> = ({
@@ -26,6 +27,7 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
   sortOrder = 'desc',
   itemsPerPage = 5,
   onSortOrderChange,
+  showNoDataMessage = false,
 }) => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +49,7 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
     { id: 10, name: "Ryan Thompson", projects: 14, followers: "2.8M" },
   ];
 
-  const sourceData = influencers.length > 0 ? influencers : defaultInfluencers;
+  const sourceData = (influencers.length > 0 || showNoDataMessage) ? influencers : defaultInfluencers;
   
   // Sort the influencer data based on sortOrder
   const sortedInfluencers = useSortedInfluencers(sourceData, currentSortOrder);
@@ -153,35 +155,43 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
             </tr>
           </thead>
           <tbody className="bg-surface divide-y divide-border">
-            {paginatedInfluencers.map((influencer) => (
-              <tr
-                key={influencer.id}
-                className="hover:bg-surface-elevated transition-colors"
-              >
-                <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
-                  <div className="flex items-center space-x-sm md:space-x-md">
-                    <div className="flex-shrink-0 h-6 w-6 md:h-8 md:w-8 bg-primary-rgb/10 dark:bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <User className="w-3 h-3 md:w-4 md:h-4 text-primary-rgb dark:text-blue-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs md:text-sm font-medium text-text-primary truncate">
-                        {influencer.name}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
-                  <div className="text-xs md:text-sm text-text-primary mono">
-                    {influencer.projects}
-                  </div>
-                </td>
-                <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
-                  <div className="text-xs md:text-sm text-text-primary mono">
-                    {influencer.followers}
-                  </div>
+            {showNoDataMessage && influencers.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="px-sm md:px-md py-12 text-center">
+                  <p className="text-text-muted text-sm">No data yet</p>
                 </td>
               </tr>
-            ))}
+            ) : (
+              paginatedInfluencers.map((influencer) => (
+                <tr
+                  key={influencer.id}
+                  className="hover:bg-surface-elevated transition-colors"
+                >
+                  <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
+                    <div className="flex items-center space-x-sm md:space-x-md">
+                      <div className="flex-shrink-0 h-6 w-6 md:h-8 md:w-8 bg-primary-rgb/10 dark:bg-blue-500/20 rounded-full flex items-center justify-center">
+                        <User className="w-3 h-3 md:w-4 md:h-4 text-primary-rgb dark:text-blue-400" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs md:text-sm font-medium text-text-primary truncate">
+                          {influencer.name}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
+                    <div className="text-xs md:text-sm text-text-primary mono">
+                      {influencer.projects}
+                    </div>
+                  </td>
+                  <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
+                    <div className="text-xs md:text-sm text-text-primary mono">
+                      {influencer.followers}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

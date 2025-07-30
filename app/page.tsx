@@ -139,6 +139,7 @@ export default function Dashboard() {
     if (useBackend && platformData && !platformError) {
       return platformData.campaignStats;
     }
+    if (useBackend) return []; // Avoid showing stale data
     
     // Fallback to mock data structure
     return dashboardData.campaignStats;
@@ -150,6 +151,7 @@ export default function Dashboard() {
     if (useBackend && platformData && !platformError) {
       return platformData.influencerData;
     }
+    if (useBackend) return []; // Avoid showing stale data
     return dashboardData.influencerData;
   };
   
@@ -159,6 +161,7 @@ export default function Dashboard() {
     if (useBackend && platformData && !platformError) {
       return platformData.demographicsData;
     }
+    if (useBackend) return []; // Avoid showing stale data
     return dashboardData.demographicsData;
   };
   
@@ -168,6 +171,7 @@ export default function Dashboard() {
     if (useBackend && platformData && !platformError) {
       return platformData.interestsData;
     }
+    if (useBackend) return []; // Avoid showing stale data
     return dashboardData.interestsData;
   };
 
@@ -319,6 +323,7 @@ export default function Dashboard() {
             <InfluencerTable 
               influencers={getCurrentInfluencers() || []} 
               itemsPerPage={5}
+              showNoDataMessage={useBackend}
             />
           </div>
           
@@ -327,6 +332,7 @@ export default function Dashboard() {
             <AudienceAgeGenderChart
               title="Audience Age & Gender"
               data={getCurrentDemographics() || []}
+              showNoDataMessage={useBackend}
             />
           </div>
           
@@ -335,6 +341,7 @@ export default function Dashboard() {
             <RadarChart
               title="Follower Interest"
               data={getCurrentInterests() || []}
+              showNoDataMessage={useBackend}
             />
           </div>
         </div>

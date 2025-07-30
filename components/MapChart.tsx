@@ -59,8 +59,11 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
     d3.select(svgRef.current)
       .transition()
       .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity.scale(1));
-  }, []);
+      .call(zoomRef.current.transform, d3.zoomIdentity
+        .translate(width / 2, height / 2)
+        .scale(1.3)
+        .translate(-width / 2, -height / 2));
+  }, [width, height]);
 
   // Load world data
   useEffect(() => {
@@ -101,11 +104,11 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       .attr("height", "100%")
       .attr("viewBox", `0 0 ${width} ${height}`);
 
-    // Create projection with better world coverage
+    // Create projection with better world coverage - more zoomed in
     const projection = d3
       .geoNaturalEarth1()
       .translate([width / 2, height / 2])
-      .scale(Math.min(width, height) / 4.3);
+      .scale(Math.min(width, height) / 3.2);
 
     // Create path generator
     const path = d3.geoPath().projection(projection);
@@ -161,8 +164,11 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
     // Apply zoom behavior to SVG
     svg.call(zoom);
 
-    // Set initial zoom level to show complete world
-    const initialTransform = d3.zoomIdentity.scale(1);
+    // Set initial zoom level to show world more zoomed in and centered
+    const initialTransform = d3.zoomIdentity
+      .translate(width / 2, height / 2)
+      .scale(1.3)
+      .translate(-width / 2, -height / 2);
     svg.call(zoom.transform, initialTransform);
 
     // Store zoom behavior for reset functionality
@@ -303,7 +309,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Global User Distribution</h2>
       </div>
-      <div className="relative flex-1 min-h-[400px] border rounded-md overflow-hidden bg-white">
+      <div className={`relative flex-1 min-h-[400px] border rounded-md overflow-hidden ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
         {/* Campaign Reach Data Overlay - Left Side - Hidden on mobile */}
         <div 
           className="absolute top-0 left-0 w-32 h-full bg-surface-elevated/95 backdrop-blur-sm border-r border-border z-10 flex-col justify-center space-y-3 p-3 hidden md:flex"
