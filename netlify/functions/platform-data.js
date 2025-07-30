@@ -42,6 +42,10 @@ export const handler = async (event) => {
       campaignStatsQuery += ' AND platform = ?';
       campaignParams.push(platform);
     }
+    if (country && country !== 'global') {
+      campaignStatsQuery += ' AND country = ?';
+      campaignParams.push(country);
+    }
     
     const campaignResult = await client.execute(campaignStatsQuery, campaignParams);
     const stats = campaignResult.rows[0];

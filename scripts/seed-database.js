@@ -294,12 +294,17 @@ async function seedDatabase() {
         for (const country of countries) {
             const platformInterests = interestCategories[platform];
             for (const interestName in platformInterests) {
+                // Add some randomness to percentages within reasonable bounds
+                const basePercentage = platformInterests[interestName];
+                const randomVariation = getRandomInt(-15, 15); // +/- 15% variation
+                const finalPercentage = Math.max(10, Math.min(95, basePercentage + randomVariation));
+                
                 interests.push({
                     platform,
                     country,
                     interest_category: 'General',
                     interest_name: interestName,
-                    percentage: getRandomInt(20, 90),
+                    percentage: finalPercentage,
                     total_users: getRandomInt(20000, 200000)
                 });
             }

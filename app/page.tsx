@@ -114,7 +114,8 @@ export default function Dashboard() {
     
     // Try to generate dynamic data for the selected country
     try {
-      const response = await fetch(`http://localhost:5000/api/dynamic-data/generate/${dbCountryName}?platform=${activeTab}`);
+      // Use a relative path for the API endpoint
+      const response = await fetch(`/api/dynamic-data/generate/${dbCountryName}?platform=${activeTab}`);
       const result = await response.json();
       
       if (result.success) {
