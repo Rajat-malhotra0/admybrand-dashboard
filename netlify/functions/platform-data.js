@@ -31,8 +31,6 @@ export const handler = async (event) => {
         SUM(impressions) as total_impressions,
         SUM(clicks) as total_clicks,
         SUM(conversions) as total_conversions,
-        AVG(cost_per_click) as avg_cpc,
-        AVG(cost_per_conversion) as avg_cpc_conversion,
         COUNT(*) as total_campaigns
       FROM campaigns 
       WHERE status = 'active'`;
@@ -41,10 +39,6 @@ export const handler = async (event) => {
     if (platform && platform !== 'global') {
       campaignStatsQuery += ' AND platform = ?';
       campaignParams.push(platform);
-    }
-    if (country && country !== 'global') {
-      campaignStatsQuery += ' AND country = ?';
-      campaignParams.push(country);
     }
     
     const campaignResult = await client.execute(campaignStatsQuery, campaignParams);
@@ -69,7 +63,7 @@ export const handler = async (event) => {
         title: "Engagement",
         value: formatNumber(Number(stats.total_clicks) || 0),
         icon: "Users", 
-        description: `Avg CPC: $${Number(stats.avg_cpc || 0).toFixed(2)}`
+        description: `Total clicks across campaigns`
       },
       {
         id: 3,
@@ -83,7 +77,7 @@ export const handler = async (event) => {
         title: "Conversions", 
         value: formatNumber(Number(stats.total_conversions) || 0),
         icon: "Target",
-        description: `Avg cost: $${Number(stats.avg_cpc_conversion || 0).toFixed(2)}`
+        description: `Total conversions achieved`
       }
     ] : [];
     
