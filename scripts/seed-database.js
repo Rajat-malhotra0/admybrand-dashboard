@@ -7,11 +7,27 @@ const tursoClient = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
+const platforms = ['Instagram', 'LinkedIn', 'TikTok', 'Facebook'];
+const countries = ['US', 'Canada', 'Germany', 'UK', 'France'];
+const ageGroups = ['18-24', '25-34', '35-44', '45-54', '55+'];
+const genders = ['Male', 'Female'];
+
+const interestCategories = {
+  Instagram: { Fashion: 85, Beauty: 72, Travel: 68, Fitness: 52, Food: 45 },
+  LinkedIn: { Technology: 78, Business: 65, Marketing: 58, Leadership: 48, Finance: 42 },
+  TikTok: { Comedy: 82, Dance: 75, Entertainment: 68, DIY: 48, 'Life Hacks': 38 },
+  Facebook: { Family: 62, 'Local Events': 54, 'Small Business': 47, 'Current Events': 41, Crafts: 35 },
+};
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 async function seedDatabase() {
   try {
-    console.log('Starting database seeding...');
+    console.log('Starting comprehensive database seeding...');
 
-    // Initialize schema first
+    // Initialize schema - first create tables without constraints
     await tursoClient.execute(`
       CREATE TABLE IF NOT EXISTS influencers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +39,6 @@ async function seedDatabase() {
         phone TEXT,
         location TEXT,
         category TEXT,
-        country TEXT DEFAULT 'US',
         engagement_rate REAL DEFAULT 0.0,
         avg_likes INTEGER DEFAULT 0,
         avg_comments INTEGER DEFAULT 0,
@@ -32,6 +47,13 @@ async function seedDatabase() {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    
+    // Add country column if it doesn't exist
+    try {
+      await tursoClient.execute(`ALTER TABLE influencers ADD COLUMN country TEXT DEFAULT 'US'`);
+    } catch (error) {
+      // Column already exists, ignore error
+    }
 
     await tursoClient.execute(`
       CREATE TABLE IF NOT EXISTS campaigns (
@@ -80,165 +102,99 @@ async function seedDatabase() {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    
+    // Add country column to user_interests if it doesn't exist
+    try {
+      await tursoClient.execute(`ALTER TABLE user_interests ADD COLUMN country TEXT DEFAULT 'US'`);
+    } catch (error) {
+      // Column already exists, ignore error
+    }
 
     // Clear existing data
+    console.log('Clearing existing data...');
     await tursoClient.execute('DELETE FROM influencers');
     await tursoClient.execute('DELETE FROM campaigns');
     await tursoClient.execute('DELETE FROM demographics');
     await tursoClient.execute('DELETE FROM user_interests');
 
-    // Seed influencers with platform-specific data
+    // Seed influencers
     const influencers = [
-      // Instagram Influencers
-      { name: 'Sarah Johnson', projects: 12, followers: '2.4M', platform: 'Instagram', category: 'Fashion', engagement_rate: 4.5, verified: true },
-      { name: 'Emma Davis', projects: 15, followers: '3.1M', platform: 'Instagram', category: 'Beauty', engagement_rate: 5.2, verified: true },
-      { name: 'Jessica Williams', projects: 9, followers: '1.5M', platform: 'Instagram', category: 'Lifestyle', engagement_rate: 3.8, verified: false },
-      { name: 'Carlos Garcia', projects: 13, followers: '1.7M', platform: 'Instagram', category: 'Fitness', engagement_rate: 4.1, verified: true },
-      { name: 'Ryan Thompson', projects: 14, followers: '2.8M', platform: 'Instagram', category: 'Travel', engagement_rate: 4.7, verified: true },
-      
-      // LinkedIn Influencers  
-      { name: 'Mike Chen', projects: 8, followers: '1,800,000', platform: 'LinkedIn', category: 'Tech', engagement_rate: 6.2, verified: true },
-      { name: 'David Brown', projects: 11, followers: '2,100,000', platform: 'LinkedIn', category: 'Business', engagement_rate: 5.8, verified: true },
-      { name: 'Maya Patel', projects: 10, followers: '1,300,000', platform: 'LinkedIn', category: 'Marketing', engagement_rate: 5.5, verified: false },
-      
-      // TikTok Influencers
-      { name: 'Alex Rodriguez', projects: 6, followers: '987K', platform: 'TikTok', category: 'Comedy', engagement_rate: 8.9, verified: false },
-      { name: 'Lisa Wang', projects: 7, followers: '890K', platform: 'TikTok', category: 'Dance', engagement_rate: 9.2, verified: false },
-      { name: 'Jordan Smith', projects: 9, followers: '1.2M', platform: 'TikTok', category: 'Entertainment', engagement_rate: 7.8, verified: true },
-      
-      // Facebook Influencers
-      { name: 'Amanda Foster', projects: 11, followers: '2.3M', platform: 'Facebook', category: 'Lifestyle', engagement_rate: 3.2, verified: true },
-      { name: 'Marcus Johnson', projects: 8, followers: '1.9M', platform: 'Facebook', category: 'Business', engagement_rate: 2.8, verified: true },
-      { name: 'Sofia Martinez', projects: 10, followers: '1.6M', platform: 'Facebook', category: 'Family', engagement_rate: 4.1, verified: false },
+      { name: 'Sarah Johnson', projects: 12, followers: '2.4M', platform: 'Instagram', category: 'Fashion', engagement_rate: 4.5, verified: true, country: 'US' },
+      { name: 'John Smith', projects: 10, followers: '1.2M', platform: 'LinkedIn', category: 'Technology', engagement_rate: 6.1, verified: true, country: 'US' },
+      { name: 'Emily Jones', projects: 15, followers: '5.2M', platform: 'TikTok', category: 'Entertainment', engagement_rate: 8.2, verified: true, country: 'Canada' },
+      { name: 'Chris Evans', projects: 5, followers: '800k', platform: 'Facebook', category: 'Lifestyle', engagement_rate: 3.4, verified: false, country: 'UK' },
     ];
 
     for (const influencer of influencers) {
-      await tursoClient.execute(
-        `INSERT INTO influencers (name, projects, followers, platform, category, engagement_rate, verified) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [influencer.name, influencer.projects, influencer.followers, influencer.platform, influencer.category, influencer.engagement_rate, influencer.verified]
-      );
+        await tursoClient.execute(
+          `INSERT INTO influencers (name, projects, followers, platform, category, engagement_rate, verified, country) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [influencer.name, influencer.projects, influencer.followers, influencer.platform, influencer.category, influencer.engagement_rate, influencer.verified, influencer.country]
+        );
+      }
+      console.log(`- ${influencers.length} influencers added`);
+
+    // Seed Demographics - using actual schema with label, male, female columns
+    console.log('Seeding demographics...');
+    const demographics = [];
+    for (const platform of platforms) {
+      for (const country of countries) {
+        for (const age_group of ageGroups) {
+          demographics.push({
+            platform,
+            label: age_group,
+            location: country,
+            male: getRandomInt(20, 60),
+            female: getRandomInt(20, 60)
+          });
+        }
+      }
     }
-
-    // Seed campaigns with realistic data
-    const campaigns = [
-      { name: 'Summer Fashion Campaign', platform: 'Instagram', status: 'active', country: 'US', budget: 50000, reach: 1200000, impressions: 5400000, clicks: 82000, conversions: 1240, cost_per_click: 0.61, cost_per_conversion: 40.32 },
-      { name: 'Autumn Style Collection', platform: 'Instagram', status: 'active', country: 'US', budget: 65000, reach: 1800000, impressions: 7200000, clicks: 108000, conversions: 1620, cost_per_click: 0.60, cost_per_conversion: 40.12 },
-      { name: 'Beauty Product Launch', platform: 'Instagram', status: 'active', country: 'US', budget: 40000, reach: 950000, impressions: 3800000, clicks: 76000, conversions: 912, cost_per_click: 0.53, cost_per_conversion: 43.86 },
-      
-      { name: 'Tech Product Launch', platform: 'LinkedIn', status: 'active', country: 'US', budget: 75000, reach: 850000, impressions: 2550000, clicks: 51000, conversions: 765, cost_per_click: 1.47, cost_per_conversion: 98.04 },
-      { name: 'B2B Software Demo', platform: 'LinkedIn', status: 'active', country: 'US', budget: 90000, reach: 1100000, impressions: 3300000, clicks: 66000, conversions: 990, cost_per_click: 1.36, cost_per_conversion: 90.91 },
-      
-      { name: 'Fashion in Canada', platform: 'Instagram', status: 'active', country: 'Canada', budget: 35000, reach: 800000, impressions: 3200000, clicks: 64000, conversions: 960, cost_per_click: 0.55, cost_per_conversion: 36.46 },
-      { name: 'Tech in Canada', platform: 'LinkedIn', status: 'active', country: 'Canada', budget: 60000, reach: 650000, impressions: 1950000, clicks: 39000, conversions: 585, cost_per_click: 1.54, cost_per_conversion: 102.56 },
-      
-      { name: 'German Fashion', platform: 'Instagram', status: 'active', country: 'Germany', budget: 45000, reach: 1000000, impressions: 4000000, clicks: 80000, conversions: 1200, cost_per_click: 0.56, cost_per_conversion: 37.50 },
-      { name: 'German B2B', platform: 'LinkedIn', status: 'active', country: 'Germany', budget: 70000, reach: 750000, impressions: 2250000, clicks: 45000, conversions: 675, cost_per_click: 1.56, cost_per_conversion: 103.70 },
-      
-      { name: 'Viral Dance Challenge', platform: 'TikTok', status: 'active', country: 'US', budget: 30000, reach: 2100000, impressions: 8400000, clicks: 168000, conversions: 1260, cost_per_click: 0.18, cost_per_conversion: 23.81 },
-      { name: 'Comedy Content Series', platform: 'TikTok', status: 'active', country: 'US', budget: 25000, reach: 1700000, impressions: 6800000, clicks: 136000, conversions: 1020, cost_per_click: 0.18, cost_per_conversion: 24.51 },
-
-      { name: 'Facebook Fashion Promo', platform: 'Facebook', status: 'active', country: 'US', budget: 45000, reach: 1500000, impressions: 6000000, clicks: 90000, conversions: 1350, cost_per_click: 0.50, cost_per_conversion: 33.33 },
-      { name: 'Facebook Tech Webinar', platform: 'Facebook', status: 'active', country: 'US', budget: 60000, reach: 950000, impressions: 2850000, clicks: 57000, conversions: 855, cost_per_click: 1.05, cost_per_conversion: 70.18 },
-    ];
-
-    for (const campaign of campaigns) {
-      await tursoClient.execute(
-        `INSERT INTO campaigns (name, platform, status, country, budget, reach, impressions, clicks, conversions, cost_per_click, cost_per_conversion) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [campaign.name, campaign.platform, campaign.status, campaign.country, campaign.budget, campaign.reach, campaign.impressions, campaign.clicks, campaign.conversions, campaign.cost_per_click, campaign.cost_per_conversion]
-      );
-    }
-
-    // Seed demographics data
-    const demographics = [
-      // Instagram Demographics
-      { platform: 'Instagram', age_group: '18-24', gender: 'Female', location: 'US', percentage: 35.2, total_users: 84480 },
-      { platform: 'Instagram', age_group: '18-24', gender: 'Male', location: 'US', percentage: 28.1, total_users: 67440 },
-      { platform: 'Instagram', age_group: '25-34', gender: 'Female', location: 'US', percentage: 28.7, total_users: 68880 },
-      { platform: 'Instagram', age_group: '25-34', gender: 'Male', location: 'US', percentage: 22.3, total_users: 53520 },
-      { platform: 'Instagram', age_group: '35-44', gender: 'Female', location: 'US', percentage: 18.5, total_users: 44400 },
-      { platform: 'Instagram', age_group: '35-44', gender: 'Male', location: 'US', percentage: 15.2, total_users: 36480 },
-      
-      // LinkedIn Demographics
-      { platform: 'LinkedIn', age_group: '25-34', gender: 'Male', location: 'US', percentage: 42.1, total_users: 101040 },
-      { platform: 'LinkedIn', age_group: '25-34', gender: 'Female', location: 'US', percentage: 38.4, total_users: 92160 },
-      { platform: 'LinkedIn', age_group: '35-44', gender: 'Male', location: 'US', percentage: 32.8, total_users: 78720 },
-      { platform: 'LinkedIn', age_group: '35-44', gender: 'Female', location: 'US', percentage: 28.9, total_users: 69360 },
-      { platform: 'LinkedIn', age_group: '45-54', gender: 'Male', location: 'US', percentage: 25.6, total_users: 61440 },
-      { platform: 'LinkedIn', age_group: '45-54', gender: 'Female', location: 'US', percentage: 22.3, total_users: 53520 },
-      
-      // TikTok Demographics
-      { platform: 'TikTok', age_group: '18-24', gender: 'Female', location: 'US', percentage: 48.9, total_users: 117360 },
-      { platform: 'TikTok', age_group: '18-24', gender: 'Male', location: 'US', percentage: 41.2, total_users: 98880 },
-      { platform: 'TikTok', age_group: '25-34', gender: 'Female', location: 'US', percentage: 32.1, total_users: 77040 },
-      { platform: 'TikTok', age_group: '25-34', gender: 'Male', location: 'US', percentage: 28.7, total_users: 68880 },
-
-      // Facebook Demographics
-      { platform: 'Facebook', age_group: '25-34', gender: 'Female', location: 'US', percentage: 33.1, total_users: 79440 },
-      { platform: 'Facebook', age_group: '25-34', gender: 'Male', location: 'US', percentage: 29.8, total_users: 71520 },
-      { platform: 'Facebook', age_group: '35-44', gender: 'Female', location: 'US', percentage: 24.5, total_users: 58800 },
-      { platform: 'Facebook', age_group: '35-44', gender: 'Male', location: 'US', percentage: 21.2, total_users: 50880 },
-    ];
 
     for (const demo of demographics) {
       await tursoClient.execute(
-        `INSERT INTO demographics (platform, age_group, gender, location, percentage, total_users) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [demo.platform, demo.age_group, demo.gender, demo.location, demo.percentage, demo.total_users]
+        `INSERT INTO demographics (platform, label, location, male, female) VALUES (?, ?, ?, ?, ?)`,
+        [demo.platform, demo.label, demo.location, demo.male, demo.female]
       );
     }
+    console.log(`- ${demographics.length} demographic records added`);
 
-    // Seed user interests data
-    const interests = [
-      // Instagram Interests
-      { platform: 'Instagram', interest_category: 'Lifestyle', interest_name: 'Fashion', percentage: 85.0, total_users: 204000 },
-      { platform: 'Instagram', interest_category: 'Lifestyle', interest_name: 'Beauty', percentage: 72.0, total_users: 172800 },
-      { platform: 'Instagram', interest_category: 'Lifestyle', interest_name: 'Travel', percentage: 68.0, total_users: 163200 },
-      { platform: 'Instagram', interest_category: 'Sports', interest_name: 'Fitness', percentage: 52.0, total_users: 124800 },
-      { platform: 'Instagram', interest_category: 'Food', interest_name: 'Cooking', percentage: 45.0, total_users: 108000 },
-      
-      // LinkedIn Interests  
-      { platform: 'LinkedIn', interest_category: 'Technology', interest_name: 'Tech', percentage: 78.0, total_users: 187200 },
-      { platform: 'LinkedIn', interest_category: 'Business', interest_name: 'Entrepreneurship', percentage: 65.0, total_users: 156000 },
-      { platform: 'LinkedIn', interest_category: 'Business', interest_name: 'Marketing', percentage: 58.0, total_users: 139200 },
-      { platform: 'LinkedIn', interest_category: 'Professional', interest_name: 'Leadership', percentage: 48.0, total_users: 115200 },
-      { platform: 'LinkedIn', interest_category: 'Finance', interest_name: 'Investing', percentage: 42.0, total_users: 100800 },
-      
-      // TikTok Interests
-      { platform: 'TikTok', interest_category: 'Entertainment', interest_name: 'Comedy', percentage: 82.0, total_users: 196800 },
-      { platform: 'TikTok', interest_category: 'Entertainment', interest_name: 'Dance', percentage: 75.0, total_users: 180000 },
-      { platform: 'TikTok', interest_category: 'Entertainment', interest_name: 'Music', percentage: 68.0, total_users: 163200 },
-      { platform: 'TikTok', interest_category: 'Lifestyle', interest_name: 'DIY', percentage: 48.0, total_users: 115200 },
-      { platform: 'TikTok', interest_category: 'Education', interest_name: 'Life Hacks', percentage: 38.0, total_users: 91200 },
-
-      // Facebook Interests
-      { platform: 'Facebook', interest_category: 'Family', interest_name: 'Parenting', percentage: 62.0, total_users: 148800 },
-      { platform: 'Facebook', interest_category: 'Community', interest_name: 'Local Events', percentage: 54.0, total_users: 129600 },
-      { platform: 'Facebook', interest_category: 'Business', interest_name: 'Small Business', percentage: 47.0, total_users: 112800 },
-      { platform: 'Facebook', interest_category: 'News', interest_name: 'Current Events', percentage: 41.0, total_users: 98400 },
-      { platform: 'Facebook', interest_category: 'Hobbies', interest_name: 'Crafts', percentage: 35.0, total_users: 84000 },
-    ];
+    // Seed User Interests
+    console.log('Seeding user interests...');
+    const interests = [];
+    for (const platform of platforms) {
+        for (const country of countries) {
+            const platformInterests = interestCategories[platform];
+            for (const interestName in platformInterests) {
+                interests.push({
+                    platform,
+                    country,
+                    interest_category: 'General',
+                    interest_name: interestName,
+                    percentage: getRandomInt(20, 90),
+                    total_users: getRandomInt(20000, 200000)
+                });
+            }
+        }
+    }
 
     for (const interest of interests) {
       await tursoClient.execute(
-        `INSERT INTO user_interests (platform, interest_category, interest_name, percentage, total_users) 
-         VALUES (?, ?, ?, ?, ?)`,
-        [interest.platform, interest.interest_category, interest.interest_name, interest.percentage, interest.total_users]
+        `INSERT INTO user_interests (platform, interest_category, interest_name, percentage, total_users, country) VALUES (?, ?, ?, ?, ?, ?)`,
+        [interest.platform, interest.interest_category, interest.interest_name, interest.percentage, interest.total_users, interest.country]
       );
     }
+    console.log(`- ${interests.length} interest records added`);
 
     console.log('Database seeded successfully!');
-    console.log(`- ${influencers.length} influencers added`);
-    console.log(`- ${campaigns.length} campaigns added`);
-    console.log(`- ${demographics.length} demographic records added`);
-    console.log(`- ${interests.length} interest records added`);
 
   } catch (error) {
     console.error('Error seeding database:', error);
     throw error;
   } finally {
-    await tursoClient.close();
+    if (tursoClient) {
+        tursoClient.close();
+    }
   }
 }
 
