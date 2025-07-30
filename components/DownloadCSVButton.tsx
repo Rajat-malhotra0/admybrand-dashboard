@@ -23,7 +23,7 @@ const DownloadCSVButton: React.FC<DownloadCSVButtonProps> = ({
   const { data: platformData, isLoading: platformLoading } = usePlatformData(
     platform,
     useBackend,
-    country
+    country || undefined
   );
   const { countries: countriesWithData, isLoading: countriesLoading } = useCountriesWithData();
 
@@ -75,16 +75,16 @@ const DownloadCSVButton: React.FC<DownloadCSVButtonProps> = ({
         csvContent += convertToCSV(platformData.campaignStats, statsHeaders) + '\n\n';
       }
 
-      // Influencers Data
-      if (platformData.influencerData && platformData.influencerData.length > 0) {
-        csvContent += 'Influencer Data\n';
-        const influencerHeaders = ['ID', 'Name', 'Projects', 'Followers', 'Platform', 'Country'];
-        const influencerDataWithMeta = platformData.influencerData.map((inf: any) => ({
-          ...inf,
+      // Lead Data
+      if (platformData.leadData && platformData.leadData.length > 0) {
+        csvContent += 'Lead Data\n';
+        const leadHeaders = ['ID', 'Name', 'Projects', 'Followers', 'Platform', 'Country'];
+        const leadDataWithMeta = platformData.leadData.map((lead: any) => ({
+          ...lead,
           platform: platform,
           country: country || 'Global'
         }));
-        csvContent += convertToCSV(influencerDataWithMeta, influencerHeaders) + '\n\n';
+        csvContent += convertToCSV(leadDataWithMeta, leadHeaders) + '\n\n';
       }
 
       // Demographics Data

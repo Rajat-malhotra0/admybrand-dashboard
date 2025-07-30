@@ -19,7 +19,7 @@ interface CampaignStat {
   title: string;
   value: string;
   icon: string;
-  description: string;
+  description?: string;
 }
 
 interface CampaignPerformanceWidgetProps {

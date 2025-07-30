@@ -8,7 +8,7 @@ import CampaignReach from "@/components/CampaignReach";
 import StatCard from "@/components/StatCard";
 import AudienceAgeGenderChart from "@/components/AudienceAgeGenderChart";
 import RadarChart from "@/components/charts/RadarChart";
-import InfluencerTable from "@/components/InfluencerTable";
+import LeadTable from "@/components/LeadTable";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { TrendingUp, Users, Eye, Target, ThumbsUp, MessageSquare, Share, BarChart2 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -146,7 +146,6 @@ export default function DashboardWithApi() {
                   title={stat.title}
                   value={stat.value}
                   icon={getIconComponent(stat.icon)}
-                  description={stat.description}
                 />
               </div>
             )) || []}
@@ -169,8 +168,8 @@ export default function DashboardWithApi() {
 
           {/* Bottom Row - Three Components */}
           <div className="col-span-4">
-            <InfluencerTable 
-              influencers={data.influencerData || []} 
+            <LeadTable 
+              leads={data.leadData || []}
               itemsPerPage={5}
             />
           </div>

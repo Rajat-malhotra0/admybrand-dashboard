@@ -39,7 +39,7 @@ export default function TestApiConnection() {
           <summary className="cursor-pointer text-green-700">Data Summary</summary>
           <div className="mt-2 text-sm text-green-600 space-y-1">
             <p>Campaign Stats: {data.campaignStats?.length || 0} items</p>
-            <p>Influencers: {data.influencerData?.length || 0} items</p>
+            <p>Leads: {data.leadData?.length || 0} items</p>
             <p>Demographics: {data.demographicsData?.length || 0} items</p>
             <p>Interests: {data.interestsData?.length || 0} items</p>
           </div>
