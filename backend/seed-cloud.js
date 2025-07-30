@@ -73,11 +73,13 @@ async function seedCloudDatabase() {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`,
 
-      `CREATE TABLE IF NOT EXISTS interests (
+      `CREATE TABLE IF NOT EXISTS user_interests (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        label TEXT NOT NULL,
-        value INTEGER NOT NULL DEFAULT 0,
-        platform TEXT DEFAULT 'global',
+        platform TEXT NOT NULL,
+        interest_category TEXT NOT NULL,
+        interest_name TEXT NOT NULL,
+        percentage REAL NOT NULL DEFAULT 0.0,
+        total_users INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`,
@@ -107,7 +109,7 @@ async function seedCloudDatabase() {
 
     // Clear existing data
     console.log('🧹 Clearing existing data...');
-    const tablesToClear = ['campaign_stats', 'leads', 'demographics', 'interests', 'campaigns', 'countries'];
+    const tablesToClear = ['campaign_stats', 'leads', 'demographics', 'user_interests', 'campaigns', 'countries'];
     for (const table of tablesToClear) {
       await client.execute(`DELETE FROM ${table}`);
     }
@@ -263,46 +265,46 @@ async function seedCloudDatabase() {
     // Interest categories for all platforms
     const interests = [
       // Global Interests
-      { label: "Technology", value: 89, platform: "global" },
-      { label: "Entertainment", value: 85, platform: "global" },
-      { label: "Fashion", value: 82, platform: "global" },
-      { label: "Travel", value: 78, platform: "global" },
-      { label: "Food", value: 75, platform: "global" },
-      { label: "Sports", value: 71, platform: "global" },
-      { label: "Music", value: 84, platform: "global" },
-      { label: "Gaming", value: 67, platform: "global" },
+      { label: "Technology", value: 83, platform: "global" },
+      { label: "Entertainment", value: 78, platform: "global" },
+      { label: "Fashion", value: 81, platform: "global" },
+      { label: "Travel", value: 79, platform: "global" },
+      { label: "Food", value: 84, platform: "global" },
+      { label: "Sports", value: 76, platform: "global" },
+      { label: "Music", value: 82, platform: "global" },
+      { label: "Gaming", value: 77, platform: "global" },
       
       // LinkedIn Interests
-      { label: "Business Strategy", value: 92, platform: "LinkedIn" },
-      { label: "Professional Development", value: 88, platform: "LinkedIn" },
-      { label: "Technology Trends", value: 85, platform: "LinkedIn" },
-      { label: "Leadership", value: 82, platform: "LinkedIn" },
-      { label: "Marketing & Sales", value: 78, platform: "LinkedIn" },
-      { label: "Finance & Economics", value: 75, platform: "LinkedIn" },
-      { label: "Industry News", value: 73, platform: "LinkedIn" },
-      { label: "Career Growth", value: 87, platform: "LinkedIn" },
+      { label: "Business Strategy", value: 58, platform: "LinkedIn" },
+      { label: "Professional Development", value: 53, platform: "LinkedIn" },
+      { label: "Technology Trends", value: 56, platform: "LinkedIn" },
+      { label: "Leadership", value: 54, platform: "LinkedIn" },
+      { label: "Marketing & Sales", value: 59, platform: "LinkedIn" },
+      { label: "Finance & Economics", value: 52, platform: "LinkedIn" },
+      { label: "Industry News", value: 57, platform: "LinkedIn" },
+      { label: "Career Growth", value: 55, platform: "LinkedIn" },
       
       // Instagram Interests
-      { label: "Fashion & Style", value: 94, platform: "Instagram" },
-      { label: "Beauty & Makeup", value: 90, platform: "Instagram" },
-      { label: "Lifestyle", value: 87, platform: "Instagram" },
-      { label: "Travel & Adventure", value: 84, platform: "Instagram" },
-      { label: "Food & Dining", value: 81, platform: "Instagram" },
-      { label: "Fitness & Health", value: 78, platform: "Instagram" },
-      { label: "Art & Photography", value: 75, platform: "Instagram" },
-      { label: "Home Decor", value: 72, platform: "Instagram" },
+      { label: "Fashion & Style", value: 78, platform: "Instagram" },
+      { label: "Beauty & Makeup", value: 73, platform: "Instagram" },
+      { label: "Lifestyle", value: 76, platform: "Instagram" },
+      { label: "Travel & Adventure", value: 74, platform: "Instagram" },
+      { label: "Food & Dining", value: 79, platform: "Instagram" },
+      { label: "Fitness & Health", value: 72, platform: "Instagram" },
+      { label: "Art & Photography", value: 77, platform: "Instagram" },
+      { label: "Home Decor", value: 75, platform: "Instagram" },
       
       // Facebook Interests
-      { label: "Family & Parenting", value: 88, platform: "Facebook" },
-      { label: "Local Community", value: 85, platform: "Facebook" },
-      { label: "News & Current Events", value: 82, platform: "Facebook" },
-      { label: "Entertainment & Movies", value: 79, platform: "Facebook" },
-      { label: "Health & Wellness", value: 76, platform: "Facebook" },
-      { label: "Hobbies & Crafts", value: 73, platform: "Facebook" },
-      { label: "Food & Cooking", value: 70, platform: "Facebook" },
-      { label: "Shopping & Deals", value: 67, platform: "Facebook" },
-      { label: "Gaming & Apps", value: 64, platform: "Facebook" },
-      { label: "Sports & Recreation", value: 61, platform: "Facebook" },
+      { label: "Family & Parenting", value: 25, platform: "Facebook" },
+      { label: "Local Community", value: 21, platform: "Facebook" },
+      { label: "News & Current Events", value: 24, platform: "Facebook" },
+      { label: "Entertainment & Movies", value: 22, platform: "Facebook" },
+      { label: "Health & Wellness", value: 26, platform: "Facebook" },
+      { label: "Hobbies & Crafts", value: 20, platform: "Facebook" },
+      { label: "Food & Cooking", value: 28, platform: "Facebook" },
+      { label: "Shopping & Deals", value: 19, platform: "Facebook" },
+      { label: "Gaming & Apps", value: 23, platform: "Facebook" },
+      { label: "Sports & Recreation", value: 27, platform: "Facebook" },
     ];
 
     // Comprehensive campaigns data
@@ -383,8 +385,8 @@ async function seedCloudDatabase() {
     console.log('📝 Seeding interests...');
     for (const interest of interests) {
       await client.execute(
-        'INSERT INTO interests (label, value, platform) VALUES (?, ?, ?)',
-        [interest.label, interest.value || 0, interest.platform || 'global']
+        'INSERT INTO user_interests (platform, interest_category, interest_name, percentage, total_users) VALUES (?, ?, ?, ?, ?)',
+        [interest.platform, interest.label, interest.label, interest.value || 0, Math.floor(interest.value * 1000)]
       );
     }
     console.log(`✅ Seeded ${interests.length} interests`);
@@ -414,7 +416,7 @@ async function seedCloudDatabase() {
 
     // Verify data counts
     console.log('\n📊 Verifying data in cloud database...');
-    const tablesToCount = ['countries', 'campaign_stats', 'leads', 'demographics', 'interests', 'campaigns'];
+    const tablesToCount = ['countries', 'campaign_stats', 'leads', 'demographics', 'user_interests', 'campaigns'];
     const counts = {};
     
     for (const table of tablesToCount) {
