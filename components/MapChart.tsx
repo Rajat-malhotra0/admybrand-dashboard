@@ -23,10 +23,20 @@ interface MapChartProps {
 
 // Sample country data with user counts for choropleth visualization
 const countryData: CountryData[] = [
-  { id: "CAN", name: "Canada", userCount: 87142 },
-  { id: "DEU", name: "Germany", userCount: 90069 },
-  { id: "IDN", name: "Indonesia", userCount: 120904 },
-  { id: "URY", name: "Uruguay", userCount: 85321 },
+  { id: "USA", name: "United States", userCount: 45287000 },
+  { id: "CAN", name: "Canada", userCount: 12741000 },
+  { id: "GBR", name: "United Kingdom", userCount: 18569000 },
+  { id: "DEU", name: "Germany", userCount: 23690000 },
+  { id: "FRA", name: "France", userCount: 19874000 },
+  { id: "ITA", name: "Italy", userCount: 16432000 },
+  { id: "ESP", name: "Spain", userCount: 14287000 },
+  { id: "AUS", name: "Australia", userCount: 8963000 },
+  { id: "JPN", name: "Japan", userCount: 31574000 },
+  { id: "KOR", name: "South Korea", userCount: 18964000 },
+  { id: "IND", name: "India", userCount: 98476000 },
+  { id: "BRA", name: "Brazil", userCount: 52847000 },
+  { id: "MEX", name: "Mexico", userCount: 28475000 },
+  { id: "ARG", name: "Argentina", userCount: 14758000 },
 ];
 
 
@@ -226,25 +236,34 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
         const hoverColor = d3.color(baseColor)?.darker(0.2)?.toString() || baseColor;
         d3.select(this).transition().duration(200).attr("fill", hoverColor);
         
-        // Show tooltip
+        // Show tooltip with container-relative positioning
         const tooltipContent = hasData 
           ? `${countryName}\nHas campaign data\nISO: ${isoCode}`
           : `${countryName}\nNo campaign data\nISO: ${isoCode}`;
         
-        setTooltip({
-          x: event.clientX,
-          y: event.clientY,
-          content: tooltipContent
-        });
+        // Get container position for relative positioning
+        const container = containerRef.current;
+        if (container) {
+          const rect = container.getBoundingClientRect();
+          setTooltip({
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top,
+            content: tooltipContent
+          });
+        }
       })
       .on("mousemove", function (event, d: any) {
         // Update tooltip position
         if (tooltip) {
-          setTooltip(prev => prev ? {
-            ...prev,
-            x: event.clientX,
-            y: event.clientY
-          } : null);
+          const container = containerRef.current;
+          if (container) {
+            const rect = container.getBoundingClientRect();
+            setTooltip(prev => prev ? {
+              ...prev,
+              x: event.clientX - rect.left,
+              y: event.clientY - rect.top
+            } : null);
+          }
         }
       })
       .on("mouseleave", function (event, d: any) {
@@ -309,7 +328,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">ADmyBRAND Insights</h2>
       </div>
-      <div className={`relative flex-1 min-h-[400px] border rounded-md overflow-hidden ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
+      <div ref={containerRef} className={`relative flex-1 min-h-[400px] border rounded-md overflow-hidden ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
         {/* Campaign Reach Data Overlay - Left Side - Hidden on mobile */}
         <div 
           className="absolute top-0 left-0 w-32 h-full bg-surface-elevated/95 backdrop-blur-sm border-r border-border z-10 flex-col justify-center space-y-3 p-3 hidden md:flex"
