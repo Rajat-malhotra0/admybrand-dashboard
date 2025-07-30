@@ -138,7 +138,7 @@ export const handler = async (event) => {
     } else {
       interestsQuery = 'SELECT interest_name as label, AVG(percentage) as value FROM user_interests GROUP BY interest_name';
     }
-    interestsQuery += ' ORDER BY value DESC';
+    interestsQuery += ' ORDER BY value DESC LIMIT 8';
     
     const interestsResult = await client.execute(interestsQuery, interestsParams);
     const interestsData = interestsResult.rows.map((row) => ({
