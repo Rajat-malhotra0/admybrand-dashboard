@@ -80,34 +80,59 @@ const demographicSchema = z.object({
 
 // Generic file upload handler
 router.post('/file', upload.single('file'), async (req, res) => {
+  console.log('=== FILE UPLOAD REQUEST RECEIVED ===');
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  console.log('File info:', req.file ? {
+    fieldname: req.file.fieldname,
+    originalname: req.file.originalname,
+    encoding: req.file.encoding,
+    mimetype: req.file.mimetype,
+    size: req.file.size,
+    path: req.file.path
+  } : 'No file');
+  
   try {
     if (!req.file) {
+      console.log('ERROR: No file uploaded');
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const { dataType } = req.body;
+    const { dataType, platform } = req.body;
+    console.log('Data type:', dataType, 'Platform:', platform);
+    
     if (!dataType) {
+      console.log('ERROR: Data type not specified');
       return res.status(400).json({ error: 'Data type must be specified' });
     }
 
     const filePath = req.file.path;
     const fileExtension = path.extname(req.file.originalname).toLowerCase();
+    console.log('File path:', filePath, 'Extension:', fileExtension);
     
     let processedCount = 0;
     let errors = [];
 
+    console.log('Processing file...');
     if (fileExtension === '.csv') {
       processedCount = await processCSVFile(filePath, dataType, errors);
     } else if (fileExtension === '.json') {
       processedCount = await processJSONFile(filePath, dataType, errors);
     } else {
+      console.log('ERROR: Unsupported file format:', fileExtension);
       return res.status(400).json({ error: 'Unsupported file format' });
     }
 
+    console.log('Processing complete. Processed:', processedCount, 'Errors:', errors.length);
+
     // Clean up uploaded file
-    fs.unlinkSync(filePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log('Cleaned up uploaded file');
+    }
 
     if (errors.length > 0) {
+      console.log('Partial success response sent');
       return res.status(207).json({
         message: `Partial success: ${processedCount} records processed`,
         processed: processedCount,
@@ -115,17 +140,21 @@ router.post('/file', upload.single('file'), async (req, res) => {
       });
     }
 
+    console.log('Success response sent');
     res.status(201).json({
       message: `Successfully processed ${processedCount} records`,
       processed: processedCount
     });
 
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('=== UPLOAD ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     
     // Clean up file if it exists
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
+      console.log('Cleaned up file after error');
     }
     
     res.status(500).json({ 
@@ -205,18 +234,25 @@ async function processJSONFile(filePath, dataType, errors) {
 
 // Insert data based on type with validation
 async function insertDataByType(client, dataType, data) {
+  console.log('=== INSERTING DATA ===');
+  console.log('Data type:', dataType);
+  console.log('Raw data:', data);
+  
   let validatedData;
   let sql;
   let params;
 
   switch (dataType.toLowerCase()) {
     case 'influencers':
+      console.log('Processing influencer data...');
       validatedData = influencerSchema.parse({
         ...data,
         projects: parseInt(data.projects) || 0,
         engagement_rate: parseFloat(data.engagement_rate) || 0,
         verified: data.verified === 'true' || data.verified === true
       });
+      
+      console.log('Validated data:', validatedData);
       
       sql = `INSERT OR REPLACE INTO influencers 
              (name, projects, followers, platform, email, phone, location, category, engagement_rate, verified)
@@ -236,6 +272,7 @@ async function insertDataByType(client, dataType, data) {
       break;
 
     case 'campaigns':
+      console.log('Processing campaign data...');
       validatedData = campaignSchema.parse({
         ...data,
         budget: parseFloat(data.budget) || null,
@@ -244,6 +281,8 @@ async function insertDataByType(client, dataType, data) {
         clicks: parseInt(data.clicks) || 0,
         conversions: parseInt(data.conversions) || 0
       });
+      
+      console.log('Validated data:', validatedData);
       
       sql = `INSERT OR REPLACE INTO campaigns 
              (name, platform, status, start_date, end_date, budget, reach, impressions, clicks, conversions)
@@ -263,11 +302,14 @@ async function insertDataByType(client, dataType, data) {
       break;
 
     case 'demographics':
+      console.log('Processing demographics data...');
       validatedData = demographicSchema.parse({
         ...data,
         percentage: parseFloat(data.percentage) || 0,
         total_users: parseInt(data.total_users) || 0
       });
+      
+      console.log('Validated data:', validatedData);
       
       sql = `INSERT OR REPLACE INTO demographics 
              (platform, age_group, gender, location, percentage, total_users)
@@ -286,7 +328,19 @@ async function insertDataByType(client, dataType, data) {
       throw new Error(`Unsupported data type: ${dataType}`);
   }
 
-  await client.execute(sql, params);
+  console.log('SQL query:', sql);
+  console.log('Parameters:', params);
+  
+  try {
+    const result = await client.execute(sql, params);
+    console.log('Database execute result:', result);
+    console.log('Rows affected:', result.rowsAffected);
+    console.log('Last insert ID:', result.lastInsertRowid);
+    return result;
+  } catch (dbError) {
+    console.error('DATABASE ERROR:', dbError);
+    throw dbError;
+  }
 }
 
 // Bulk data upload endpoint

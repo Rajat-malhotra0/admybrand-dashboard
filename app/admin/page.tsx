@@ -122,7 +122,8 @@ export default function AdminPage() {
         await dashboardApi.createInfluencer({
           name: newItem.name,
           projects: newItem.projects,
-          followers: newItem.followers
+          followers: newItem.followers,
+          platform: selectedPlatform
         });
         // Refresh platform data to get updated list
         refresh();

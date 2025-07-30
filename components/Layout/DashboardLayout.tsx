@@ -7,12 +7,14 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
   sidebar: React.ReactNode;
   sidebarClassName?: string;
+  reportRef?: React.RefObject<HTMLDivElement>;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   sidebar,
   sidebarClassName = "",
+  reportRef,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -27,10 +29,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       )}
 
       {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-header bg-white border-b border-gray-200 px-4 py-3">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-header bg-surface-elevated border-b border-border px-4 py-3">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-md text-text-muted hover:text-text-primary hover:bg-surface-elevated transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
@@ -50,12 +52,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <div className="lg:hidden absolute top-4 right-4 z-10">
           <button
             onClick={() => setSidebarOpen(false)}
-            className="p-2 rounded-md text-white hover:bg-slate-700 transition-colors"
+            className="p-2 rounded-md text-white hover:bg-surface-elevated transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        {sidebar}
+        {React.isValidElement(sidebar) ? React.cloneElement(sidebar as React.ReactElement<any>, { reportRef }) : sidebar}
       </div>
 
       {/* Main content area */}

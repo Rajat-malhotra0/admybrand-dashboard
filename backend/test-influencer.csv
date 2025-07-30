@@ -1,0 +1,3 @@
+name,projects,followers,platform,email,phone,location,category,engagement_rate,verified
+"Test User",5,"100K","Instagram","test@example.com","+1234567890","New York","Fashion",5.2,true
+"Test User 2",3,"50K","LinkedIn","test2@example.com","+0987654321","Los Angeles","Tech",3.8,false

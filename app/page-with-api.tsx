@@ -22,26 +22,26 @@ const getIconComponent = (iconName: string) => {
   switch (iconName) {
     case "TrendingUp":
     case "trending-up":
-      return <TrendingUp />;
+      return <TrendingUp className="text-primary" />;
     case "Users":
     case "users":
-      return <Users />;
+      return <Users className="text-primary" />;
     case "Eye":
     case "eye":
-      return <Eye />;
+      return <Eye className="text-primary" />;
     case "Target":
     case "target":
-      return <Target />;
+      return <Target className="text-primary" />;
     case "thumbs-up":
-      return <ThumbsUp />;
+      return <ThumbsUp className="text-primary" />;
     case "message-square":
-      return <MessageSquare />;
+      return <MessageSquare className="text-primary" />;
     case "share":
-      return <Share />;
+      return <Share className="text-primary" />;
     case "bar-chart-2":
-      return <BarChart2 />;
+      return <BarChart2 className="text-primary" />;
     default:
-      return <TrendingUp />;
+      return <TrendingUp className="text-primary" />;
   }
 };
 

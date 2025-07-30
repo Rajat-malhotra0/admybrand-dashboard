@@ -42,16 +42,16 @@ const StatCard: React.FC<StatCardProps> = ({
             {icon && (
               <div className={`
                 ${isMobile ? 'w-6 h-6' : 'w-8 h-8'} 
-                bg-orange-100 rounded-lg 
+                bg-orange-100 dark:bg-orange-900/30 rounded-lg
                 flex items-center justify-center flex-shrink-0
               `}>
-                <div className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} text-orange-600`}>
+                <div className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} text-orange-600 dark:text-orange-400`}>
                   {icon}
                 </div>
               </div>
             )}
           </div>
-          <div className="text-gray-400">
+          <div className="text-text-muted">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="1"/>
               <circle cx="12" cy="5" r="1"/>
@@ -63,7 +63,7 @@ const StatCard: React.FC<StatCardProps> = ({
         {/* Title */}
         <p className={`
           ${isMobile ? 'text-xs' : 'text-sm'} 
-          text-gray-500 font-medium text-responsive-sm
+          text-text-muted font-medium text-responsive-sm
         `}>
           {title}
         </p>
@@ -71,7 +71,7 @@ const StatCard: React.FC<StatCardProps> = ({
         {/* Value */}
         <p className={`
           ${isMobile ? 'text-xl' : 'text-2xl'} 
-          font-bold text-gray-900 mono text-responsive-xl
+          font-bold text-text-primary mono text-responsive-xl
         `}>
           {formatValue(value)}
         </p>
@@ -80,7 +80,7 @@ const StatCard: React.FC<StatCardProps> = ({
         {description && (
           <p className={`
             ${isMobile ? 'text-xs' : 'text-sm'} 
-            text-gray-400 text-responsive-sm
+            text-text-muted text-responsive-sm
           `}>
             {description}
           </p>
@@ -102,7 +102,7 @@ const StatCard: React.FC<StatCardProps> = ({
               {change.type === "increase" ? "+" : "-"}
               {change.value}%
             </span>
-            <span className="text-sm text-gray-400 ml-1">
+            <span className="text-sm text-text-muted ml-1">
               vs last month
             </span>
           </div>

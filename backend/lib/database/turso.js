@@ -15,10 +15,12 @@ function getTursoClient() {
         throw new Error('TURSO_AUTH_TOKEN environment variable is not set');
       }
 
+      console.log('🌐 Connecting to Turso cloud database:', process.env.TURSO_DATABASE_URL);
       client = createClient({
         url: process.env.TURSO_DATABASE_URL,
         authToken: process.env.TURSO_AUTH_TOKEN,
       });
+      console.log('✅ Turso client created successfully');
     }
   }
   

@@ -11,19 +11,23 @@ import {
   Settings,
   UserCheck,
   Crown,
-  Search,
   Shield,
   Database,
 } from "lucide-react";
 import { useScreenSize } from "@/hooks/useScreenSize";
+import DownloadPDFButton from "@/components/DownloadPDFButton";
 
 interface SidebarProps {
   className?: string;
   isOpen?: boolean;
   onClose?: () => void;
+  reportRef?: React.RefObject<HTMLDivElement>;
+  platform?: string;
+  country?: string | null;
+  disabled?: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, country, disabled = false }) => {
   const pathname = usePathname();
   
   const navigationItems = [
@@ -78,9 +82,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
   ];
   
   return (
-    <div className={`flex flex-col bg-slate-900 text-white h-full w-full ${className}`}>
+    <div className={`flex flex-col bg-bg-sidebar text-text-white h-full w-full ${className}`}>
       {/* User Profile Section */}
-      <div className="px-3 lg:px-4 py-4 lg:py-6 border-b border-slate-700">
+      <div className="px-3 lg:px-4 py-4 lg:py-6 border-b border-border">
         <div className="flex items-center space-x-2 lg:space-x-3">
           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs lg:text-sm">
             JL
@@ -96,25 +100,13 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
         </div>
       </div>
 
-      {/* Search Section */}
-      <div className="px-3 lg:px-4 py-3 lg:py-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 lg:w-4 lg:h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-8 lg:pl-10 pr-4 py-2 lg:py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-xs lg:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-          />
-        </div>
-      </div>
-
       {/* Navigation Section */}
       <div className="flex-1 px-3 lg:px-4 pb-3 lg:pb-4">
         <nav className="space-y-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
-            
+
             return (
               <Link
                 key={item.href}
@@ -137,6 +129,16 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
               </Link>
             );
           })}
+          
+          {/* Download PDF Button */}
+          {reportRef && platform && (
+            <DownloadPDFButton
+              reportRef={reportRef}
+              platform={platform}
+              country={country || null}
+              disabled={disabled}
+            />
+          )}
         </nav>
       </div>
 

@@ -1,6 +1,8 @@
 import useSWR from "swr";
 import { PlatformData } from "@/lib/api/types";
 
+const BASE_URL = 'http://localhost:5000/api';
+
 const fetcher = async (url: string): Promise<PlatformData> => {
   const response = await fetch(url);
   
@@ -22,21 +24,33 @@ export const usePlatformData = (platform: string, enabled: boolean = true, count
     if (country && country !== 'global') {
       params.set('country', country);
     }
-    swrKey = `/api/platform-data?${params.toString()}`;
+    swrKey = `${BASE_URL}/platform-data?${params.toString()}`;
+    console.log('SWR Key:', swrKey); // Debug: show URL being called
   }
-  // If enabled is false, swrKey remains null, disabling SWR completely
   
   const { data, error, isLoading, mutate } = useSWR<PlatformData>(
     swrKey,
     fetcher,
     {
-      refreshInterval: swrKey ? 60000 : 0, // Only refresh when there's a key
-      revalidateOnFocus: !!swrKey,
-      errorRetryCount: swrKey ? 2 : 0,
-      dedupingInterval: 10000,
+      refreshInterval: 0, // Disable automatic refresh
+      revalidateOnFocus: false, // Disable focus revalidation
+      revalidateOnReconnect: false, // Disable reconnect revalidation
+      revalidateOnMount: true, // Only revalidate on mount
+      errorRetryCount: 1, // Reduce retry attempts
+      dedupingInterval: 30000, // Increase deduping interval to 30 seconds
+      focusThrottleInterval: 5000, // Throttle focus events
+      loadingTimeout: 3000, // Set loading timeout
+      errorRetryInterval: 5000, // Increase retry interval
+      keepPreviousData: true, // Keep previous data while loading new data
       onError: (error) => {
         if (swrKey) {
           console.error(`Platform data fetch error for ${swrKey}:`, error);
+        }
+      },
+      onSuccess: (data) => {
+        // Reduce console logging
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Platform data loaded successfully');
         }
       },
     }

@@ -13,10 +13,11 @@ export const usePlatformDemographics = (platform: string) => {
     platform ? `platforms/${platform}/demographics` : null,
     fetcher,
     {
-      refreshInterval: 30000,
-      revalidateOnFocus: true,
+      refreshInterval: 0, // Disable automatic refresh
+      revalidateOnFocus: false, // Disable focus revalidation
+      revalidateOnReconnect: false, // Disable reconnect revalidation
       errorRetryCount: 3,
-      dedupingInterval: 5000,
+      dedupingInterval: 60000, // Increase deduping interval
       onError: (error) => {
         console.error(`Demographics fetch error for ${platform}:`, error);
       },

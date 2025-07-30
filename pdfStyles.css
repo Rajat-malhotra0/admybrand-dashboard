@@ -1,0 +1,173 @@
+/* PDF-friendly styles for business reports */
+/* Applied only when .print class is present or in print media */
+
+@media print, .print {
+  /* Reset and base styles */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Body and background */
+  body {
+    background: white !important;
+    color: #000 !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 20px !important;
+  }
+
+  /* Remove all shadows */
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+
+  /* Typography - Print-friendly fonts */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Times New Roman', Times, serif !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    margin-top: 1em !important;
+    margin-bottom: 0.5em !important;
+    page-break-after: avoid !important;
+  }
+
+  h1 { font-size: 18pt !important; }
+  h2 { font-size: 16pt !important; }
+  h3 { font-size: 14pt !important; }
+  h4 { font-size: 13pt !important; }
+  h5 { font-size: 12pt !important; }
+  h6 { font-size: 11pt !important; }
+
+  p, div, span, li {
+    font-family: 'Times New Roman', Times, serif !important;
+    color: #000 !important;
+    font-size: 12pt !important;
+  }
+
+  /* Tables */
+  table {
+    background: white !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+    margin: 1em 0 !important;
+    page-break-inside: avoid !important;
+  }
+
+  th, td {
+    background: white !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+    padding: 8px !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important;
+  }
+
+  th {
+    font-weight: bold !important;
+    background: #f5f5f5 !important;
+  }
+
+  /* Charts and SVG elements */
+  svg {
+    background: white !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Remove unnecessary elements for print */
+  .no-print,
+  .screen-only {
+    display: none !important;
+  }
+
+  /* Ensure good contrast */
+  .text-muted,
+  .text-secondary {
+    color: #333 !important;
+  }
+
+  /* Links */
+  a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+
+  /* Remove gradients and fancy backgrounds */
+  * {
+    background-image: none !important;
+    background-gradient: none !important;
+  }
+
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always !important;
+  }
+
+  .page-break-after {
+    page-break-after: always !important;
+  }
+
+  .page-break-inside-avoid {
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure content fits properly */
+  .container,
+  .content,
+  .main {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Button and form elements (if any) */
+  button,
+  input,
+  select,
+  textarea {
+    background: white !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+    font-family: 'Times New Roman', Times, serif !important;
+  }
+
+  /* Ensure proper spacing */
+  .chart-container,
+  .report-section {
+    margin: 1em 0 !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Hide scrollbars */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Ensure text is readable */
+  .text-white,
+  .text-light {
+    color: #000 !important;
+  }
+
+  /* Remove rounded corners for cleaner print appearance */
+  * {
+    border-radius: 0 !important;
+  }
+}
+
+/* Additional styles that only apply when .print class is used */
+.print {
+  background: white !important;
+}
+
+.print * {
+  background: white !important;
+}

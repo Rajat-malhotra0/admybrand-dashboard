@@ -16,8 +16,11 @@ export const useCampaignStats = () => {
     "campaign-stats",
     fetcher,
     {
-      revalidateOnFocus: true,
+      refreshInterval: 0, // Disable automatic refresh
+      revalidateOnFocus: false, // Disable focus revalidation
+      revalidateOnReconnect: false, // Disable reconnect revalidation
       errorRetryCount: 3,
+      dedupingInterval: 60000, // Add deduping interval
     },
   );
 

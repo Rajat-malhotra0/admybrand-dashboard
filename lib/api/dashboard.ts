@@ -1,36 +1,110 @@
-// Stub implementations for build purposes
+const BASE_URL = 'http://localhost:5000/api';
+
+// Helper function to handle API requests
+const apiRequest = async (url: string, options: RequestInit = {}) => {
+  try {
+    const response = await fetch(`${BASE_URL}${url}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error;
+  }
+};
+
 export const dashboardApi = {
   // Get all dashboard data
-  getDashboardData: () => Promise.resolve({ data: { platforms: {}, campaignStats: [], influencerData: [], demographicsData: [], interestsData: [] } }),
+  getDashboardData: () => apiRequest('/dashboard'),
 
   // Platform-specific data
-  getPlatformData: (platform: string) => Promise.resolve({ data: { campaignStats: [], influencerData: [], demographicsData: [], interestsData: [] } }),
-  getPlatformCampaignStats: (platform: string) => Promise.resolve({ data: [] }),
-  getPlatformInfluencers: (platform: string) => Promise.resolve({ data: [] }),
-  getPlatformDemographics: (platform: string) => Promise.resolve({ data: [] }),
-  getPlatformInterests: (platform: string) => Promise.resolve({ data: [] }),
-  updatePlatformData: (platform: string, data: any) => Promise.resolve({ data: {} }),
+  getPlatformData: (platform: string) => apiRequest(`/platforms/${platform}`),
+  getPlatformCampaignStats: (platform: string) => apiRequest(`/platforms/${platform}/campaign-stats`),
+  getPlatformInfluencers: (platform: string) => apiRequest(`/platforms/${platform}/influencers`),
+  getPlatformDemographics: (platform: string) => apiRequest(`/platforms/${platform}/demographics`),
+  getPlatformInterests: (platform: string) => apiRequest(`/platforms/${platform}/interests`),
+  updatePlatformData: (platform: string, data: any) => apiRequest(`/platforms/${platform}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
 
   // Campaign Stats
-  getCampaignStats: () => Promise.resolve({ data: [] }),
-  createCampaignStat: (data: any) => Promise.resolve({ data: {} }),
-  updateCampaignStat: (id: number, data: any) => Promise.resolve({ data: {} }),
-  deleteCampaignStat: (id: number) => Promise.resolve({ data: {} }),
+  getCampaignStats: () => apiRequest('/campaign-stats'),
+  createCampaignStat: (data: any) => apiRequest('/campaign-stats', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  updateCampaignStat: (id: number, data: any) => apiRequest(`/campaign-stats/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  deleteCampaignStat: (id: number) => apiRequest(`/campaign-stats/${id}`, {
+    method: 'DELETE',
+  }),
 
   // Influencers
-  getInfluencers: () => Promise.resolve({ data: [] }),
-  createInfluencer: (data: any) => Promise.resolve({ data: {} }),
-  updateInfluencer: (id: number, data: any) => Promise.resolve({ data: {} }),
-  deleteInfluencer: (id: number) => Promise.resolve({ data: {} }),
+  getInfluencers: () => apiRequest('/influencers'),
+  createInfluencer: (data: any) => {
+    console.log('Creating influencer with data:', data);
+    return apiRequest('/influencers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  updateInfluencer: (id: number, data: any) => apiRequest(`/influencers/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  deleteInfluencer: (id: number) => apiRequest(`/influencers/${id}`, {
+    method: 'DELETE',
+  }),
+
+  // Database-backed endpoints
+  getDbInfluencers: () => apiRequest('/db/influencers'),
+  getDbCampaigns: () => apiRequest('/db/campaigns'),
+  getDbDemographics: () => apiRequest('/db/demographics'),
+  
+  // Direct POST endpoints for database insertion
+  createCampaign: (data: any) => {
+    console.log('Creating campaign with data:', data);
+    return apiRequest('/campaigns', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  createDemographic: (data: any) => {
+    console.log('Creating demographic with data:', data);
+    return apiRequest('/demographics', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 
   // Demographics
-  getDemographics: () => Promise.resolve({ data: [] }),
-  updateDemographic: (id: number, data: any) => Promise.resolve({ data: {} }),
+  getDemographics: () => apiRequest('/demographics'),
+  updateDemographic: (id: number, data: any) => apiRequest(`/demographics/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
 
   // Interests
-  getInterests: () => Promise.resolve({ data: [] }),
-  updateInterest: (id: number, data: any) => Promise.resolve({ data: {} }),
+  getInterests: () => apiRequest('/interests'),
+  updateInterest: (id: number, data: any) => apiRequest(`/interests/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
 
   // Utility
-  resetData: () => Promise.resolve({ data: {} }),
+  resetData: () => apiRequest('/reset', {
+    method: 'POST',
+  }),
 };

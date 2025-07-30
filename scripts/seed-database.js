@@ -105,6 +105,11 @@ async function seedDatabase() {
       { name: 'Alex Rodriguez', projects: 6, followers: '987K', platform: 'TikTok', category: 'Comedy', engagement_rate: 8.9, verified: false },
       { name: 'Lisa Wang', projects: 7, followers: '890K', platform: 'TikTok', category: 'Dance', engagement_rate: 9.2, verified: false },
       { name: 'Jordan Smith', projects: 9, followers: '1.2M', platform: 'TikTok', category: 'Entertainment', engagement_rate: 7.8, verified: true },
+      
+      // Facebook Influencers
+      { name: 'Amanda Foster', projects: 11, followers: '2.3M', platform: 'Facebook', category: 'Lifestyle', engagement_rate: 3.2, verified: true },
+      { name: 'Marcus Johnson', projects: 8, followers: '1.9M', platform: 'Facebook', category: 'Business', engagement_rate: 2.8, verified: true },
+      { name: 'Sofia Martinez', projects: 10, followers: '1.6M', platform: 'Facebook', category: 'Family', engagement_rate: 4.1, verified: false },
     ];
 
     for (const influencer of influencers) {
@@ -132,6 +137,9 @@ async function seedDatabase() {
       
       { name: 'Viral Dance Challenge', platform: 'TikTok', status: 'active', country: 'US', budget: 30000, reach: 2100000, impressions: 8400000, clicks: 168000, conversions: 1260, cost_per_click: 0.18, cost_per_conversion: 23.81 },
       { name: 'Comedy Content Series', platform: 'TikTok', status: 'active', country: 'US', budget: 25000, reach: 1700000, impressions: 6800000, clicks: 136000, conversions: 1020, cost_per_click: 0.18, cost_per_conversion: 24.51 },
+
+      { name: 'Facebook Fashion Promo', platform: 'Facebook', status: 'active', country: 'US', budget: 45000, reach: 1500000, impressions: 6000000, clicks: 90000, conversions: 1350, cost_per_click: 0.50, cost_per_conversion: 33.33 },
+      { name: 'Facebook Tech Webinar', platform: 'Facebook', status: 'active', country: 'US', budget: 60000, reach: 950000, impressions: 2850000, clicks: 57000, conversions: 855, cost_per_click: 1.05, cost_per_conversion: 70.18 },
     ];
 
     for (const campaign of campaigns) {
@@ -165,6 +173,12 @@ async function seedDatabase() {
       { platform: 'TikTok', age_group: '18-24', gender: 'Male', location: 'US', percentage: 41.2, total_users: 98880 },
       { platform: 'TikTok', age_group: '25-34', gender: 'Female', location: 'US', percentage: 32.1, total_users: 77040 },
       { platform: 'TikTok', age_group: '25-34', gender: 'Male', location: 'US', percentage: 28.7, total_users: 68880 },
+
+      // Facebook Demographics
+      { platform: 'Facebook', age_group: '25-34', gender: 'Female', location: 'US', percentage: 33.1, total_users: 79440 },
+      { platform: 'Facebook', age_group: '25-34', gender: 'Male', location: 'US', percentage: 29.8, total_users: 71520 },
+      { platform: 'Facebook', age_group: '35-44', gender: 'Female', location: 'US', percentage: 24.5, total_users: 58800 },
+      { platform: 'Facebook', age_group: '35-44', gender: 'Male', location: 'US', percentage: 21.2, total_users: 50880 },
     ];
 
     for (const demo of demographics) {
@@ -197,6 +211,13 @@ async function seedDatabase() {
       { platform: 'TikTok', interest_category: 'Entertainment', interest_name: 'Music', percentage: 68.0, total_users: 163200 },
       { platform: 'TikTok', interest_category: 'Lifestyle', interest_name: 'DIY', percentage: 48.0, total_users: 115200 },
       { platform: 'TikTok', interest_category: 'Education', interest_name: 'Life Hacks', percentage: 38.0, total_users: 91200 },
+
+      // Facebook Interests
+      { platform: 'Facebook', interest_category: 'Family', interest_name: 'Parenting', percentage: 62.0, total_users: 148800 },
+      { platform: 'Facebook', interest_category: 'Community', interest_name: 'Local Events', percentage: 54.0, total_users: 129600 },
+      { platform: 'Facebook', interest_category: 'Business', interest_name: 'Small Business', percentage: 47.0, total_users: 112800 },
+      { platform: 'Facebook', interest_category: 'News', interest_name: 'Current Events', percentage: 41.0, total_users: 98400 },
+      { platform: 'Facebook', interest_category: 'Hobbies', interest_name: 'Crafts', percentage: 35.0, total_users: 84000 },
     ];
 
     for (const interest of interests) {

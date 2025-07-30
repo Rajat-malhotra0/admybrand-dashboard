@@ -11,7 +11,11 @@ const customJestConfig = {
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    'd3': '<rootDir>/node_modules/d3/dist/d3.min.js',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(d3|d3-.*|topojson-client)/)',
+  ],
   testPathIgnorePatterns: [
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',

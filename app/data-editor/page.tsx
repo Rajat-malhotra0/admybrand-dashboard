@@ -58,35 +58,35 @@ export default function DataEditor() {
     {
       id: 'countries',
       title: 'Geographic Data',
-      icon: <MapPin className="w-5 h-5" />,
+      icon: <MapPin className="w-5 h-5 text-primary" />,
       description: 'Manage country-specific user data and metrics',
       isExpanded: expandedSections.has('countries')
     },
     {
       id: 'campaignStats',
       title: 'Campaign Statistics',
-      icon: <BarChart3 className="w-5 h-5" />,
+      icon: <BarChart3 className="w-5 h-5 text-primary" />,
       description: 'Update key performance indicators and metrics',
       isExpanded: expandedSections.has('campaignStats')
     },
     {
       id: 'influencers',
       title: 'Influencer Data',
-      icon: <Users className="w-5 h-5" />,
+      icon: <Users className="w-5 h-5 text-primary" />,
       description: 'Modify influencer profiles and statistics',
       isExpanded: expandedSections.has('influencers')
     },
     {
       id: 'demographics',
       title: 'Demographics',
-      icon: <PieChart className="w-5 h-5" />,
+      icon: <PieChart className="w-5 h-5 text-primary" />,
       description: 'Adjust age and gender distribution data',
       isExpanded: expandedSections.has('demographics')
     },
     {
       id: 'interests',
       title: 'Interest Categories',
-      icon: <TrendingUp className="w-5 h-5" />,
+      icon: <TrendingUp className="w-5 h-5 text-primary" />,
       description: 'Update audience interest and engagement levels',
       isExpanded: expandedSections.has('interests')
     }
@@ -104,11 +104,11 @@ export default function DataEditor() {
 
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
-      case "TrendingUp": return <TrendingUp className="w-4 h-4" />;
-      case "Users": return <Users className="w-4 h-4" />;
-      case "Eye": return <Eye className="w-4 h-4" />;
-      case "Target": return <Target className="w-4 h-4" />;
-      default: return <TrendingUp className="w-4 h-4" />;
+      case "TrendingUp": return <TrendingUp className="w-4 h-4 text-primary" />;
+      case "Users": return <Users className="w-4 h-4 text-primary" />;
+      case "Eye": return <Eye className="w-4 h-4 text-primary" />;
+      case "Target": return <Target className="w-4 h-4 text-primary" />;
+      default: return <TrendingUp className="w-4 h-4 text-primary" />;
     }
   };
 
@@ -119,7 +119,7 @@ export default function DataEditor() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <Settings className="w-8 h-8 text-blue-600" />
+              <Settings className="w-8 h-8 text-primary" />
               Data Editor
             </h1>
             <p className="text-gray-600 mt-2">
@@ -143,7 +143,7 @@ export default function DataEditor() {
               onClick={resetData}
               className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4 text-primary" />
               Reset All
             </button>
           </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "../Card";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface BarChartData {
   range: string;
@@ -13,6 +14,9 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ title, data }) => {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   // Default data if none provided
   const ageGroups =
     data.length > 0
@@ -36,11 +40,11 @@ const BarChart: React.FC<BarChartProps> = ({ title, data }) => {
         {/* Legend */}
         <div className="flex items-center space-x-md mb-md">
           <div className="flex items-center space-x-xs">
-            <div className="w-3 h-3 bg-chart-1 rounded-full"></div>
+            <div className="w-3 h-3 bg-primary rounded-full"></div>
             <span className="text-xs md:text-sm text-text-secondary">Male</span>
           </div>
           <div className="flex items-center space-x-xs">
-            <div className="w-3 h-3 bg-chart-2 rounded-full"></div>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span className="text-xs md:text-sm text-text-secondary">
               Female
             </span>
@@ -60,13 +64,13 @@ const BarChart: React.FC<BarChartProps> = ({ title, data }) => {
               <div className="flex w-full max-w-xs">
                 <div className="flex justify-end" style={{ width: "50%" }}>
                   <div
-                    className="bg-chart-1 h-4 md:h-6 rounded-l transition-all duration-500 ease-out"
+                    className="bg-primary h-4 md:h-6 rounded-l transition-all duration-500 ease-out"
                     style={{ width: `${group.male * 2}%` }}
                   ></div>
                 </div>
                 <div className="flex" style={{ width: "50%" }}>
                   <div
-                    className="bg-chart-2 h-4 md:h-6 rounded-r transition-all duration-500 ease-out"
+                    className="bg-green-500 h-4 md:h-6 rounded-r transition-all duration-500 ease-out"
                     style={{ width: `${group.female * 2}%` }}
                   ></div>
                 </div>

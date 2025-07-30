@@ -11,8 +11,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary colors
-        primary: {
+        // Unified Dark Palette
+        surface: {
+          DEFAULT: "rgb(var(--surface))",
+          elevated: "rgb(var(--surface-elevated))",
+        },
+        border: { DEFAULT: "rgb(var(--border-rgb))" },
+        primary: { DEFAULT: "rgb(var(--primary-rgb))" },
+        accent: { DEFAULT: "rgb(var(--accent-rgb))" },
+        "text-primary": { DEFAULT: "rgb(var(--text-primary))" },
+        "text-muted": { DEFAULT: "rgb(var(--text-muted))" },
+
+        // Custom primary colors with RGB
+        "primary-rgb": {
           DEFAULT: "rgb(var(--color-primary))",
           dark: "rgb(var(--color-primary-dark))",
           light: "rgb(var(--color-primary-light))",
@@ -57,10 +68,31 @@ const config: Config = {
           highlight3: "rgb(var(--color-map-highlight-3))",
         },
 
-        // UI Colors
-        border: "hsl(var(--border))",
+        // UI Colors (keeping existing HSL-based system)
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
       },
 
       fontFamily: {

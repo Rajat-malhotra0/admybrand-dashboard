@@ -6,6 +6,7 @@ import { RefreshCw } from "lucide-react";
 import Card from "./Card";
 import MapLegend from "./MapLegend";
 import { getUserCountColorByBucket, getUserCountColorByScale } from "../lib/utils/colorUtils";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface CountryData {
   id: string;
@@ -17,6 +18,7 @@ interface MapChartProps {
   width?: number;
   height?: number;
   onCountryClick?: (countryIsoCode: string) => void;
+  countriesWithData?: string[]; // ISO codes of countries with data
 }
 
 // Sample country data with user counts for choropleth visualization
@@ -28,7 +30,7 @@ const countryData: CountryData[] = [
 ];
 
 
-const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountryClick }) => {
+const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountryClick, countriesWithData = [] }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
@@ -37,6 +39,8 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dimensions, setDimensions] = useState({ width, height });
   const [tooltip, setTooltip] = useState<{ x: number; y: number; content: string } | null>(null);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   
   // Check if we're on mobile
   const [isMobile, setIsMobile] = useState(false);
@@ -135,12 +139,12 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       .attr("stroke", "rgba(0,0,0,0.03)")
       .attr("stroke-width", 0.5);
 
-    // Add clean background with subtle grid
+    // Add clean background with subtle grid - transparent for dark theme
     svg
       .append("rect")
       .attr("width", width)
       .attr("height", height)
-      .attr("fill", "url(#subtle-grid)");
+      .attr("fill", isDark ? "transparent" : "url(#subtle-grid)");
 
     // Create main group for map elements
     const mapGroup = svg.append("g").attr("class", "map-group");
@@ -180,40 +184,46 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       .attr("class", "country")
       .attr("d", path as any)
       .attr("fill", (d: any) => {
-        // Try to get user count by ISO code first, then by name
         const isoCode = d?.id ?? "";
-        const countryName = d?.properties?.name ?? "";
-        const userCount = countryUserData[isoCode] || countryUserData[countryName] || 0;
         
-        // Use our color utility if we have data, otherwise use default gray
-        return userCount > 0 ? getUserCountColorByBucket(userCount) : "rgb(226, 232, 240)";
+        // Check if country has data in the backend
+        const hasData = countriesWithData.includes(isoCode);
+        
+        // Use theme-aware colors
+        if (hasData) {
+          return isDark ? "rgb(96, 165, 250)" : "rgb(59, 130, 246)"; // Primary blue adapted for theme
+        } else {
+          return isDark ? "rgb(75, 85, 99)" : "rgb(226, 232, 240)"; // Gray adapted for theme
+        }
       })
-      .attr("stroke", "#ffffff")
+      .attr("stroke", isDark ? "#1f2937" : "#ffffff") // Dark stroke for dark theme
       .attr("stroke-width", 0.5)
       .style("cursor", "pointer")
       .attr("aria-label", (d: any) => {
         const isoCode = d?.id ?? "";
         const countryName = d?.properties?.name ?? "";
-        const userCount = countryUserData[isoCode] || countryUserData[countryName] || 0;
+        const hasData = countriesWithData.includes(isoCode);
         
-        return userCount > 0 
-          ? `${countryName}: ${userCount.toLocaleString()} users. Click for more details.`
-          : `${countryName}: No user data available. Click for more details.`;
+        return hasData 
+          ? `${countryName}: Has campaign data. Click for more details.`
+          : `${countryName}: No campaign data available. Click for more details.`;
       })
       .on("mouseenter", function (event, d: any) {
         const isoCode = d?.id ?? "";
         const countryName = d?.properties?.name ?? "";
-        const userCount = countryUserData[isoCode] || countryUserData[countryName] || 0;
+        const hasData = countriesWithData.includes(isoCode);
         
-        // Update fill color on hover
-        const baseColor = userCount > 0 ? getUserCountColorByBucket(userCount) : "rgb(226, 232, 240)";
+        // Update fill color on hover with theme awareness
+        const baseColor = hasData 
+          ? (isDark ? "rgb(96, 165, 250)" : "rgb(59, 130, 246)")
+          : (isDark ? "rgb(75, 85, 99)" : "rgb(226, 232, 240)");
         const hoverColor = d3.color(baseColor)?.darker(0.2)?.toString() || baseColor;
         d3.select(this).transition().duration(200).attr("fill", hoverColor);
         
         // Show tooltip
-        const tooltipContent = userCount > 0 
-          ? `${countryName}\n${userCount.toLocaleString()} users\nISO: ${isoCode}`
-          : `${countryName}\nNo data available\nISO: ${isoCode}`;
+        const tooltipContent = hasData 
+          ? `${countryName}\nHas campaign data\nISO: ${isoCode}`
+          : `${countryName}\nNo campaign data\nISO: ${isoCode}`;
         
         setTooltip({
           x: event.clientX,
@@ -233,9 +243,10 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       })
       .on("mouseleave", function (event, d: any) {
         const isoCode = d?.id ?? "";
-        const countryName = d?.properties?.name ?? "";
-        const userCount = countryUserData[isoCode] || countryUserData[countryName] || 0;
-        const fillColor = userCount > 0 ? getUserCountColorByBucket(userCount) : "rgb(226, 232, 240)";
+        const hasData = countriesWithData.includes(isoCode);
+        const fillColor = hasData 
+          ? (isDark ? "rgb(96, 165, 250)" : "rgb(59, 130, 246)")
+          : (isDark ? "rgb(75, 85, 99)" : "rgb(226, 232, 240)");
         d3.select(this).transition().duration(200).attr("fill", fillColor);
         
         // Hide tooltip
@@ -261,7 +272,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       })
 ;
 
-  }, [worldData, width, height, isLoading, onCountryClick]);
+  }, [worldData, width, height, isLoading, onCountryClick, countriesWithData, isDark]);
 
   if (isLoading) {
     return (
@@ -295,34 +306,34 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
       <div className="relative flex-1 min-h-[400px] border rounded-md overflow-hidden bg-white">
         {/* Campaign Reach Data Overlay - Left Side - Hidden on mobile */}
         <div 
-          className="absolute top-0 left-0 w-32 h-full bg-white/95 backdrop-blur-sm border-r border-gray-200 z-10 flex-col justify-center space-y-3 p-3 hidden md:flex"
+          className="absolute top-0 left-0 w-32 h-full bg-surface-elevated/95 backdrop-blur-sm border-r border-border z-10 flex-col justify-center space-y-3 p-3 hidden md:flex"
           role="complementary"
           aria-label="Campaign statistics summary"
         >
           {/* Campaign Reach */}
           <div className="text-center" role="group" aria-labelledby="campaign-reach-label">
-            <p id="campaign-reach-label" className="text-xs text-gray-500 mb-1">Campaign Reach</p>
-            <p className="text-lg font-bold text-gray-900" aria-label="12 countries reached">12</p>
-            <p className="text-xs text-gray-400" aria-hidden="true">country</p>
+            <p id="campaign-reach-label" className="text-xs text-text-muted mb-1">Campaign Reach</p>
+            <p className="text-lg font-bold text-text-primary" aria-label="12 countries reached">12</p>
+            <p className="text-xs text-text-muted" aria-hidden="true">country</p>
           </div>
 
           {/* User Reached */}
           <div className="text-center" role="group" aria-labelledby="user-reached-label">
-            <p id="user-reached-label" className="text-xs text-gray-500 mb-1">User Reached</p>
-            <p className="text-sm font-bold text-gray-900" aria-label="180,807,839 users reached">180,807,839</p>
-            <p className="text-xs text-gray-400" aria-hidden="true">user</p>
+            <p id="user-reached-label" className="text-xs text-text-muted mb-1">User Reached</p>
+            <p className="text-sm font-bold text-text-primary" aria-label="180,807,839 users reached">180,807,839</p>
+            <p className="text-xs text-text-muted" aria-hidden="true">user</p>
           </div>
 
           {/* Period */}
           <div className="text-center" role="group" aria-labelledby="period-label">
-            <p id="period-label" className="text-xs text-gray-500 mb-1">Period</p>
-            <p className="text-lg font-bold text-gray-900" aria-label="9 months campaign period">9</p>
-            <p className="text-xs text-gray-400" aria-hidden="true">month</p>
+            <p id="period-label" className="text-xs text-text-muted mb-1">Period</p>
+            <p className="text-lg font-bold text-text-primary" aria-label="9 months campaign period">9</p>
+            <p className="text-xs text-text-muted" aria-hidden="true">month</p>
           </div>
 
           {/* Last Updated */}
           <div className="text-center">
-            <p className="text-xs text-gray-500 mb-2" aria-label="Data last updated 2 seconds ago">Updated 2s ago</p>
+            <p className="text-xs text-text-muted mb-2" aria-label="Data last updated 2 seconds ago">Updated 2s ago</p>
             <button 
               className="flex items-center justify-center space-x-1 text-blue-600 hover:text-blue-800 transition-colors text-xs mx-auto"
               aria-label="Refresh campaign data"
@@ -353,18 +364,18 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
         </svg>
         <button
           onClick={resetZoom}
-          className="absolute top-2 right-2 bg-white text-xs px-2 py-1 rounded shadow hover:bg-gray-100 transition-colors"
+          className="absolute top-2 right-2 bg-surface-elevated text-xs px-2 py-1 rounded shadow hover:bg-surface transition-colors"
         >
           Reset Zoom
         </button>
-        <div className="absolute bottom-2 right-2 text-xs text-gray-500 bg-white px-2 py-1 rounded shadow">
+        <div className="absolute bottom-2 right-2 text-xs text-text-muted bg-surface-elevated px-2 py-1 rounded shadow">
           🌍 Interactive World Map
         </div>
         
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-50 bg-gray-900 text-white text-xs rounded px-2 py-1 shadow-lg pointer-events-none whitespace-pre-line"
+            className="absolute z-50 bg-surface text-text-primary text-xs rounded px-2 py-1 shadow-lg pointer-events-none whitespace-pre-line"
             style={{
               left: tooltip.x + 10,
               top: tooltip.y - 10,

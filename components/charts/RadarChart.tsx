@@ -2,6 +2,7 @@
 
 import React from "react";
 import Card from "../Card";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface RadarChartData {
   label: string;
@@ -14,6 +15,9 @@ interface RadarChartProps {
 }
 
 const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  
   // Default data if none provided
   const chartData =
     data.length > 0
@@ -82,7 +86,8 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
                   })
                   .join(" ")}
                 fill="none"
-                stroke="#e2e8f0"
+                stroke={isDark ? "rgb(var(--border-rgb))" : "#e2e8f0"}
+                className="stroke-border"
                 strokeWidth="1"
               />
             </g>
@@ -98,7 +103,8 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
                 y1={center}
                 x2={point.x}
                 y2={point.y}
-                stroke="#e2e8f0"
+                stroke={isDark ? "rgb(var(--border-rgb))" : "#e2e8f0"}
+                className="stroke-border"
                 strokeWidth="1"
               />
             );
@@ -107,8 +113,8 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
           {/* Data polygon */}
           <path
             d={pathData}
-            fill="rgba(59, 130, 246, 0.15)"
-            stroke="#3b82f6"
+            fill={isDark ? "rgba(96, 165, 250, 0.15)" : "rgba(59, 130, 246, 0.15)"}
+            stroke={isDark ? "rgb(var(--primary-rgb))" : "rgb(var(--primary-rgb))"}
             strokeWidth="2"
           />
 
@@ -119,7 +125,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
               cx={point.x}
               cy={point.y}
               r="3"
-              fill="#3b82f6"
+              fill={isDark ? "rgb(var(--primary-rgb))" : "rgb(var(--primary-rgb))"}
             />
           ))}
 
@@ -133,8 +139,8 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
                 y={labelPoint.y}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="text-xs"
-                fill="#64748b"
+                className="text-xs fill-text-muted"
+                fill={isDark ? "rgb(var(--text-muted))" : "#64748b"}
               >
                 <tspan x={labelPoint.x} dy="-6">
                   {item.label}
@@ -142,8 +148,8 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data }) => {
                 <tspan
                   x={labelPoint.x}
                   dy="12"
-                  className="font-medium"
-                  fill="#1e293b"
+                  className="font-medium fill-text-primary"
+                  fill={isDark ? "rgb(var(--text-primary))" : "#1e293b"}
                 >
                   {item.value}%
                 </tspan>

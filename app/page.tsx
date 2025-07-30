@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Sidebar from "@/components/Sidebar";
 import ConsolidatedHeader from "@/components/ConsolidatedHeader";
 import ContentHeader from "@/components/ContentHeader";
@@ -12,6 +12,7 @@ import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { ResponsiveGrid, ResponsiveGridItem } from "@/components/Layout/ResponsiveGrid";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { usePlatformData } from "@/hooks/usePlatformData";
+import { useCountriesWithData } from "@/hooks/useCountriesWithData";
 import { TrendingUp, Users, Eye, Target } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -30,19 +31,20 @@ const fallbackData = {
 const getIconComponent = (iconName: string) => {
   switch (iconName) {
     case "TrendingUp":
-      return <TrendingUp />;
+      return <TrendingUp className="text-primary" />;
     case "Users":
-      return <Users />;
+      return <Users className="text-primary" />;
     case "Eye":
-      return <Eye />;
+      return <Eye className="text-primary" />;
     case "Target":
-      return <Target />;
+      return <Target className="text-primary" />;
     default:
-      return <TrendingUp />;
+      return <TrendingUp className="text-primary" />;
   }
 };
 
 export default function Dashboard() {
+  const reportRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState("LinkedIn");
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedCountryName, setSelectedCountryName] = useState<string | null>(null);
@@ -50,8 +52,65 @@ export default function Dashboard() {
   const [useBackend, setUseBackend] = useState(true);
   const tabs = ["LinkedIn", "Instagram", "Facebook"];
   
+  // ISO to country name mapping
+  const isoToCountryName: Record<string, string> = {
+    'USA': 'United States',
+    'CAN': 'Canada', 
+    'DEU': 'Germany',
+    'GBR': 'United Kingdom',
+    'FRA': 'France',
+    'JPN': 'Japan',
+    'AUS': 'Australia',
+    'BRA': 'Brazil',
+    'IND': 'India',
+    'CHN': 'China'
+  };
+  
+  // Database country name to ISO code mapping
+  const countryNameToIso: Record<string, string> = {
+    'US': 'USA',
+    'Canada': 'CAN',
+    'Germany': 'DEU',
+    'United Kingdom': 'GBR',
+    'France': 'FRA',
+    'Japan': 'JPN',
+    'Australia': 'AUS',
+    'Brazil': 'BRA',
+    'India': 'IND',
+    'China': 'CHN'
+  };
+  
+  // ISO to database country name mapping (reverse of countryNameToIso)
+  const isoToDbCountryName: Record<string, string> = {
+    'USA': 'US',
+    'CAN': 'Canada',
+    'DEU': 'Germany',
+    'GBR': 'United Kingdom',
+    'FRA': 'France',
+    'JPN': 'Japan',
+    'AUS': 'Australia',
+    'BRA': 'Brazil',
+    'IND': 'India',
+    'CHN': 'China'
+  };
+  
   // Use the unified platform data hook like the admin panel
-  const { data: platformData, error: platformError, isLoading: platformLoading, refresh } = usePlatformData(activeTab, useBackend, selectedCountry || undefined);
+  const { data: platformData, error: platformError, isLoading: platformLoading, refresh } = usePlatformData(activeTab, useBackend, selectedCountry ? (isoToDbCountryName[selectedCountry] || selectedCountry) : undefined);
+  
+  // Fetch countries with data from backend
+  const { countries: countriesWithData, error: countriesError, isLoading: countriesLoading, refresh: refreshCountries } = useCountriesWithData();
+
+  // Convert database country names to ISO codes for the map
+  const mapCountriesWithData = countriesWithData.map(country => countryNameToIso[country] || country);
+
+  // Track platform/country changes for debugging
+  // SWR automatically fetches when the key changes, no manual refresh needed
+  React.useEffect(() => {
+    if (useBackend) {
+      console.log('Platform/country changed:', { platform: activeTab, country: selectedCountry });
+      // SWR will automatically fetch with the new key - no manual refresh needed
+    }
+  }, [activeTab, selectedCountry, useBackend]);
 
   // Load data from localStorage on component mount
   React.useEffect(() => {
@@ -66,20 +125,6 @@ export default function Dashboard() {
     }
   }, []);
   const { isMobile, isTablet, isDesktop, screenSize } = useScreenSize();
-
-  // ISO to country name mapping
-  const isoToCountryName: Record<string, string> = {
-    'US': 'United States',
-    'CAN': 'Canada', 
-    'DEU': 'Germany',
-    'GBR': 'United Kingdom',
-    'FRA': 'France',
-    'JPN': 'Japan',
-    'AUS': 'Australia',
-    'BRA': 'Brazil',
-    'IND': 'India',
-    'CHN': 'China'
-  };
   
   // Function to handle country selection
   const handleCountryClick = (countryIso: string) => {
@@ -126,9 +171,12 @@ export default function Dashboard() {
     return dashboardData.interestsData;
   };
 
+  // Determine if PDF export should be disabled
+  const shouldDisablePDF = useBackend && (platformLoading || countriesLoading);
+
   return (
-    <DashboardLayout sidebar={<Sidebar />}>
-      <div className="px-4 lg:px-6 py-4 lg:py-6 max-w-full overflow-x-hidden space-y-4 lg:space-y-6">
+    <DashboardLayout sidebar={<Sidebar reportRef={reportRef} platform={activeTab} country={selectedCountryName} disabled={shouldDisablePDF} />} reportRef={reportRef}>
+      <div ref={reportRef} className="px-4 lg:px-6 py-4 lg:py-6 max-w-full overflow-x-hidden space-y-4 lg:space-y-6">
         {/* Header */}
         <header className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
           <ConsolidatedHeader />
@@ -153,18 +201,43 @@ export default function Dashboard() {
               <label htmlFor="useBackend">Use Backend Data</label>
             </div>
             
-            {useBackend && platformLoading && (
-              <span className="text-sm text-gray-600">Loading...</span>
+            {useBackend && (
+              <>
+                <button
+                  onClick={() => refresh()}
+                  className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                  disabled={platformLoading}
+                >
+                  {platformLoading ? 'Refreshing...' : 'Refresh Platform Data'}
+                </button>
+                <button
+                  onClick={() => refreshCountries()}
+                  className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                  disabled={countriesLoading}
+                >
+                  {countriesLoading ? 'Refreshing...' : 'Refresh Countries'}
+                </button>
+              </>
+            )}
+            
+            {useBackend && countriesLoading && (
+              <span className="text-sm text-text-muted">Loading...</span>
             )}
             
             {useBackend && platformError && (
               <span className="text-sm text-red-600">Error loading data</span>
             )}
+            
+            {useBackend && (
+              <div className="text-xs text-text-muted">
+                Countries: {countriesWithData.length > 0 ? countriesWithData.join(', ') : 'None'}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Social Media Tabs */}
-        <div className="flex bg-gray-100 rounded-lg p-1 w-full lg:w-fit">
+        <div className="flex bg-surface-elevated rounded-lg p-1 w-full lg:w-fit">
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -175,8 +248,8 @@ export default function Dashboard() {
                 px-3 py-2 text-sm lg:px-4 relative
                 ${
                   activeTab === tab
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "bg-surface text-text-primary shadow-sm"
+                    : "text-text-muted hover:text-text-primary"
                 }
               `}
             >
@@ -232,7 +305,10 @@ export default function Dashboard() {
 
           {/* Right Section - Map Chart */}
           <div className="lg:col-span-8">
-            <MapChart onCountryClick={handleCountryClick} />
+            <MapChart 
+              onCountryClick={handleCountryClick} 
+              countriesWithData={mapCountriesWithData}
+            />
           </div>
         </div>
 

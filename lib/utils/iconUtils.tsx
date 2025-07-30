@@ -36,7 +36,7 @@ interface IconProps {
 
 export const getIconComponent = (
   iconName: string,
-  className: string = "w-6 h-6 text-blue-500",
+  className: string = "w-6 h-6 text-primary",
 ): React.ReactNode => {
   const IconComponent = iconMap[iconName as IconName];
 

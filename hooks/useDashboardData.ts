@@ -12,10 +12,11 @@ export const useDashboardData = () => {
     "dashboard",
     fetcher,
     {
-      refreshInterval: 30000, // Refresh every 30 seconds
-      revalidateOnFocus: true,
+      refreshInterval: 0, // Disable automatic refresh
+      revalidateOnFocus: false, // Disable focus revalidation
+      revalidateOnReconnect: false, // Disable reconnect revalidation
       errorRetryCount: 3,
-      dedupingInterval: 5000, // Dedupe requests within 5 seconds
+      dedupingInterval: 60000, // Increase deduping interval to 60 seconds
       onError: (error) => {
         console.error("Dashboard data fetch error:", error);
       },

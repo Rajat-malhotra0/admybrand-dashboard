@@ -24,7 +24,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onTabChange }) => {
   };
 
   return (
-    <div className="border-b border-gray-200">
+    <div className="border-b border-border">
       <nav className="flex space-x-8">
         {tabs.map((tab) => (
           <button
@@ -34,7 +34,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onTabChange }) => {
               "py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200",
               activeTab === tab.id
                 ? "border-primary text-primary"
-                : "border-transparent text-text-secondary hover:text-text-primary hover:border-gray-300",
+                : "border-transparent text-text-secondary hover:text-text-primary hover:border-border",
             )}
           >
             {tab.label}
@@ -44,7 +44,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onTabChange }) => {
                   "ml-2 py-0.5 px-2 rounded-full text-xs",
                   activeTab === tab.id
                     ? "bg-primary text-white"
-                    : "bg-gray-100 text-text-secondary",
+                    : "bg-surface-elevated text-text-secondary",
                 )}
               >
                 {tab.count}
