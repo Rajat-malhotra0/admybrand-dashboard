@@ -25,10 +25,9 @@ interface SidebarProps {
   platform?: string;
   country?: string | null;
   disabled?: boolean;
-  useBackend?: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, country, disabled = false, useBackend = true }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, country, disabled = false }) => {
   const pathname = usePathname();
   
   const navigationItems = [
@@ -137,12 +136,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, 
           
           {/* Download CSV Button */}
           {platform && (
-            <DownloadCSVButton
-              platform={platform}
-              country={country || null}
-              disabled={disabled}
-              useBackend={useBackend}
-            />
+              <DownloadCSVButton
+                platform={platform}
+                country={country || null}
+                disabled={disabled}
+              />
           )}
         </nav>
       </div>
