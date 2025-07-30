@@ -1,5 +1,4 @@
 [build]
-  publish = "out"
   command = "npm run build"
 
 [build.environment]
@@ -18,11 +17,7 @@
   status = 200
   force = true
 
-# Redirect all other routes to index.html for SPA routing
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Let Next.js handle routing - no catch-all redirect needed
 
 [dev]
   command = "npm run dev"

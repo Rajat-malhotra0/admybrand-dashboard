@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: "export", // Disabled for local development
+  // Remove output: "export" to enable API routes and server features
   eslint: {
     ignoreDuringBuilds: true,
   },
