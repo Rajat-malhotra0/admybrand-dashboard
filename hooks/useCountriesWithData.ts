@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
 const fetcher = async (url: string): Promise<{ countries: string[] }> => {
   const response = await fetch(url);

@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { PlatformData } from "@/lib/api/types";
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
 const fetcher = async (url: string | null): Promise<PlatformData | null> => {
   if (!url) return null;
