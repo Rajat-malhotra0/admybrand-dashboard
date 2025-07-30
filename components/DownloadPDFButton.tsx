@@ -33,12 +33,28 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
       return;
     }
 
+    if (!reportRef.current) {
+      toast({
+        title: "Error",
+        description: "Report element not found. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsGenerating(true);
     try {
+      console.log('Starting PDF generation...', {
+        platform,
+        country,
+        reportRefExists: !!reportRef.current
+      });
+      
       await generateDashboardPDF(reportRef, {
         platform,
         country: country || undefined
       });
+      
       toast({
         title: "PDF Generated",
         description: "Your dashboard PDF has been successfully generated.",
@@ -47,7 +63,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
       console.error("Failed to generate PDF:", error);
       toast({
         title: "Error Generating PDF",
-        description: "An unexpected error occurred while generating the PDF.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred while generating the PDF.",
         variant: "destructive",
       });
     } finally {
@@ -59,11 +75,10 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = ({
     <button
       onClick={handleDownload}
       disabled={isGenerating || disabled}
-      className={`
+      className={className || `
         w-full text-left flex items-center space-x-2 lg:space-x-3 px-2 lg:px-3 py-2 lg:py-2.5 rounded-lg transition-colors group
         text-slate-300 hover:text-white hover:bg-slate-800
         disabled:opacity-50 disabled:cursor-not-allowed
-        ${className}
       `}
       title="Export current report as PDF"
     >

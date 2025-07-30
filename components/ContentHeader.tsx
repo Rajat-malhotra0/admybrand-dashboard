@@ -1,40 +1,51 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Calendar, Filter, Share2 } from "lucide-react";
 
 interface ContentHeaderProps {
   title?: string;
-  description?: string;
+  subtitle?: string;
   showBackButton?: boolean;
-  avatar?: string;
-  avatarBg?: string;
 }
 
 const ContentHeader: React.FC<ContentHeaderProps> = ({
-  title = "Blue Chips Chicago",
-  description = "Diam nullam quis nunc et pretium augue",
+  title = "Marketing Campaign Overview",
+  subtitle = "Track performance metrics for your ongoing campaigns",
   showBackButton = true,
-  avatar = "BC",
-  avatarBg = "bg-red-500",
 }) => {
   return (
-    <div className="flex items-center space-x-4">
-      {showBackButton && (
-        <button className="p-2 hover:bg-surface-elevated rounded-lg transition-colors">
-          <ArrowLeft className="w-5 h-5 text-text-muted" />
-        </button>
-      )}
-      <div className="flex items-center space-x-3">
-        <div
-          className={`w-12 h-12 ${avatarBg} rounded-full flex items-center justify-center`}
-        >
-          <span className="text-white font-bold text-lg">{avatar}</span>
-        </div>
+    <div className="flex flex-wrap items-center justify-between w-full gap-4">
+      {/* Left side: Title and back button */}
+      <div className="flex items-center space-x-4">
+        {showBackButton && (
+          <button 
+            className="p-2 hover:bg-surface-elevated rounded-lg transition-colors"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-5 h-5 text-text-muted" />
+          </button>
+        )}
         <div>
           <h1 className="text-2xl font-bold text-text-primary">{title}</h1>
-          <p className="text-sm text-text-muted">{description}</p>
+          <p className="text-sm text-text-muted">{subtitle}</p>
         </div>
+      </div>
+
+      {/* Right side: Action buttons */}
+      <div className="flex items-center space-x-2">
+        <button className="flex items-center space-x-2 px-3 py-2 text-sm bg-surface-elevated rounded-lg hover:bg-surface transition-colors border border-border">
+          <Calendar className="w-4 h-4 text-text-muted" />
+          <span>Date Range</span>
+        </button>
+        <button className="flex items-center space-x-2 px-3 py-2 text-sm bg-surface-elevated rounded-lg hover:bg-surface transition-colors border border-border">
+          <Filter className="w-4 h-4 text-text-muted" />
+          <span>Filters</span>
+        </button>
+        <button className="flex items-center space-x-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <Share2 className="w-4 h-4" />
+          <span>Share</span>
+        </button>
       </div>
     </div>
   );

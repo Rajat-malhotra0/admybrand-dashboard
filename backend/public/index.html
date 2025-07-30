@@ -204,37 +204,37 @@
             </div>
         </div>
 
-        <!-- Influencers Section -->
+        <!-- Leads Section -->
         <div class="section">
-            <div class="section-header">👥 Influencers</div>
+            <div class="section-header">👥 Leads</div>
             <div class="section-content">
                 <div class="controls">
-                    <button onclick="loadInfluencers()">Load Data</button>
-                    <button onclick="showAddInfluencerForm()" class="success">Add New</button>
+                    <button onclick="loadLeads()">Load Data</button>
+                    <button onclick="showAddLeadForm()" class="success">Add New</button>
                 </div>
 
-                <div id="add-influencer-form" class="hidden">
-                    <h4>Add New Influencer</h4>
+                <div id="add-lead-form" class="hidden">
+                    <h4>Add New Lead</h4>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Name:</label>
-                            <input type="text" id="influencer-name" placeholder="e.g., John Doe">
+                            <input type="text" id="lead-name" placeholder="e.g., John Doe">
                         </div>
                         <div class="form-group">
                             <label>Projects:</label>
-                            <input type="number" id="influencer-projects" placeholder="e.g., 15">
+                            <input type="number" id="lead-projects" placeholder="e.g., 15">
                         </div>
                         <div class="form-group">
                             <label>Followers:</label>
-                            <input type="text" id="influencer-followers" placeholder="e.g., 1,500,000">
+                            <input type="text" id="lead-followers" placeholder="e.g., 1,500,000">
                         </div>
                     </div>
-                    <button onclick="addInfluencer()" class="success">Add Influencer</button>
-                    <button onclick="hideAddInfluencerForm()">Cancel</button>
+                    <button onclick="addLead()" class="success">Add Lead</button>
+                    <button onclick="hideAddLeadForm()">Cancel</button>
                 </div>
 
                 <div class="data-container">
-                    <pre id="influencer-data">Click "Load Data" to view influencers</pre>
+                    <pre id="lead-data">Click "Load Data" to view leads</pre>
                 </div>
             </div>
         </div>
@@ -346,33 +346,33 @@
             }
         }
 
-        // Influencer Functions
-        async function loadInfluencers() {
+        // Lead Functions
+        async function loadLeads() {
             try {
-                const response = await fetch(`${API_BASE}/api/influencers`);
+                const response = await fetch(`${API_BASE}/api/leads`);
                 const data = await response.json();
-                document.getElementById('influencer-data').textContent = formatJSON(data);
+                document.getElementById('lead-data').textContent = formatJSON(data);
             } catch (error) {
-                showStatus('Error loading influencers: ' + error.message, 'error');
+                showStatus('Error loading leads: ' + error.message, 'error');
             }
         }
 
-        function showAddInfluencerForm() {
-            document.getElementById('add-influencer-form').classList.remove('hidden');
+        function showAddLeadForm() {
+            document.getElementById('add-lead-form').classList.remove('hidden');
         }
 
-        function hideAddInfluencerForm() {
-            document.getElementById('add-influencer-form').classList.add('hidden');
+        function hideAddLeadForm() {
+            document.getElementById('add-lead-form').classList.add('hidden');
             // Clear form
-            document.getElementById('influencer-name').value = '';
-            document.getElementById('influencer-projects').value = '';
-            document.getElementById('influencer-followers').value = '';
+            document.getElementById('lead-name').value = '';
+            document.getElementById('lead-projects').value = '';
+            document.getElementById('lead-followers').value = '';
         }
 
-        async function addInfluencer() {
-            const name = document.getElementById('influencer-name').value;
-            const projects = parseInt(document.getElementById('influencer-projects').value);
-            const followers = document.getElementById('influencer-followers').value;
+        async function addLead() {
+            const name = document.getElementById('lead-name').value;
+            const projects = parseInt(document.getElementById('lead-projects').value);
+            const followers = document.getElementById('lead-followers').value;
 
             if (!name || !projects || !followers) {
                 showStatus('Please fill in all fields', 'error');
@@ -380,18 +380,18 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/influencers`, {
+                const response = await fetch(`${API_BASE}/api/leads`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, projects, followers })
                 });
 
                 if (response.ok) {
-                    showStatus('Influencer added successfully!');
-                    hideAddInfluencerForm();
-                    loadInfluencers();
+                    showStatus('Lead added successfully!');
+                    hideAddLeadForm();
+                    loadLeads();
                 } else {
-                    showStatus('Error adding influencer', 'error');
+                    showStatus('Error adding lead', 'error');
                 }
             } catch (error) {
                 showStatus('Error: ' + error.message, 'error');
@@ -424,7 +424,7 @@
         async function loadAllData() {
             await Promise.all([
                 loadCampaignStats(),
-                loadInfluencers(),
+                loadLeads(),
                 loadDemographics(),
                 loadInterests()
             ]);

@@ -3,8 +3,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { User, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import Card from "./Card";
-import { Influencer } from "@/lib/api/types";
-import { useSortedInfluencers, SortOrder } from "@/hooks/useSortedInfluencers";
+import { Lead } from '@/lib/api/types';
+import { useSortedLeads, SortOrder } from '@/hooks/useSortedLeads';
 import {
   Pagination,
   PaginationContent,
@@ -14,16 +14,16 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-interface InfluencerTableProps {
-  influencers?: Influencer[];
+interface LeadTableProps {
+  leads?: Lead[];
   sortOrder?: SortOrder;
   itemsPerPage?: number;
   onSortOrderChange?: (order: SortOrder) => void;
   showNoDataMessage?: boolean;
 }
 
-const InfluencerTable: React.FC<InfluencerTableProps> = ({
-  influencers = [],
+const LeadTable: React.FC<LeadTableProps> = ({
+  leads = [],
   sortOrder = 'desc',
   itemsPerPage = 5,
   onSortOrderChange,
@@ -36,7 +36,7 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
   const currentSortOrder = onSortOrderChange ? sortOrder : internalSortOrder;
 
   // Default data if none provided - expanded for demonstration
-  const defaultInfluencers: Influencer[] = [
+  const defaultLeads: Lead[] = [
     { id: 1, name: "Sarah Johnson", projects: 12, followers: "2.3M" },
     { id: 2, name: "Mike Chen", projects: 8, followers: "1.8M" },
     { id: 3, name: "Emma Davis", projects: 15, followers: "3.1M" },
@@ -49,10 +49,10 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
     { id: 10, name: "Ryan Thompson", projects: 14, followers: "2.8M" },
   ];
 
-  const sourceData = (influencers.length > 0 || showNoDataMessage) ? influencers : defaultInfluencers;
+  const sourceData = (leads.length > 0 || showNoDataMessage) ? leads : defaultLeads;
   
-  // Sort the influencer data based on sortOrder
-  const sortedInfluencers = useSortedInfluencers(sourceData, currentSortOrder);
+  // Sort the lead data based on sortOrder
+  const sortedLeads = useSortedLeads(sourceData, currentSortOrder);
 
   // Reset pagination when sort order or data changes
   useEffect(() => {
@@ -70,7 +70,7 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
   };
 
   // Ensure current page is valid when data changes
-  const totalPages = Math.ceil(sortedInfluencers.length / itemsPerPage);
+  const totalPages = Math.ceil(sortedLeads.length / itemsPerPage);
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
@@ -80,7 +80,7 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
   // Pagination calculations (totalPages already calculated above)
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedInfluencers = sortedInfluencers.slice(startIndex, endIndex);
+  const paginatedLeads = sortedLeads.slice(startIndex, endIndex);
 
   // Pagination handlers
   const handlePageChange = (page: number) => {
@@ -120,10 +120,10 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
     <Card hover>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-md md:mb-lg gap-sm">
         <h3 className="text-base md:text-lg font-semibold text-text-primary tech-accent">
-          Influencer
+          Leads
         </h3>
           <button className="text-primary-rgb hover:text-primary-rgb-dark dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center text-sm">
-          <span>+ Add Influencer</span>
+          <span>+ Add Lead</span>
         </button>
       </div>
 
@@ -155,16 +155,16 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
             </tr>
           </thead>
           <tbody className="bg-surface divide-y divide-border">
-            {showNoDataMessage && influencers.length === 0 ? (
+            {showNoDataMessage && leads.length === 0 ? (
               <tr>
                 <td colSpan={3} className="px-sm md:px-md py-12 text-center">
                   <p className="text-text-muted text-sm">No data yet</p>
                 </td>
               </tr>
             ) : (
-              paginatedInfluencers.map((influencer) => (
+              paginatedLeads.map((lead) => (
                 <tr
-                  key={influencer.id}
+                  key={lead.id}
                   className="hover:bg-surface-elevated transition-colors"
                 >
                   <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
@@ -174,19 +174,19 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="text-xs md:text-sm font-medium text-text-primary truncate">
-                          {influencer.name}
+                          {lead.name}
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
                     <div className="text-xs md:text-sm text-text-primary mono">
-                      {influencer.projects}
+                      {lead.projects}
                     </div>
                   </td>
                   <td className="px-sm md:px-md py-sm md:py-md whitespace-nowrap">
                     <div className="text-xs md:text-sm text-text-primary mono">
-                      {influencer.followers}
+                      {lead.followers}
                     </div>
                   </td>
                 </tr>
@@ -244,7 +244,7 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
           {/* Page info */}
           <div className="mt-3 text-center">
             <p className="text-sm text-text-muted">
-              Showing {startIndex + 1} to {Math.min(endIndex, sortedInfluencers.length)} of {sortedInfluencers.length} influencers
+              Showing {startIndex + 1} to {Math.min(endIndex, sortedLeads.length)} of {sortedLeads.length} leads
             </p>
           </div>
         </div>
@@ -253,4 +253,4 @@ const InfluencerTable: React.FC<InfluencerTableProps> = ({
   );
 };
 
-export default InfluencerTable;
+export default LeadTable;

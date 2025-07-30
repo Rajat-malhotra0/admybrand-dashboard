@@ -1,5 +1,5 @@
 {
-  "name": "nextjs",
+  "name": "admybrand-insights",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,10 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "db:seed:enhanced": "node backend/seed-enhanced.js",
+    "db:seed:comprehensive": "node backend/comprehensive-seed.js",
+    "db:seed:cloud": "node backend/seed-cloud.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -62,9 +65,11 @@
     "html2canvas": "^1.4.1",
     "input-otp": "^1.2.4",
     "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.446.0",
     "next": "^14.2.13",
     "next-themes": "^0.3.0",
+    "node-fetch": "^2.7.0",
     "postcss": "8.4.30",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",

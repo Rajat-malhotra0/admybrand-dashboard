@@ -13,12 +13,12 @@ import { usePlatformData } from "@/hooks/usePlatformData";
 import { dashboardApi } from "@/lib/api/dashboard";
 import { useTheme } from "@/contexts/ThemeContext";
 import { CampaignStatsForm } from "@/components/admin/CampaignStatsForm";
-import { InfluencerForm } from "@/components/admin/InfluencerForm";
+import { LeadForm } from "@/components/admin/LeadForm";
 
 // Fallback data structure for when database is unavailable
 const fallbackData = {
   campaignStats: [],
-  influencerData: [],
+  leadData: [],
   demographicsData: [],
   interestsData: [],
 };
@@ -31,7 +31,7 @@ export default function AdminPage() {
   const [editingType, setEditingType] = useState<string>("");
   const [useBackend, setUseBackend] = useState(true);
   
-  // Influencer tab state
+  // Lead tab state
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -39,7 +39,7 @@ export default function AdminPage() {
   // File upload state
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadDataType, setUploadDataType] = useState('influencers');
+  const [uploadDataType, setUploadDataType] = useState('leads');
   
   // Fetch platform data from backend
   const { data: platformData, isLoading, error, refresh } = usePlatformData(selectedPlatform, useBackend);
@@ -63,9 +63,9 @@ export default function AdminPage() {
     return num;
   };
 
-  // Derived values for influencer tab - use current data (backend if available)
-  const sortedInfluencers = useMemo(() => {
-    const sorted = [...currentData.influencerData].sort((a, b) => {
+  // Derived values for lead tab - use current data (backend if available)
+  const sortedLeads = useMemo(() => {
+    const sorted = [...currentData.leadData].sort((a, b) => {
       // Sort by follower count using parseFollowerCount for accurate parsing
       const aFollowers = parseFollowerCount(a.followers);
       const bFollowers = parseFollowerCount(b.followers);
@@ -77,13 +77,13 @@ export default function AdminPage() {
       }
     });
     return sorted;
-  }, [currentData.influencerData, sortOrder]);
+  }, [currentData.leadData, sortOrder]);
   
-  const paginatedInfluencers = useMemo(() => {
+  const paginatedLeads = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return sortedInfluencers.slice(startIndex, endIndex);
-  }, [sortedInfluencers, currentPage, itemsPerPage]);
+    return sortedLeads.slice(startIndex, endIndex);
+  }, [sortedLeads, currentPage, itemsPerPage]);
 
   // Save data to localStorage (you can replace this with API calls)
   const saveData = () => {
@@ -119,10 +119,10 @@ export default function AdminPage() {
 
   // Generic add function
   const addItem = async (type: string, newItem: any) => {
-    if (useBackend && type === "influencerData") {
+    if (useBackend && type === "leadData") {
       try {
         // Add to backend
-        await dashboardApi.createInfluencer({
+        await dashboardApi.createLead({
           name: newItem.name,
           projects: newItem.projects,
           followers: newItem.followers,
@@ -132,7 +132,7 @@ export default function AdminPage() {
         refresh();
         alert(`${newItem.name} added successfully to backend!`);
       } catch (error) {
-        console.error('Error adding influencer to backend:', error);
+        console.error('Error adding lead to backend:', error);
         alert('Failed to add to backend. Added to local data instead.');
       }
     }
@@ -146,15 +146,15 @@ export default function AdminPage() {
 
   // Generic delete function
   const deleteItem = async (type: string, id: number | string) => {
-    if (useBackend && type === "influencerData" && typeof id === 'number') {
+    if (useBackend && type === "leadData" && typeof id === 'number') {
       try {
         // Delete from backend
-        await dashboardApi.deleteInfluencer(id);
+        await dashboardApi.deleteLead(id);
         // Refresh platform data to get updated list
         refresh();
-        alert('Influencer deleted successfully from backend!');
+        alert('Lead deleted successfully from backend!');
       } catch (error) {
-        console.error('Error deleting influencer from backend:', error);
+        console.error('Error deleting lead from backend:', error);
         alert('Failed to delete from backend. Removed from local data instead.');
       }
     }
@@ -330,7 +330,7 @@ export default function AdminPage() {
         <Tabs defaultValue="stats" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="stats">Campaign Stats</TabsTrigger>
-            <TabsTrigger value="influencers">Influencers</TabsTrigger>
+            <TabsTrigger value="leads">Leads</TabsTrigger>
             <TabsTrigger value="demographics">Demographics</TabsTrigger>
             <TabsTrigger value="interests">Interests</TabsTrigger>
           </TabsList>
@@ -368,15 +368,15 @@ export default function AdminPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="influencers" className="space-y-6">
+          <TabsContent value="leads" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Add Form */}
-              <InfluencerForm addItem={addItem} influencerData={currentData.influencerData} />
+              <LeadForm addItem={addItem} leadData={currentData.leadData} />
 
-              {/* Current Influencers */}
+              {/* Current Leads */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Influencers</CardTitle>
+                  <CardTitle>Current Leads</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {/* Pagination and Sort Controls */}
@@ -413,14 +413,14 @@ export default function AdminPage() {
                   </div>
                   
                   <div className="space-y-3">
-                    {paginatedInfluencers.map((influencer) => (
-                      <div key={influencer.id} className="flex items-center justify-between p-3 bg-muted rounded">
+                    {paginatedLeads.map((lead) => (
+                      <div key={lead.id} className="flex items-center justify-between p-3 bg-muted rounded">
                         <div>
-                          <h4 className="font-medium text-foreground">{influencer.name}</h4>
-                          <p className="text-sm text-muted-foreground">{influencer.projects} projects - {influencer.followers} followers</p>
+                          <h4 className="font-medium text-foreground">{lead.name}</h4>
+                          <p className="text-sm text-muted-foreground">{lead.projects} projects - {lead.followers} followers</p>
                         </div>
                         <Button
-                          onClick={() => deleteItem("influencerData", influencer.id)}
+                          onClick={() => deleteItem("leadData", lead.id)}
                           variant="destructive"
                           size="sm"
                         >
@@ -433,7 +433,7 @@ export default function AdminPage() {
                   {/* Pagination Controls */}
                   <div className="mt-4 flex items-center justify-between">
                     <div className="text-sm text-muted-foreground">
-                      Showing {Math.min((currentPage - 1) * itemsPerPage + 1, sortedInfluencers.length)} to {Math.min(currentPage * itemsPerPage, sortedInfluencers.length)} of {sortedInfluencers.length} influencers
+                      Showing {Math.min((currentPage - 1) * itemsPerPage + 1, sortedLeads.length)} to {Math.min(currentPage * itemsPerPage, sortedLeads.length)} of {sortedLeads.length} leads
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -445,11 +445,11 @@ export default function AdminPage() {
                         Previous
                       </Button>
                       <span className="px-3 py-1 text-sm">
-                        Page {currentPage} of {Math.ceil(sortedInfluencers.length / itemsPerPage)}
+                        Page {currentPage} of {Math.ceil(sortedLeads.length / itemsPerPage)}
                       </span>
                       <Button
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(sortedInfluencers.length / itemsPerPage)))}
-                        disabled={currentPage >= Math.ceil(sortedInfluencers.length / itemsPerPage)}
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(sortedLeads.length / itemsPerPage)))}
+                        disabled={currentPage >= Math.ceil(sortedLeads.length / itemsPerPage)}
                         variant="outline"
                         size="sm"
                       >
@@ -563,7 +563,7 @@ export default function AdminPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="influencers">Influencers</SelectItem>
+                      <SelectItem value="leads">Leads</SelectItem>
                       <SelectItem value="campaigns">Campaigns</SelectItem>
                       <SelectItem value="demographics">Demographics</SelectItem>
                     </SelectContent>

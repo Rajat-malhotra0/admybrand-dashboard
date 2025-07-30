@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "./Card";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { useScreenSize } from "@/hooks/useScreenSize";
 
 interface StatCardProps {
   title: string;
@@ -10,19 +11,20 @@ interface StatCardProps {
     type: "increase" | "decrease";
   };
   icon?: React.ReactNode;
-  description?: string;
+  link?: string;
+  primaryColor?: string;
 }
-
-import { useScreenSize } from "@/hooks/useScreenSize";
 
 const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
   change,
   icon,
-  description,
+  link,
+  primaryColor = "blue",
 }) => {
-  const { isMobile, isTablet } = useScreenSize();
+  const { isMobile } = useScreenSize();
+
   const formatValue = (val: string | number) => {
     if (typeof val === "number") {
       return val.toLocaleString();
@@ -30,84 +32,45 @@ const StatCard: React.FC<StatCardProps> = ({
     return val;
   };
 
+  const colorClasses = {
+    background: `bg-${primaryColor}-50 dark:bg-${primaryColor}-900/30`,
+    text: `text-${primaryColor}-600 dark:text-${primaryColor}-400`,
+    changeText: change?.type === "increase" ? "text-green-600" : "text-red-600",
+  };
+
   return (
-    <Card className={`
-      hover:shadow-md transition-shadow 
-      ${isMobile ? 'min-h-[120px]' : 'min-h-[140px]'}
-    `}>
-      <div className={`flex flex-col ${isMobile ? 'space-y-2' : 'space-y-3'}`}>
-        {/* Icon and Title Row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {icon && (
-              <div className={`
-                ${isMobile ? 'w-6 h-6' : 'w-8 h-8'} 
-                bg-orange-100 dark:bg-orange-900/30 rounded-lg
-                flex items-center justify-center flex-shrink-0
-              `}>
-                <div className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} text-orange-600 dark:text-orange-400`}>
-                  {icon}
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="text-text-muted">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="1"/>
-              <circle cx="12" cy="5" r="1"/>
-              <circle cx="12" cy="19" r="1"/>
-            </svg>
-          </div>
+    <Card className={`hover:shadow-lg transition-shadow p-5 flex flex-col justify-between min-h-[160px]`}>
+      {/* Top row: Icon and Title */}
+      <div className="flex items-start justify-between">
+        <div className={`p-2.5 rounded-lg ${colorClasses.background}`}>
+          <div className={colorClasses.text}>{icon}</div>
         </div>
-
-        {/* Title */}
-        <p className={`
-          ${isMobile ? 'text-xs' : 'text-sm'} 
-          text-text-muted font-medium text-responsive-sm
-        `}>
-          {title}
-        </p>
-
-        {/* Value */}
-        <p className={`
-          ${isMobile ? 'text-xl' : 'text-2xl'} 
-          font-bold text-text-primary mono text-responsive-xl
-        `}>
-          {formatValue(value)}
-        </p>
-
-        {/* Description */}
-        {description && (
-          <p className={`
-            ${isMobile ? 'text-xs' : 'text-sm'} 
-            text-text-muted text-responsive-sm
-          `}>
-            {description}
-          </p>
-        )}
-
-        {/* Change indicator */}
         {change && (
-          <div className="flex items-center">
+          <div className="flex items-center text-sm font-medium">
             {change.type === "increase" ? (
-              <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+              <TrendingUp className={`w-4 h-4 mr-1 ${colorClasses.changeText}`} />
             ) : (
-              <TrendingDown className="w-4 h-4 text-red-500 mr-1" />
+              <TrendingDown className={`w-4 h-4 mr-1 ${colorClasses.changeText}`} />
             )}
-            <span
-              className={`text-sm font-medium ${
-                change.type === "increase" ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {change.type === "increase" ? "+" : "-"}
-              {change.value}%
-            </span>
-            <span className="text-sm text-text-muted ml-1">
-              vs last month
-            </span>
+            <span className={colorClasses.changeText}>{change.value}%</span>
           </div>
         )}
       </div>
+
+      {/* Middle row: Value */}
+      <div>
+        <p className="text-sm text-text-muted font-medium mb-1">{title}</p>
+        <p className="text-3xl font-bold text-text-primary mono">
+          {formatValue(value)}
+        </p>
+      </div>
+
+      {/* Bottom row: Link */}
+      {link && (
+        <a href={link} className="flex items-center text-sm text-blue-600 hover:underline">
+          View Details <ArrowRight className="w-4 h-4 ml-1" />
+        </a>
+      )}
     </Card>
   );
 };

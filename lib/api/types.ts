@@ -8,12 +8,13 @@ export interface CampaignStat {
   description?: string;
 }
 
-export interface Influencer {
+export interface Lead {
   id: number;
   name: string;
   projects: number;
   followers: string;
 }
+
 
 export interface DemographicData {
   label: string;
@@ -31,14 +32,14 @@ export interface DashboardData {
     [key: string]: PlatformData;
   };
   campaignStats: CampaignStat[];
-  influencerData: Influencer[];
+  leadData: Lead[];
   demographicsData: DemographicData[];
   interestsData: InterestData[];
 }
 
 export interface PlatformData {
   campaignStats: CampaignStat[];
-  influencerData: Influencer[];
+  leadData: Lead[];
   demographicsData: DemographicData[];
   interestsData: InterestData[];
 }
@@ -57,7 +58,8 @@ export interface ApiError {
 }
 
 // Request types for creating/updating data
-export type CreateInfluencerRequest = Omit<Influencer, "id">;
-export type UpdateInfluencerRequest = Partial<Omit<Influencer, "id">>;
+export type CreateLeadRequest = Omit<Lead, "id">;
+export type UpdateLeadRequest = Partial<Omit<Lead, "id">>;
 export type CreateCampaignStatRequest = Omit<CampaignStat, "id">;
 export type UpdateCampaignStatRequest = Partial<Omit<CampaignStat, "id">>;
+

@@ -18,13 +18,14 @@ export interface CampaignStat {
   rawValue?: number; // For calculations
 }
 
-export interface InfluencerData {
+export interface LeadData {
   id: number;
   name: string;
   projects: number;
   followers: string;
   followersCount?: number; // For calculations
 }
+
 
 export interface DemographicData {
   label: string;
@@ -40,7 +41,7 @@ export interface InterestData {
 export interface DashboardData {
   countries: CountryData[];
   campaignStats: CampaignStat[];
-  influencers: InfluencerData[];
+  leads: LeadData[];
   demographics: DemographicData[];
   interests: InterestData[];
 }
@@ -49,7 +50,7 @@ interface DashboardDataContextType {
   data: DashboardData;
   updateCountryData: (id: string, newValue: number) => void;
   updateCampaignStat: (id: number, field: keyof CampaignStat, value: any) => void;
-  updateInfluencer: (id: number, field: keyof InfluencerData, value: any) => void;
+  updateLead: (id: number, field: keyof LeadData, value: any) => void;
   updateDemographic: (label: string, field: 'male' | 'female', value: number) => void;
   updateInterest: (label: string, value: number) => void;
   addCountry: (country: CountryData) => void;
@@ -100,7 +101,7 @@ const initialData: DashboardData = {
       description: "+16% from last month",
     },
   ],
-  influencers: [
+  leads: [
     {
       id: 1,
       name: "Sarah Johnson",
@@ -234,22 +235,23 @@ export const DashboardDataProvider: React.FC<{ children: ReactNode }> = ({ child
     }));
   }, []);
 
-  const updateInfluencer = useCallback((id: number, field: keyof InfluencerData, value: any) => {
+  const updateLead = useCallback((id: number, field: keyof LeadData, value: any) => {
     setData(prev => ({
       ...prev,
-      influencers: prev.influencers.map(influencer => {
-        if (influencer.id === id) {
-          const updatedInfluencer = { ...influencer, [field]: value };
+      leads: prev.leads.map(lead => {
+        if (lead.id === id) {
+          const updatedLead = { ...lead, [field]: value };
           // Auto-format followers display if followersCount is updated
           if (field === 'followersCount') {
-            updatedInfluencer.followers = formatNumber(value);
+            updatedLead.followers = formatNumber(value);
           }
-          return updatedInfluencer;
+          return updatedLead;
         }
-        return influencer;
+        return lead;
       })
     }));
   }, []);
+
 
   const updateDemographic = useCallback((label: string, field: 'male' | 'female', value: number) => {
     setData(prev => ({
@@ -292,7 +294,7 @@ export const DashboardDataProvider: React.FC<{ children: ReactNode }> = ({ child
       data,
       updateCountryData,
       updateCampaignStat,
-      updateInfluencer,
+      updateLead,
       updateDemographic,
       updateInterest,
       addCountry,

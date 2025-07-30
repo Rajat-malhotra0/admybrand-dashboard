@@ -29,7 +29,7 @@ export const dashboardApi = {
   // Platform-specific data
   getPlatformData: (platform: string) => apiRequest(`/platforms/${platform}`),
   getPlatformCampaignStats: (platform: string) => apiRequest(`/platforms/${platform}/campaign-stats`),
-  getPlatformInfluencers: (platform: string) => apiRequest(`/platforms/${platform}/influencers`),
+  getPlatformLeads: (platform: string) => apiRequest(`/platforms/${platform}/leads`),
   getPlatformDemographics: (platform: string) => apiRequest(`/platforms/${platform}/demographics`),
   getPlatformInterests: (platform: string) => apiRequest(`/platforms/${platform}/interests`),
   updatePlatformData: (platform: string, data: any) => apiRequest(`/platforms/${platform}`, {
@@ -51,25 +51,25 @@ export const dashboardApi = {
     method: 'DELETE',
   }),
 
-  // Influencers
-  getInfluencers: () => apiRequest('/influencers'),
-  createInfluencer: (data: any) => {
-    console.log('Creating influencer with data:', data);
-    return apiRequest('/influencers', {
+  // Leads
+  getLeads: () => apiRequest('/leads'),
+  createLead: (data: any) => {
+    console.log('Creating lead with data:', data);
+    return apiRequest('/leads', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
-  updateInfluencer: (id: number, data: any) => apiRequest(`/influencers/${id}`, {
+  updateLead: (id: number, data: any) => apiRequest(`/leads/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
-  deleteInfluencer: (id: number) => apiRequest(`/influencers/${id}`, {
+  deleteLead: (id: number) => apiRequest(`/leads/${id}`, {
     method: 'DELETE',
   }),
 
   // Database-backed endpoints
-  getDbInfluencers: () => apiRequest('/db/influencers'),
+  getDbLeads: () => apiRequest('/db/leads'),
   getDbCampaigns: () => apiRequest('/db/campaigns'),
   getDbDemographics: () => apiRequest('/db/demographics'),
   

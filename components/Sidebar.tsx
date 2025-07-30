@@ -9,13 +9,13 @@ import {
   CreditCard,
   Users,
   Settings,
-  UserCheck,
   Crown,
   Shield,
   Database,
 } from "lucide-react";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import DownloadPDFButton from "@/components/DownloadPDFButton";
+import DownloadCSVButton from "@/components/DownloadCSVButton";
 
 interface SidebarProps {
   className?: string;
@@ -25,9 +25,10 @@ interface SidebarProps {
   platform?: string;
   country?: string | null;
   disabled?: boolean;
+  useBackend?: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, country, disabled = false }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, country, disabled = false, useBackend = true }) => {
   const pathname = usePathname();
   
   const navigationItems = [
@@ -35,66 +36,60 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, 
       href: "/",
       icon: Home,
       label: "Dashboard",
-      description: "Main overview"
+      description: "Campaign overview & KPI tracking"
     },
     {
       href: "/campaigns",
       icon: Target,
       label: "Campaigns",
-      description: "Manage campaigns"
-    },
-    {
-      href: "/payments",
-      icon: CreditCard,
-      label: "Payments",
-      description: "Financial management"
-    },
-    {
-      href: "/influencers",
-      icon: UserCheck,
-      label: "Influencers",
-      description: "Influencer management"
+      description: "Manage marketing campaigns"
     },
     {
       href: "/team",
       icon: Users,
       label: "Team",
-      description: "Team management"
+      description: "Marketing team collaboration"
+    },
+    {
+      href: "/payments",
+      icon: CreditCard,
+      label: "Budget & ROI",
+      description: "Campaign spending & returns"
     },
     {
       href: "/admin",
       icon: Shield,
       label: "Admin",
-      description: "Admin panel"
+      description: "Platform administration"
     },
     {
       href: "/data-editor",
       icon: Database,
-      label: "Data Editor",
-      description: "Edit dashboard data"
+      label: "Data Studio",
+      description: "Custom analytics & reports"
     },
     {
       href: "/settings",
       icon: Settings,
       label: "Settings",
-      description: "App settings"
+      description: "Platform configuration"
     }
   ];
   
   return (
     <div className={`flex flex-col bg-bg-sidebar text-text-white h-full w-full ${className}`}>
-      {/* User Profile Section */}
+      {/* Agency Profile Section */}
       <div className="px-3 lg:px-4 py-4 lg:py-6 border-b border-border">
         <div className="flex items-center space-x-2 lg:space-x-3">
-          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs lg:text-sm">
-            JL
+          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-xs lg:text-sm">
+            AM
           </div>
           <div className="min-w-0 flex-1">
             <p className="font-medium text-white truncate text-sm lg:text-base">
-              Justinus Lhaksana
+              Marketing Agency Pro
             </p>
             <p className="text-slate-400 truncate text-xs lg:text-sm">
-              @justinus.lhaksana
+              Digital Campaign Manager
             </p>
           </div>
         </div>
@@ -139,23 +134,33 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "", reportRef, platform, 
               disabled={disabled}
             />
           )}
+          
+          {/* Download CSV Button */}
+          {platform && (
+            <DownloadCSVButton
+              platform={platform}
+              country={country || null}
+              disabled={disabled}
+              useBackend={useBackend}
+            />
+          )}
         </nav>
       </div>
 
-      {/* Pro Access Card */}
+      {/* Premium Analytics Card */}
       <div className="px-3 lg:px-4 pb-3 lg:pb-4">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl text-white p-3 lg:p-4">
+        <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl text-white p-3 lg:p-4">
           <div className="flex items-center space-x-1.5 lg:space-x-2 mb-2">
             <Crown className="flex-shrink-0 text-yellow-300 w-4 h-4 lg:w-5 lg:h-5" />
             <span className="font-semibold text-xs lg:text-sm">
-              Become Pro Access
+              Premium Analytics
             </span>
           </div>
-          <p className="text-blue-100 mb-2 lg:mb-3 leading-relaxed text-xs">
-            Try our knowledge base and unlock learning
+          <p className="text-purple-100 mb-2 lg:mb-3 leading-relaxed text-xs">
+            Unlock advanced campaign insights, competitor analysis & AI-powered recommendations
           </p>
-          <button className="w-full bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors py-1.5 px-2 lg:py-2 lg:px-3 text-xs lg:text-sm">
-            Upgrade Pro
+          <button className="w-full bg-white text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors py-1.5 px-2 lg:py-2 lg:px-3 text-xs lg:text-sm">
+            Upgrade to Premium
           </button>
         </div>
       </div>

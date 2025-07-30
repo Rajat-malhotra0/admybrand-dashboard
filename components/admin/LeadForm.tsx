@@ -5,12 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
 
-interface InfluencerFormProps {
+interface LeadFormProps {
   addItem: (type: string, newItem: any) => void;
-  influencerData: any[];
+  leadData: any[];
 }
 
-export const InfluencerForm: React.FC<InfluencerFormProps> = ({ addItem, influencerData }) => {
+export const LeadForm: React.FC<LeadFormProps> = ({ addItem, leadData }) => {
   const [formData, setFormData] = useState({
     name: '',
     projects: 0,
@@ -19,19 +19,19 @@ export const InfluencerForm: React.FC<InfluencerFormProps> = ({ addItem, influen
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const maxId = influencerData.length > 0 ? Math.max(...influencerData.map((i: any) => i.id || 0)) : 0;
-    const newInfluencer = {
+    const maxId = leadData.length > 0 ? Math.max(...leadData.map((i: any) => i.id || 0)) : 0;
+    const newLead = {
       ...formData,
       id: maxId + 1,
     };
-    addItem('influencerData', newInfluencer);
+    addItem('leadData', newLead);
     setFormData({ name: '', projects: 0, followers: '' });
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Add Influencer</CardTitle>
+        <CardTitle>Add Lead</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,7 +66,7 @@ export const InfluencerForm: React.FC<InfluencerFormProps> = ({ addItem, influen
           </div>
           <Button type="submit">
             <Plus className="w-4 h-4 mr-2" />
-            Add Influencer
+            Add Lead
           </Button>
         </form>
       </CardContent>

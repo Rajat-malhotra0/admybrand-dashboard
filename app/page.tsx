@@ -7,7 +7,7 @@ import ContentHeader from "@/components/ContentHeader";
 import StatCard from "@/components/StatCard";
 import AudienceAgeGenderChart from "@/components/AudienceAgeGenderChart";
 import RadarChart from "@/components/charts/RadarChart";
-import InfluencerTable from "@/components/InfluencerTable";
+import LeadTable from "@/components/LeadTable";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { ResponsiveGrid, ResponsiveGridItem } from "@/components/Layout/ResponsiveGrid";
 import { useScreenSize } from "@/hooks/useScreenSize";
@@ -16,6 +16,8 @@ import { useCountriesWithData } from "@/hooks/useCountriesWithData";
 import { TrendingUp, Users, Eye, Target } from "lucide-react";
 import dynamic from "next/dynamic";
 
+import CampaignPerformanceWidget from "@/components/CampaignPerformanceWidget";
+
 const MapChart = dynamic(() => import("@/components/MapChart"), {
   ssr: false,
 });
@@ -23,7 +25,7 @@ const MapChart = dynamic(() => import("@/components/MapChart"), {
 // Fallback data structure for when database is unavailable
 const fallbackData = {
   campaignStats: [],
-  influencerData: [],
+  leadData: [],
   demographicsData: [],
   interestsData: [],
 };
@@ -127,10 +129,32 @@ export default function Dashboard() {
   const { isMobile, isTablet, isDesktop, screenSize } = useScreenSize();
   
   // Function to handle country selection
-  const handleCountryClick = (countryIso: string) => {
+  const handleCountryClick = async (countryIso: string) => {
     console.log('Country selected (ISO):', countryIso);
+    const dbCountryName = isoToDbCountryName[countryIso] || countryIso;
+    
     setSelectedCountry(countryIso);
     setSelectedCountryName(isoToCountryName[countryIso] || countryIso);
+    
+    // Try to generate dynamic data for the selected country
+    try {
+      const response = await fetch(`http://localhost:5000/api/dynamic-data/generate/${dbCountryName}?platform=${activeTab}`);
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log(`✅ Generated dynamic data for ${dbCountryName}:`, result.data);
+        // Refresh the platform data to show the new data
+        refresh();
+      } else {
+        console.log(`ℹ️ No data available for ${dbCountryName}:`, result.message);
+        // Still refresh to show "No data" state
+        refresh();
+      }
+    } catch (error) {
+      console.error('Error generating dynamic data:', error);
+      // Still refresh to show current state (which may be "No data")
+      refresh();
+    }
   };
   
   // Get current stats based on selected country and platform
@@ -145,14 +169,14 @@ export default function Dashboard() {
     return dashboardData.campaignStats;
   };
   
-  // Get current influencer data
-  const getCurrentInfluencers = () => {
+  // Get current lead data
+  const getCurrentLeads = () => {
     // Use backend data if available and backend is enabled
     if (useBackend && platformData && !platformError) {
-      return platformData.influencerData;
+      return platformData.leadData;
     }
     if (useBackend) return []; // Avoid showing stale data
-    return dashboardData.influencerData;
+    return dashboardData.leadData;
   };
   
   // Get current demographics data
@@ -179,7 +203,7 @@ export default function Dashboard() {
   const shouldDisablePDF = useBackend && (platformLoading || countriesLoading);
 
   return (
-    <DashboardLayout sidebar={<Sidebar reportRef={reportRef} platform={activeTab} country={selectedCountryName} disabled={shouldDisablePDF} />} reportRef={reportRef}>
+    <DashboardLayout sidebar={<Sidebar reportRef={reportRef} platform={activeTab} country={selectedCountryName} disabled={shouldDisablePDF} useBackend={useBackend} />} reportRef={reportRef}>
       <div ref={reportRef} className="px-4 lg:px-6 py-4 lg:py-6 max-w-full overflow-x-hidden space-y-4 lg:space-y-6">
         {/* Header */}
         <header className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
@@ -274,75 +298,50 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Main Content Grid - Desktop: Stats left, Map right | Mobile: Stacked */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Section - Stats Cards (2x2 grid on desktop) */}
-          <div className="lg:col-span-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {getCurrentStats()?.map((stat: any) => (
-                <StatCard
-                  key={stat.id}
-                  title={stat.title}
-                  value={stat.value}
-                  icon={getIconComponent(stat.icon)}
-                  description={stat.description}
-                />
-              )) || []}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 gap-6">
+          {/* Campaign Performance Widget */}
+          <CampaignPerformanceWidget 
+            campaignStats={getCurrentStats()} 
+            platform={activeTab}
+            country={selectedCountryName || 'Global'}
+            reportRef={reportRef}
+            disabled={shouldDisablePDF}
+          />
+
+          {/* Map and Demographics */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-8">
+              <MapChart 
+                onCountryClick={handleCountryClick} 
+                countriesWithData={mapCountriesWithData}
+              />
             </div>
-            {selectedCountry && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium">
-                  Showing stats for: {selectedCountryName || selectedCountry}
-                </p>
-                <button 
-                  onClick={() => {
-                    setSelectedCountry(null);
-                    setSelectedCountryName(null);
-                  }}
-                  className="text-xs text-blue-600 hover:text-blue-800 underline mt-1"
-                >
-                  View global stats
-                </button>
-              </div>
-            )}
+            <div className="lg:col-span-4">
+              <AudienceAgeGenderChart
+                title="Audience Demographics"
+                data={getCurrentDemographics() || []}
+                showNoDataMessage={useBackend}
+              />
+            </div>
           </div>
 
-          {/* Right Section - Map Chart */}
-          <div className="lg:col-span-8">
-            <MapChart 
-              onCountryClick={handleCountryClick} 
-              countriesWithData={mapCountriesWithData}
-            />
-          </div>
-        </div>
-
-        {/* Bottom Section - Tables and Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Influencer Table */}
-          <div className="lg:col-span-4">
-            <InfluencerTable 
-              influencers={getCurrentInfluencers() || []} 
-              itemsPerPage={5}
-              showNoDataMessage={useBackend}
-            />
-          </div>
-          
-          {/* Age & Gender Chart */}
-          <div className="lg:col-span-4">
-            <AudienceAgeGenderChart
-              title="Audience Age & Gender"
-              data={getCurrentDemographics() || []}
-              showNoDataMessage={useBackend}
-            />
-          </div>
-          
-          {/* Radar Chart - Visible on all devices */}
-          <div className="lg:col-span-4">
-            <RadarChart
-              title="Follower Interest"
-              data={getCurrentInterests() || []}
-              showNoDataMessage={useBackend}
-            />
+          {/* Leads and Interests */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7">
+              <LeadTable 
+                leads={getCurrentLeads() || []} 
+                itemsPerPage={5}
+                showNoDataMessage={useBackend}
+              />
+            </div>
+            <div className="lg:col-span-5">
+              <RadarChart
+                title="Top Follower Interests"
+                data={getCurrentInterests() || []}
+                showNoDataMessage={useBackend}
+              />
+            </div>
           </div>
         </div>
       </div>

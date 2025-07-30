@@ -41,7 +41,7 @@ export default function DataEditor() {
     data, 
     updateCountryData, 
     updateCampaignStat, 
-    updateInfluencer, 
+    updateLead,
     updateDemographic, 
     updateInterest, 
     addCountry,
@@ -70,11 +70,11 @@ export default function DataEditor() {
       isExpanded: expandedSections.has('campaignStats')
     },
     {
-      id: 'influencers',
-      title: 'Influencer Data',
+      id: 'leads',
+      title: 'Lead Data',
       icon: <Users className="w-5 h-5 text-primary" />,
-      description: 'Modify influencer profiles and statistics',
-      isExpanded: expandedSections.has('influencers')
+      description: 'Modify lead profiles and statistics',
+      isExpanded: expandedSections.has('leads')
     },
     {
       id: 'demographics',
@@ -230,30 +230,30 @@ export default function DataEditor() {
                       </div>
                     )}
 
-                    {/* Influencers Section */}
-                    {section.id === 'influencers' && (
+                    {/* Leads Section */}
+                    {section.id === 'leads' && (
                       <div className="space-y-3">
-                        {data.influencers.map((influencer) => (
-                          <div key={influencer.id} className="bg-white p-3 rounded-lg">
+                        {data.leads.map((lead) => (
+                          <div key={lead.id} className="bg-white p-3 rounded-lg">
                             <input
                               type="text"
-                              value={influencer.name}
-                              onChange={(e) => updateInfluencer(influencer.id, 'name', e.target.value)}
+                              value={lead.name}
+                              onChange={(e) => updateLead(lead.id, 'name', e.target.value)}
                               className="w-full mb-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="Name"
                             />
                             <div className="grid grid-cols-2 gap-2">
                               <input
                                 type="number"
-                                value={influencer.projects}
-                                onChange={(e) => updateInfluencer(influencer.id, 'projects', parseInt(e.target.value) || 0)}
+                                value={lead.projects}
+                                onChange={(e) => updateLead(lead.id, 'projects', parseInt(e.target.value) || 0)}
                                 className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Projects"
                               />
                               <input
                                 type="number"
-                                value={influencer.followersCount || 0}
-                                onChange={(e) => updateInfluencer(influencer.id, 'followersCount', parseInt(e.target.value) || 0)}
+                                value={lead.followersCount || 0}
+                                onChange={(e) => updateLead(lead.id, 'followersCount', parseInt(e.target.value) || 0)}
                                 className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Followers"
                               />
@@ -263,7 +263,7 @@ export default function DataEditor() {
                         
                         {/* Note about pagination */}
                         <div className="text-xs text-gray-500 mt-2 p-2 bg-blue-50 rounded">
-                          💡 The InfluencerTable component includes pagination when more than 5 influencers are present.
+                          💡 The LeadTable component includes pagination when more than 5 leads are present.
                         </div>
                       </div>
                     )}

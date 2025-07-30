@@ -284,7 +284,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
     return (
       <Card className="p-4 flex flex-col h-full">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Global User Distribution</h2>
+          <h2 className="text-lg font-semibold">ADmyBRAND Insights</h2>
         </div>
         <div className="flex items-center justify-center flex-1 min-h-[400px]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -297,7 +297,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
     return (
       <Card className="p-4 flex flex-col h-full">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Global User Distribution</h2>
+          <h2 className="text-lg font-semibold">ADmyBRAND Insights</h2>
         </div>
         <div className="text-red-500 p-4 bg-red-50 rounded">{error}</div>
       </Card>
@@ -307,7 +307,7 @@ const MapChart: React.FC<MapChartProps> = ({ width = 800, height = 400, onCountr
   return (
     <Card className="p-4 flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Global User Distribution</h2>
+        <h2 className="text-lg font-semibold">ADmyBRAND Insights</h2>
       </div>
       <div className={`relative flex-1 min-h-[400px] border rounded-md overflow-hidden ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
         {/* Campaign Reach Data Overlay - Left Side - Hidden on mobile */}

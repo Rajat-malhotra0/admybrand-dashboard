@@ -1,16 +1,16 @@
 import useSWR from "swr";
 import { dashboardApi } from "@/lib/api/dashboard";
-import { Influencer } from "@/lib/api/types";
+import { Lead } from "@/lib/api/types";
 
-const fetcher = async (url: string): Promise<Influencer[]> => {
+const fetcher = async (url: string): Promise<Lead[]> => {
   const platform = url.split('/')[1]; // Extract platform from URL
-  const response = await dashboardApi.getPlatformInfluencers(platform);
+  const response = await dashboardApi.getPlatformLeads(platform);
   return response.data;
 };
 
-export const usePlatformInfluencers = (platform: string) => {
-  const { data, error, isLoading, mutate } = useSWR<Influencer[]>(
-    platform ? `platforms/${platform}/influencers` : null,
+export const usePlatformLeads = (platform: string) => {
+  const { data, error, isLoading, mutate } = useSWR<Lead[]>(
+    platform ? `platforms/${platform}/leads` : null,
     fetcher,
     {
       refreshInterval: 0, // Disable automatic refresh
@@ -19,7 +19,7 @@ export const usePlatformInfluencers = (platform: string) => {
       errorRetryCount: 3,
       dedupingInterval: 60000, // Increase deduping interval
       onError: (error) => {
-        console.error(`Influencers fetch error for ${platform}:`, error);
+        console.error(`Leads fetch error for ${platform}:`, error);
       },
     }
   );
