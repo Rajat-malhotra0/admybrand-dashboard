@@ -17,6 +17,7 @@ import { TrendingUp, Users, Eye, Target } from "lucide-react";
 import dynamic from "next/dynamic";
 
 import CampaignPerformanceWidget from "@/components/CampaignPerformanceWidget";
+import Footer from "@/components/Footer";
 
 const MapChart = dynamic(() => import("@/components/MapChart"), {
   ssr: false,
@@ -245,6 +246,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </DashboardLayout>
   );
