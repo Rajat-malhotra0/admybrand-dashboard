@@ -1,7 +1,17 @@
 import useSWR from "swr";
 import { PlatformData } from "@/lib/api/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+// Ensure we always have the correct API base URL
+const getBaseUrl = () => {
+  // If explicit API base URL is provided, use it
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+  // Default to relative /api path for production
+  return '/api';
+};
+
+const BASE_URL = getBaseUrl();
 
 const fetcher = async (url: string | null): Promise<PlatformData | null> => {
   if (!url) return null;
@@ -24,6 +34,12 @@ export const usePlatformData = (platform: string, enabled: boolean = true, count
     params.set('country', country);
   }
   const swrKey = enabled ? `${BASE_URL}/platform-data?${params.toString()}` : null;
+  
+  // Debug: Log the constructed URL
+  if (swrKey && process.env.NODE_ENV === 'development') {
+    console.log('Platform API URL:', swrKey);
+    console.log('BASE_URL:', BASE_URL);
+  }
   
   const { data, error, isLoading, mutate } = useSWR<PlatformData | null>(
     swrKey,

@@ -1,6 +1,16 @@
 import useSWR from 'swr';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+// Ensure we always have the correct API base URL
+const getBaseUrl = () => {
+  // If explicit API base URL is provided, use it
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+  // Default to relative /api path for production
+  return '/api';
+};
+
+const BASE_URL = getBaseUrl();
 
 const fetcher = async (url: string): Promise<{ countries: string[] }> => {
   const response = await fetch(url);
