@@ -14,8 +14,13 @@ function getTursoClient() {
   });
 }
 
-export const handler = async () => {
+export const handler = async (event) => {
   try {
+    console.log('Countries function - Environment check:', {
+      hasUrl: !!process.env.TURSO_DATABASE_URL,
+      hasToken: !!process.env.TURSO_AUTH_TOKEN
+    });
+    
     const client = getTursoClient();
     
     const query = `

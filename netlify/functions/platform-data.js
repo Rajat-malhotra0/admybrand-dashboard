@@ -16,8 +16,14 @@ function getTursoClient() {
 
 export const handler = async (event) => {
   try {
+    console.log('Environment check:', {
+      hasUrl: !!process.env.TURSO_DATABASE_URL,
+      hasToken: !!process.env.TURSO_AUTH_TOKEN,
+      event: event.queryStringParameters
+    });
+    
     const client = getTursoClient();
-    const { platform, country } = event.queryStringParameters;
+    const { platform, country } = event.queryStringParameters || {};
 
     let campaignStatsQuery = `
       SELECT 
