@@ -164,6 +164,40 @@ export default function Dashboard() {
           <ContentHeader />
         </section>
 
+        {/* Social Media Platform Tabs */}
+        <div className="flex bg-surface-elevated rounded-lg p-1 w-full lg:w-fit">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`
+                flex-1 lg:flex-none font-medium rounded-md transition-colors 
+                min-h-[44px] flex items-center justify-center
+                px-3 py-2 text-sm lg:px-4 relative
+                ${
+                  activeTab === tab
+                    ? "bg-surface text-text-primary shadow-sm"
+                    : "text-text-muted hover:text-text-primary"
+                }
+              `}
+            >
+              {tab}
+              {platformLoading && activeTab === tab && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+              )}
+            </button>
+          ))}
+        </div>
+        
+        {/* Platform Loading/Error Status */}
+        {platformError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-sm text-red-800">
+              Failed to load {activeTab} data. Using cached data instead.
+            </p>
+          </div>
+        )}
+
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 gap-6">
           {/* Campaign Performance Widget */}
