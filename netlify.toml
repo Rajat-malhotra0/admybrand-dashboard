@@ -5,6 +5,20 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Handle API routes with Netlify functions
+[[redirects]]
+  from = "/api/platform-data"
+  to = "/.netlify/functions/platform-data"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/countries-with-data"
+  to = "/.netlify/functions/countries-with-data"
+  status = 200
+  force = true
+
+# Redirect all other routes to index.html for SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
