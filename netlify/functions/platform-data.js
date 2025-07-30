@@ -31,6 +31,8 @@ export const handler = async (event) => {
         SUM(impressions) as total_impressions,
         SUM(clicks) as total_clicks,
         SUM(conversions) as total_conversions,
+        AVG(cost_per_click) as avg_cpc,
+        AVG(cost_per_conversion) as avg_cpc_conversion,
         COUNT(*) as total_campaigns
       FROM campaigns 
       WHERE status = 'active'`;
