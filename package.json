@@ -11,6 +11,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "deploy": "node deploy.js",
+    "deploy:netlify": "npm run build && echo 'Ready for Netlify deployment! Upload the out/ folder.'",
     "db:seed:enhanced": "node backend/seed-enhanced.js",
     "db:seed:comprehensive": "node backend/comprehensive-seed.js",
     "db:seed:cloud": "node backend/seed-cloud.js"
