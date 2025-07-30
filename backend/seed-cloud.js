@@ -384,10 +384,10 @@ async function seedCloudDatabase() {
 
     console.log('📝 Seeding interests...');
     for (const interest of interests) {
-      await client.execute(
-        'INSERT INTO user_interests (platform, interest_category, interest_name, percentage, total_users) VALUES (?, ?, ?, ?, ?)',
-        [interest.platform, interest.label, interest.label, interest.value || 0, Math.floor(interest.value * 1000)]
-      );
+        await client.execute(
+          'INSERT INTO user_interests (platform, interest_category, interest_name, percentage, total_users) VALUES (?, ?, ?, ?, ?)',
+          [interest.platform, interest.label, interest.label, interest.value || 0, Math.floor(interest.value * 1000)]
+        );
     }
     console.log(`✅ Seeded ${interests.length} interests`);
 
