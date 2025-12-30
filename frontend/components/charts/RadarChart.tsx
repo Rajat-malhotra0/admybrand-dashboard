@@ -139,7 +139,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ title, data, showNoDataMessage 
           <path
             d={pathData}
             fill="currentColor"
-            className="text-primary/20"
+            fillOpacity="0.2"
             stroke="currentColor"
             className="text-primary"
             strokeWidth="2"

@@ -14,7 +14,7 @@ import { TrendingUp, Users, Eye, Target, ThumbsUp, MessageSquare, Share, BarChar
 import dynamic from "next/dynamic";
 import { useDashboardData } from "@/hooks/useDashboardData";
 
-const MapChart = dynamic(() => import("@/components/MapChart"), {
+const MapChart = dynamic(() => import("@/components/SimpleMapChart"), {
   ssr: false,
 });
 

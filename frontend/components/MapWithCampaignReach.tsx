@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { RefreshCw } from "lucide-react";
 import Card from "./Card";
-import MapChart from "./MapChart";
+import SimpleMapChart from "./SimpleMapChart";
 import * as d3 from "d3";
 
 interface CountryStats {
@@ -60,7 +60,7 @@ const MapWithCampaignReach: React.FC = () => {
         {/* Map Chart - Right Side */}
         <div className="flex-1 relative">
           <div className="absolute inset-0">
-            <MapChart />
+            <SimpleMapChart />
           </div>
         </div>
       </div>

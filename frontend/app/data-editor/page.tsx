@@ -24,7 +24,7 @@ import { useDashboardData } from "@/contexts/DashboardDataContext";
 import Card from "@/components/Card";
 
 // Dynamically import the chart components
-const MapChart = dynamic(() => import("@/components/MapChart"), { ssr: false });
+const MapChart = dynamic(() => import("@/components/SimpleMapChart"), { ssr: false });
 const AudienceAgeGenderChart = dynamic(() => import("@/components/AudienceAgeGenderChart"), { ssr: false });
 const RadarChart = dynamic(() => import("@/components/charts/RadarChart"), { ssr: false });
 
