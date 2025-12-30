@@ -1,4 +1,4 @@
-const { getTursoClient } = require('../lib/database/turso');
+const { getTursoClient } = require('../src/database/lib/database/turso');
 const fs = require('fs');
 const path = require('path');
 
@@ -7,7 +7,7 @@ async function initializeDatabase() {
     const client = getTursoClient();
     
     // Read schema file
-    const schemaPath = path.join(__dirname, '../../lib/database/schema.sql');
+    const schemaPath = path.join(__dirname, '../src/database/lib/database/schema.sql');
     const schema = fs.readFileSync(schemaPath, 'utf8');
     
     // Split schema into individual statements
