@@ -4,7 +4,6 @@ import React, { useState, useRef } from "react";
 import Sidebar from "@/components/Sidebar";
 import ConsolidatedHeader from "@/components/ConsolidatedHeader";
 import ContentHeader from "@/components/ContentHeader";
-import SimpleMapChart from "@/components/SimpleMapChart";
 import AudienceAgeGenderChart from "@/components/AudienceAgeGenderChart";
 import RadarChart from "@/components/charts/RadarChart";
 import LeadTable from "@/components/LeadTable";
@@ -18,6 +17,8 @@ import dynamic from "next/dynamic";
 
 import CampaignPerformanceWidget from "@/components/CampaignPerformanceWidget";
 import Footer from "@/components/Footer";
+
+const MapChart = dynamic(() => import("@/components/MapChart"), { ssr: false });
 
 const getIconComponent = (iconName: string) => {
   switch (iconName) {
@@ -219,7 +220,7 @@ export default function Dashboard() {
           {/* Map and Demographics */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8">
-              <SimpleMapChart 
+              <MapChart 
                 onCountryClick={handleCountryClick} 
                 countriesWithData={mapCountriesWithData}
               />
